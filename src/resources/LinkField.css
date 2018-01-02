@@ -1,0 +1,15 @@
+.linkfield--field {
+  display: table;
+  width: 100%;
+}
+
+.linkfield--type,
+.linkfield--typeOptions {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.linkfield--typeOptions {
+  width: 100%;
+  padding-left: 10px;
+}
