@@ -23,7 +23,7 @@ To install the plugin, follow these instructions.
 
 ## Templating
 
-Link fields on your models will return an instance of `linkfield\models\Link`. Rendering a link
+Link fields on your models will return an instance of `typedlinkfield\models\Link`. Rendering a link
 field directly within a template will return the url the field is pointing to.
 
 ```
@@ -54,13 +54,13 @@ You can register additional link types by registering them via the `addLinkType`
 want to add another element type, you can do it like this:
 
 ```php
-$plugin = \linkfield\Plugin::getInstance();
-$linkType = new \linkfield\models\ElementLinkType('user');
+$plugin = \typedlinkfield\Plugin::getInstance();
+$linkType = new \typedlinkfield\models\ElementLinkType('user');
 $plugin->addLinkType('user', $linkType);
 ```
 
 
-Each link type must have an unique name and a definition object implementing `linkfield\modles\LinkTypeInterface`. 
+Each link type must have an unique name and a definition object implementing `typedlinkfield\modles\LinkTypeInterface`. 
 Take a look at the bundled link types `ElementLinkType` and `InputLinkType` to get an idea of how to write your own 
 link type definitions.
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace linkfield\validators;
+namespace typedlinkfield\validators;
 
-use linkfield\models\Link;
+use typedlinkfield\models\Link;
 use yii\validators\Validator;
 
 /**
  * Class LinkFieldValidator
- * @package linkfield
+ * @package typedlinkfield
  */
 class LinkFieldValidator extends Validator
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace linkfield\models;
+namespace typedlinkfield\models;
 
 use craft\base\ElementInterface;
-use linkfield\fields\LinkField;
+use typedlinkfield\fields\LinkField;
 
 /**
  * Interface LinkTypeInterface
- * @package linkfield\models
+ * @package typedlinkfield\models
  */
 interface LinkTypeInterface
 {

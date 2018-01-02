@@ -3,8 +3,8 @@
 <hr />
 
 {{ forms.checkboxSelectField({
-  label: '{elementName} sources'|t('linkfield', { 'elementName': elementName }),
-  instructions: 'Select the available sources.'|t('linkfield'),
+  label: '{elementName} sources'|t('typedlinkfield', { 'elementName': elementName }),
+  instructions: 'Select the available sources.'|t('typedlinkfield'),
   id: 'typeSettings-'~linkTypeName~'-sources',
   name: 'typeSettings['~linkTypeName~'][sources]',
   options: sources,

@@ -1,6 +1,6 @@
 {% import "_includes/forms" as forms %}
 
-{% do view.registerAssetBundle('linkfield\\utilities\\CpAssetBundle') %}
+{% do view.registerAssetBundle('typedlinkfield\\utilities\\CpAssetBundle') %}
 
 {% set singleType = linkNames|length == 1 ? types[0] : null %}
 {% set type = singleType ? singleType : ( value.type is defined and value.type ? value.type : null) %}
@@ -31,8 +31,8 @@
         {{ forms.textField({
           id: name~'-customText',
           name: name~'[customText]',
-          placeholder: settings.defaultText == '' ? 'Custom link text'|t('linkfield') : settings.defaultText|t('site'),
-          label: 'Custom link text'|t('linkfield'),
+          placeholder: settings.defaultText == '' ? 'Custom link text'|t('typedlinkfield') : settings.defaultText|t('site'),
+          label: 'Custom link text'|t('typedlinkfield'),
           value: value.customText is defined and value.customText ? value.customText
         }) }}
       {% endif %}
@@ -42,7 +42,7 @@
           id: name~'-Target',
           name: name~'[target]',
           value: '_blank',
-          label: 'Open link in new window?'|t('linkfield'),
+          label: 'Open link in new window?'|t('typedlinkfield'),
           checked: value.target is defined and value.target == '_blank' ? true : null
         }) }}
       {% endif %}

@@ -1,17 +1,17 @@
 <?php
 
-namespace linkfield\fields;
+namespace typedlinkfield\fields;
 
 use craft\base\ElementInterface;
 use craft\base\Field;
-use linkfield\Plugin;
-use linkfield\models\Link;
-use linkfield\models\LinkTypeInterface;
-use linkfield\validators\LinkFieldValidator;
+use typedlinkfield\Plugin;
+use typedlinkfield\models\Link;
+use typedlinkfield\models\LinkTypeInterface;
+use typedlinkfield\validators\LinkFieldValidator;
 
 /**
  * Class LinkField
- * @package linkfield\fields
+ * @package typedlinkfield\fields
  */
 class LinkField extends Field
 {
@@ -108,7 +108,7 @@ class LinkField extends Field
       $linkInputs[] = $linkType->getInputHtml($linkTypeName, $this, $value, $element);
     }
 
-    return \Craft::$app->getView()->renderTemplate('linkfield/_input', [
+    return \Craft::$app->getView()->renderTemplate('typedlinkfield/_input', [
       'linkInputs' => implode('', $linkInputs),
       'linkNames'  => $linkNames,
       'name'       => $this->handle,
@@ -147,7 +147,7 @@ class LinkField extends Field
       $linkSettings[] = $linkType->getSettingsHtml($linkTypeName, $this);
     }
 
-    return \Craft::$app->getView()->renderTemplate('linkfield/_settings', [
+    return \Craft::$app->getView()->renderTemplate('typedlinkfield/_settings', [
       'linkNames' => $linkNames,
       'settings'  => $this->getSettings(),
     ]) . implode('', $linkSettings);
@@ -212,6 +212,6 @@ class LinkField extends Field
    * @return string
    */
   static public function displayName(): string {
-    return \Craft::t('linkfield', 'Link field');
+    return \Craft::t('typedlinkfield', 'Link field');
   }
 }

@@ -1,15 +1,15 @@
 <?php
 
-namespace linkfield\models;
+namespace typedlinkfield\models;
 
 use craft\base\ElementInterface;
 use craft\helpers\Html;
-use linkfield\fields\LinkField;
+use typedlinkfield\fields\LinkField;
 use yii\base\Model;
 
 /**
  * Class ElementLinkType
- * @package linkfield\models
+ * @package typedlinkfield\models
  */
 class ElementLinkType extends Model implements LinkTypeInterface
 {
@@ -84,14 +84,14 @@ class ElementLinkType extends Model implements LinkTypeInterface
     ];
 
     try {
-      return \Craft::$app->view->renderTemplate('linkfield/_input-element', [
+      return \Craft::$app->view->renderTemplate('typedlinkfield/_input-element', [
         'isSelected'         => $isSelected,
         'linkTypeName'       => $linkTypeName,
         'selectFieldOptions' => $selectFieldOptions,
       ]);
     } catch (\Throwable $exception) {
       return Html::tag('p', \Craft::t(
-        'linkfield',
+        'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
         [ 'name' => $this->getDisplayName() ]
       ));
@@ -113,7 +113,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
    */
   public function getSettingsHtml(string $linkTypeName, LinkField $field): string {
     try {
-      return \Craft::$app->view->renderTemplate('linkfield/_settings-element', [
+      return \Craft::$app->view->renderTemplate('typedlinkfield/_settings-element', [
         'settings'     => $field->getLinkTypeSettings($linkTypeName, $this),
         'elementName'  => $this->getDisplayName(),
         'linkTypeName' => $linkTypeName,
@@ -121,7 +121,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
       ]);
     } catch (\Throwable $exception) {
       return Html::tag('p', \Craft::t(
-        'linkfield',
+        'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
         [ 'name' => $this->getDisplayName() ]
       ));

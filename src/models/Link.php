@@ -1,15 +1,15 @@
 <?php
 
-namespace linkfield\models;
+namespace typedlinkfield\models;
 
 use craft\helpers\Html;
 use craft\helpers\Template;
-use linkfield\Plugin;
+use typedlinkfield\Plugin;
 use yii\base\Model;
 
 /**
  * Class Link
- * @package linkfield\models
+ * @package typedlinkfield\models
  */
 class Link extends Model
 {

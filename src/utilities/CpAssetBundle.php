@@ -1,13 +1,13 @@
 <?php
 
-namespace linkfield\utilities;
+namespace typedlinkfield\utilities;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
 /**
  * Class CpAssetBundle
- * @package linkfield\utilities
+ * @package typedlinkfield\utilities
  */
 class CpAssetBundle extends AssetBundle
 {

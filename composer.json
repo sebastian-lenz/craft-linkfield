@@ -1,7 +1,7 @@
 {
   "name": "sebastianlenz/linkfield",
   "description": "A Craft field type for selecting links",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "craft-plugin",
   "license": "MIT",
   "require": {
@@ -10,12 +10,12 @@
   },
   "autoload": {
     "psr-4": {
-      "linkfield\\": "src/"
+      "typedlinkfield\\": "src/"
     }
   },
   "extra": {
-    "handle": "linkfield",
-    "name": "Link Field",
+    "handle": "typedlinkfield",
+    "name": "Typed link Field",
     "developer": "Sebastian Lenz",
     "developerUrl": "https://github.com/sebastian-lenz/"
   }

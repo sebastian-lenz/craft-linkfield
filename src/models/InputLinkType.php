@@ -1,15 +1,15 @@
 <?php
 
-namespace linkfield\models;
+namespace typedlinkfield\models;
 
 use craft\base\ElementInterface;
 use craft\helpers\Html;
-use linkfield\fields\LinkField;
+use typedlinkfield\fields\LinkField;
 use yii\base\Model;
 
 /**
  * Class InputLinkType
- * @package linkfield\models
+ * @package typedlinkfield\models
  */
 class InputLinkType extends Model implements LinkTypeInterface
 {
@@ -50,7 +50,7 @@ class InputLinkType extends Model implements LinkTypeInterface
    * @return string
    */
   public function getDisplayName(): string {
-    return \Craft::t('linkfield', $this->displayName);
+    return \Craft::t('typedlinkfield', $this->displayName);
   }
 
   /**
@@ -83,18 +83,18 @@ class InputLinkType extends Model implements LinkTypeInterface
     }
 
     if (isset($this->placeholder)) {
-      $textFieldOptions['placeholder'] = \Craft::t('linkfield', $this->placeholder);
+      $textFieldOptions['placeholder'] = \Craft::t('typedlinkfield', $this->placeholder);
     }
 
     try {
-      return \Craft::$app->view->renderTemplate('linkfield/_input-input', [
+      return \Craft::$app->view->renderTemplate('typedlinkfield/_input-input', [
         'isSelected'       => $isSelected,
         'linkTypeName'     => $linkTypeName,
         'textFieldOptions' => $textFieldOptions,
       ]);
     } catch (\Throwable $exception) {
       return Html::tag('p', \Craft::t(
-        'linkfield',
+        'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
         [ 'name' => $this->getDisplayName() ]
       ));
@@ -179,20 +179,20 @@ class InputLinkType extends Model implements LinkTypeInterface
     switch ($this->inputType) {
       case('email'):
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-          return [\Craft::t('linkfield', 'Please enter a valid email address.'), []];
+          return [\Craft::t('typedlinkfield', 'Please enter a valid email address.'), []];
         }
         break;
 
       case('tel'):
         $regexp = '/^[0-9+\(\)#\.\s\/ext-]+$/';
         if (!filter_var($value, FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $regexp)))) {
-          return [\Craft::t('linkfield', 'Please enter a valid phone number.'), []];
+          return [\Craft::t('typedlinkfield', 'Please enter a valid phone number.'), []];
         }
         break;
 
       case('custom'):
         if (!filter_var($value, FILTER_VALIDATE_URL) && $this->value == '#') {
-          return [\Craft::t('linkfield', 'Please enter a valid url.'), []];
+          return [\Craft::t('typedlinkfield', 'Please enter a valid url.'), []];
         }
         break;
     }
