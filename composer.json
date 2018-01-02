@@ -3,8 +3,9 @@
   "description": "A Craft field type for selecting links",
   "version": "1.0.0",
   "type": "craft-plugin",
-  "minimum-stability": "dev",
+  "license": "MIT",
   "require": {
+    "php": "^7.0",
     "craftcms/cms": "^3.0.0-RC1"
   },
   "autoload": {
