@@ -1,7 +1,6 @@
 {
   "name": "sebastianlenz/linkfield",
   "description": "A Craft field type for selecting links",
-  "version": "1.0.1",
   "type": "craft-plugin",
   "license": "MIT",
   "require": {
