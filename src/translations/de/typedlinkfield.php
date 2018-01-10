@@ -10,6 +10,7 @@ return [
   'Link field'                                                   => 'Linkfeld',
   'Link types'                                                   => 'Linktypen',
   'Mail'                                                         => 'E-Mail',
+  'No link types available.'                                     => 'Keine Linktypen verfügbar.',
   'Open link in new window?'                                     => 'Link in neuem Fenster öffnen?',
   'Please enter a valid email address.'                          => 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
   'Please enter a valid phone number.'                           => 'Bitte geben Sie eine gültige Telefonnummer ein.',

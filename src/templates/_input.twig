@@ -2,52 +2,55 @@
 
 {% do view.registerAssetBundle('typedlinkfield\\utilities\\CpAssetBundle') %}
 
-{% set singleType = linkNames|length == 1 ? types[0] : null %}
 {% set type = singleType ? singleType : ( value.type is defined and value.type ? value.type : null) %}
 
 <div class="linkfield" id="{{ name }}">
-  <div class="linkfield--field field">
-    {% if singleType %}
-      <input type="hidden" id="{{ name }}-type" name="{{ name }}[type]" value="{{ type }}" />
-    {% else %}
-      <div class="linkfield--type">
-        {{ forms.select({
-          id: name~'-Type',
-          name: name~'[type]',
-          options: linkNames,
-          value: type
-        }) }}
+  {% if linkNames|length == 0 %}
+    <p>{{ 'No link types available.'|t('typedlinkfield') }}</p>
+  {% else %}
+    <div class="linkfield--field field">
+      {% if singleType %}
+        <input type="hidden" id="{{ name }}-type" name="{{ name }}[type]" value="{{ type }}" />
+      {% else %}
+        <div class="linkfield--type">
+          {{ forms.select({
+            id: name~'-Type',
+            name: name~'[type]',
+            options: linkNames,
+            value: type
+          }) }}
+        </div>
+      {% endif %}
+
+      <div class="linkfield--typeOptions{% if singleType %} single{% endif %}">
+        {{ linkInputs|raw }}
+      </div>
+    </div>
+
+    {% if settings.allowCustomText or settings.allowTarget %}
+      <div class="linkfield--settings{{ type == '' ? ' hidden' }}">
+        {% if settings.allowCustomText %}
+          {{ forms.textField({
+            id: name~'-customText',
+            name: name~'[customText]',
+            placeholder: settings.defaultText == '' ? 'Custom link text'|t('typedlinkfield') : settings.defaultText|t('site'),
+            label: 'Custom link text'|t('typedlinkfield'),
+            value: value.customText is defined and value.customText ? value.customText
+          }) }}
+        {% endif %}
+
+        {% if settings.allowTarget %}
+          {{ forms.checkboxField({
+            id: name~'-Target',
+            name: name~'[target]',
+            value: '_blank',
+            label: 'Open link in new window?'|t('typedlinkfield'),
+            checked: value.target is defined and value.target == '_blank' ? true : null
+          }) }}
+        {% endif %}
       </div>
     {% endif %}
-
-    <div class="linkfield--typeOptions">
-      {{ linkInputs|raw }}
-    </div>
-  </div>
-
-	{% if settings.allowCustomText or settings.allowTarget %}
-    <div class="linkfield--settings{{ type == '' ? ' hidden' }}">
-      {% if settings.allowCustomText %}
-        {{ forms.textField({
-          id: name~'-customText',
-          name: name~'[customText]',
-          placeholder: settings.defaultText == '' ? 'Custom link text'|t('typedlinkfield') : settings.defaultText|t('site'),
-          label: 'Custom link text'|t('typedlinkfield'),
-          value: value.customText is defined and value.customText ? value.customText
-        }) }}
-      {% endif %}
-
-      {% if settings.allowTarget %}
-        {{ forms.checkboxField({
-          id: name~'-Target',
-          name: name~'[target]',
-          value: '_blank',
-          label: 'Open link in new window?'|t('typedlinkfield'),
-          checked: value.target is defined and value.target == '_blank' ? true : null
-        }) }}
-      {% endif %}
-    </div>
-	{% endif %}
+  {% endif %}
 </div>
 
 {% js %}

@@ -92,7 +92,7 @@ class LinkField extends Field
   }
 
   /**
-   * @param $value
+   * @param Link $value
    * @param ElementInterface|null $element
    * @return string
    * @throws \Twig_Error_Loader
@@ -102,6 +102,12 @@ class LinkField extends Field
     $linkTypes = $this->getAllowedLinkTypes();
     $linkNames = [];
     $linkInputs = [];
+    $singleType = count($linkTypes) === 1 ? array_keys($linkTypes)[0] : null;
+
+    if (!array_key_exists($value->type, $linkTypes) && count($linkTypes) > 0) {
+      $value->type = array_keys($linkTypes)[0];
+      $value->value = null;
+    }
 
     foreach ($linkTypes as $linkTypeName => $linkType) {
       $linkNames[$linkTypeName] = $linkType->getDisplayName();
@@ -114,6 +120,7 @@ class LinkField extends Field
       'name'       => $this->handle,
       'nameNs'     => \Craft::$app->view->namespaceInputId($this->handle),
       'settings'   => $this->getSettings(),
+      'singleType' => $singleType,
       'value'      => $value,
     ]);
   }
