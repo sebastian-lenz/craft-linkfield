@@ -50,6 +50,14 @@ class Link extends Model
 
 
   /**
+   * @return null|\craft\base\ElementInterface
+   */
+  public function getElement() {
+    $linkType = $this->getLinkType();
+    return is_null($linkType) ? null : $linkType->getElement($this);
+  }
+
+  /**
    * @return null|\Twig_Markup
    */
   public function getLink() {
