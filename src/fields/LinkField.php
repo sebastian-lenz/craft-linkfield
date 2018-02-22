@@ -8,6 +8,7 @@ use typedlinkfield\Plugin;
 use typedlinkfield\models\Link;
 use typedlinkfield\models\LinkTypeInterface;
 use typedlinkfield\validators\LinkFieldValidator;
+use yii\db\Schema;
 
 /**
  * Class LinkField
@@ -40,6 +41,15 @@ class LinkField extends Field
    */
   public $typeSettings = array();
 
+  /**
+   * Get Content Column Type
+   * Used to set the correct column type in the DB
+   * @return string
+   */
+  public function getContentColumnType(): string
+  {
+      return Schema::TYPE_TEXT;
+  }
 
   /**
    * @param $value
