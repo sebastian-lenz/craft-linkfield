@@ -71,8 +71,17 @@ class ElementLinkType extends Model implements LinkTypeInterface
     $isSelected = $value->type === $linkTypeName;
     $elements   = $isSelected ? array_filter([$this->getElement($value)]) : null;
 
+    $criteria = [
+      'enabledForSite' => null,
+      'status' => null,
+    ];
+
+    try {
+      $criteria['siteId'] = $this->getTargetSiteId($element);
+    } catch (\Exception $e) {}
+
     $selectFieldOptions = [
-      'criteria'        => [ 'status' => null ],
+      'criteria'        => $criteria,
       'elementType'     => $this->elementType,
       'elements'        => $elements,
       'id'              => $field->handle . '-' . $linkTypeName,
@@ -80,7 +89,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
       'name'            => $field->handle . '[' . $linkTypeName . ']',
       'storageKey'      => 'field.' . $field->handle,
       'sources'         => $sources === '*' ? null : $sources,
-      'sourceElementId' => $element->getId(),
+      'sourceElementId' => !empty($element->id) ? $element->id : null,
     ];
 
     try {
@@ -96,6 +105,21 @@ class ElementLinkType extends Model implements LinkTypeInterface
         [ 'name' => $this->getDisplayName() ]
       ));
     }
+  }
+
+  /**
+   * @param ElementInterface|null $element
+   * @return int
+   * @throws \craft\errors\SiteNotFoundException
+   */
+  protected function getTargetSiteId(ElementInterface $element = null): int {
+    if (\Craft::$app->getIsMultiSite()) {
+      if ($element !== null) {
+        return $element->siteId;
+      }
+    }
+
+    return \Craft::$app->getSites()->getCurrentSite()->id;
   }
 
   /**
