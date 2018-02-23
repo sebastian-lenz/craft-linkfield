@@ -192,10 +192,11 @@ class ElementLinkType extends Model implements LinkTypeInterface
   }
 
   /**
+   * @param LinkField $field
    * @param Link $link
    * @return array|null
    */
-  public function validateValue(Link $link) {
+  public function validateValue(LinkField $field, Link $link) {
     return null;
   }
 }

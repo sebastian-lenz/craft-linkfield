@@ -43,7 +43,9 @@ class InputLinkType extends Model implements LinkTypeInterface
    * @return array
    */
   public function getDefaultSettings(): array {
-    return [];
+    return [
+      'disableValidation' => false,
+    ];
   }
 
   /**
@@ -69,6 +71,7 @@ class InputLinkType extends Model implements LinkTypeInterface
    * @return string
    */
   public function getInputHtml(string $linkTypeName, LinkField $field, Link $value, ElementInterface $element): string {
+    $settings   = $field->getLinkTypeSettings($linkTypeName, $this);
     $isSelected = $value->type === $linkTypeName;
     $value      = $isSelected ? $value->value : '';
 
@@ -78,7 +81,7 @@ class InputLinkType extends Model implements LinkTypeInterface
       'value' => $value,
     ];
 
-    if (isset($this->inputType)) {
+    if (isset($this->inputType) && !$settings['disableValidation']) {
       $textFieldOptions['type'] = $this->inputType;
     }
 
@@ -115,7 +118,19 @@ class InputLinkType extends Model implements LinkTypeInterface
    * @return string
    */
   public function getSettingsHtml(string $linkTypeName, LinkField $field): string {
-    return '';
+    try {
+      return \Craft::$app->view->renderTemplate('typedlinkfield/_settings-input', [
+        'settings'     => $field->getLinkTypeSettings($linkTypeName, $this),
+        'elementName'  => $this->getDisplayName(),
+        'linkTypeName' => $linkTypeName,
+      ]);
+    } catch (\Throwable $exception) {
+      return Html::tag('p', \Craft::t(
+        'typedlinkfield',
+        'Error: Could not render the template for the field `{name}`.',
+        [ 'name' => $this->getDisplayName() ]
+      ));
+    }
   }
 
   /**
@@ -166,11 +181,17 @@ class InputLinkType extends Model implements LinkTypeInterface
   }
 
   /**
+   * @param LinkField $field
    * @param Link $link
    * @return array|null
    */
-  public function validateValue(Link $link) {
+  public function validateValue(LinkField $field, Link $link) {
     if ($this->isEmpty($link)) {
+      return null;
+    }
+
+    $settings = $field->getLinkTypeSettings($link->type, $this);
+    if ($settings['disableValidation']) {
       return null;
     }
 
@@ -190,8 +211,8 @@ class InputLinkType extends Model implements LinkTypeInterface
         }
         break;
 
-      case('custom'):
-        if (!filter_var($value, FILTER_VALIDATE_URL) && $this->value == '#') {
+      case('url'):
+        if (!filter_var($value, FILTER_VALIDATE_URL)) {
           return [\Craft::t('typedlinkfield', 'Please enter a valid url.'), []];
         }
         break;

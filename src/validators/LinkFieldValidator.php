@@ -2,6 +2,7 @@
 
 namespace typedlinkfield\validators;
 
+use typedlinkfield\fields\LinkField;
 use typedlinkfield\models\Link;
 use yii\validators\Validator;
 
@@ -12,6 +13,11 @@ use yii\validators\Validator;
 class LinkFieldValidator extends Validator
 {
   /**
+   * @var LinkField
+   */
+  public $field;
+
+  /**
    * @param mixed $value
    * @return array|null
    */
@@ -20,7 +26,7 @@ class LinkFieldValidator extends Validator
       $linkType = $value->getLinkType();
 
       if (!is_null($linkType)) {
-        return $linkType->validateValue($value);
+        return $linkType->validateValue($this->field, $value);
       }
     }
 

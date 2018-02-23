@@ -74,8 +74,9 @@ interface LinkTypeInterface
   public function isEmpty(Link $link): bool;
 
   /**
+   * @param LinkField $field
    * @param Link $link
    * @return array|null
    */
-  public function validateValue(Link $link);
+  public function validateValue(LinkField $field, Link $link);
 }

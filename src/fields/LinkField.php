@@ -41,14 +41,14 @@ class LinkField extends Field
    */
   public $typeSettings = array();
 
+
   /**
    * Get Content Column Type
    * Used to set the correct column type in the DB
    * @return string
    */
-  public function getContentColumnType(): string
-  {
-      return Schema::TYPE_TEXT;
+  public function getContentColumnType(): string {
+    return Schema::TYPE_TEXT;
   }
 
   /**
@@ -97,7 +97,7 @@ class LinkField extends Field
    */
   public function getElementValidationRules(): array {
     return [
-      LinkFieldValidator::class,
+      [LinkFieldValidator::class, 'field' => $this],
     ];
   }
 

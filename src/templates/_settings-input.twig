@@ -1,0 +1,8 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.checkboxField({
+  label: 'Disable {elementName} input validation'|t('typedlinkfield', { 'elementName': elementName }),
+  id: 'typeSettings-'~linkTypeName~'-disableValidation',
+  name: 'typeSettings['~linkTypeName~'][disableValidation]',
+  checked: settings.disableValidation,
+})}}
