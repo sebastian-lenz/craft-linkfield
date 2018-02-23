@@ -10,6 +10,15 @@
   showAllOption: true,
 }) }}
 
+{{ forms.selectField({
+  label: 'Default link type'|t('typedlinkfield'),
+  instructions: 'Select the preselected link type.'|t('typedlinkfield'),
+  id: 'defaultLinkName',
+  name: 'defaultLinkName',
+  options: linkNames,
+  value: settings.defaultLinkName,
+}) }}
+
 {{ forms.textField({
   label: 'Default link text'|t('typedlinkfield'),
   instructions: 'Set a default value for this links text value, can be overridden if custom link text option is selected.'|t('typedlinkfield'),

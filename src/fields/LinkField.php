@@ -34,6 +34,11 @@ class LinkField extends Field
   /**
    * @var string
    */
+  public $defaultLinkName = '';
+
+  /**
+   * @var string
+   */
   public $defaultText = '';
 
   /**
@@ -117,6 +122,14 @@ class LinkField extends Field
     if (!array_key_exists($value->type, $linkTypes) && count($linkTypes) > 0) {
       $value->type = array_keys($linkTypes)[0];
       $value->value = null;
+    }
+
+    if (
+      $value->isEmpty() &&
+      !empty($this->defaultLinkName) &&
+      array_key_exists($this->defaultLinkName, $linkTypes)
+    ) {
+      $value->type = $this->defaultLinkName;
     }
 
     foreach ($linkTypes as $linkTypeName => $linkType) {
