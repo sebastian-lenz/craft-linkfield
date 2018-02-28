@@ -60,21 +60,41 @@ class Link extends Model
   /**
    * @return null|\Twig_Markup
    */
-  public function getLink() {
-    $text = $this->getText();
-    $url = $this->getUrl();
-    if (is_null($text) || is_null($url)) {
-      return null;
-    }
+  public function getLink($attributes = null)
+    {
+        $text = $this->getText();
+        $url = $this->getUrl();
+        if (is_null($text) || is_null($url)) {
+            return null;
+        }
 
-    $attr = [ 'href' => $url ];
-    $target = $this->getTarget();
-    if (!is_null($target)) {
-      $attr['target'] = $target;
-    }
+        if ($url && $text) {
+            // Open  Link
+            $htmlLink = '<a href="' . $url . '"';
 
-    return Template::raw(Html::tag('a', $text, $attr));
-  }
+            // Add Title (if not in attributes)
+            if (!is_array($attributes) || !array_key_exists('title', $attributes)) {
+                $htmlLink .= ' title="' . $text . '"';
+            }
+            // Add Target (if not in attributes)
+            if ((!is_array($attributes) || !array_key_exists('title', $attributes)) && $this->target) {
+                $htmlLink .= ' target="' . $this->target . '"';
+            }
+
+            // Add Attributes
+            if (is_array($attributes)) {
+                foreach ($attributes as $attr => $value) {
+                    $htmlLink .= ' ' . $attr . '="' . $value . '"';
+                }
+            }
+
+            // Close Up Link
+            $htmlLink .= '>' . $text . '</a>';
+
+            // Get Raw
+            return Template::raw($htmlLink);
+        }
+    }
 
   /**
    * @return LinkTypeInterface|null
