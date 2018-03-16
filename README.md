@@ -58,7 +58,7 @@ will be used as the link content.
 ```
 {{ entry.linkField.getLink({
   class: 'my-link-class',
-  href: '_blank',
+  target: '_blank',
   text: 'Imprint',
 }) }}
 ```
