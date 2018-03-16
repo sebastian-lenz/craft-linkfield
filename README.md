@@ -47,6 +47,21 @@ Use the `getLink` utility function to render a full html link:
 {{ item.myLinkField.getLink() }}
 ```
 
+You can pass the desired content of the link as a string, e.g.
+```
+{{ entry.linkField.getLink('Imprint') }}
+```
+
+You may also pass an array of attributes. When doing this you can override
+the default attributes `href` and `target`. The special attribute `text`
+will be used as the link content.
+```
+{{ entry.linkField.getLink({
+  class: 'my-link-class',
+  href: '_blank',
+  text: 'Imprint',
+}) }}
+```
 
 ## API
 

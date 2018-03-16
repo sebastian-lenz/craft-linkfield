@@ -58,43 +58,55 @@ class Link extends Model
   }
 
   /**
+   * Renders a complete link tag.
+   *
+   * You can either pass the desired content of the link as a string, e.g.
+   * ```
+   * {{ entry.linkField.link('Imprint') }}
+   * ```
+   *
+   * or you can pass an array of attributes which can contain the key `text`
+   * which will be used as the link text. When doing this you can also override
+   * the default attributes `href` and `target` if you want to.
+   * ```
+   * {{ entry.linkField.link({
+   *   class: 'my-link-class',
+   *   text: 'Imprint',
+   * }) }}
+   * ```
+   *
+   * @param array|string|null $attributesOrText
    * @return null|\Twig_Markup
    */
-  public function getLink($attributes = null)
-    {
-        $text = $this->getText();
-        $url = $this->getUrl();
-        if (is_null($text) || is_null($url)) {
-            return null;
-        }
-
-        if ($url && $text) {
-            // Open  Link
-            $htmlLink = '<a href="' . $url . '"';
-
-            // Add Title (if not in attributes)
-            if (!is_array($attributes) || !array_key_exists('title', $attributes)) {
-                $htmlLink .= ' title="' . $text . '"';
-            }
-            // Add Target (if not in attributes)
-            if ((!is_array($attributes) || !array_key_exists('title', $attributes)) && $this->target) {
-                $htmlLink .= ' target="' . $this->target . '"';
-            }
-
-            // Add Attributes
-            if (is_array($attributes)) {
-                foreach ($attributes as $attr => $value) {
-                    $htmlLink .= ' ' . $attr . '="' . $value . '"';
-                }
-            }
-
-            // Close Up Link
-            $htmlLink .= '>' . $text . '</a>';
-
-            // Get Raw
-            return Template::raw($htmlLink);
-        }
+  public function getLink($attributesOrText = null) {
+    $text = $this->getText();
+    $url = $this->getUrl();
+    if (is_null($text) || is_null($url)) {
+      return null;
     }
+
+    $attr = [ 'href' => $url ];
+    $target = $this->getTarget();
+    if (!is_null($target)) {
+      $attr['target'] = $target;
+    }
+
+    // If a string is passed, override the text component
+    if (is_string($attributesOrText)) {
+      $text = $attributesOrText;
+
+    // If an array is passed, use it as tag attributes
+    } elseif (is_array($attributesOrText)) {
+      if (array_key_exists('text', $attributesOrText)) {
+        $text = $attributesOrText['text'];
+        unset($attributesOrText['text']);
+      }
+
+      $attr = $attributesOrText + $attr;
+    }
+
+    return Template::raw(Html::tag('a', $text, $attr));
+  }
 
   /**
    * @return LinkTypeInterface|null
