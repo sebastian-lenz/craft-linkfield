@@ -5,8 +5,6 @@
 {% set type = singleType ? singleType : ( value.type is defined and value.type ? value.type : null) %}
 
 <div class="linkfield" id="{{ name }}">
-  <input type="hidden" id="{{ name }}-isCpFormData" name="{{ name }}[isCpFormData]" value="true" />
-
   {% if linkNames|length == 0 %}
     <p>{{ 'No link types available.'|t('typedlinkfield') }}</p>
   {% else %}
@@ -53,6 +51,8 @@
       </div>
     {% endif %}
   {% endif %}
+
+  <input type="hidden" id="{{ name }}-isCpFormData" name="{{ name }}[isCpFormData]" value="true" />
 </div>
 
 {% js %}
