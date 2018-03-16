@@ -72,6 +72,7 @@ class LinkField extends Field
       'defaultText'     => $this->defaultText,
     ];
 
+    // If value is a string we are loading the data from the database
     if (is_string($value)) {
       $attr += array_filter(
         json_decode($value, true) ?: [],
@@ -80,13 +81,19 @@ class LinkField extends Field
         },
         ARRAY_FILTER_USE_KEY
       );
-    } else if (is_array($value)) {
+
+      // If it is an array and the field `isCpFormData` is set, we are saving a cp form
+    } else if (is_array($value) && isset($value['isCpFormData'])) {
       $attr += [
         'customText' => $this->allowCustomText && isset($value['customText']) ? $value['customText'] : null,
         'target'     => $this->allowTarget && isset($value['target']) ? $value['target'] : null,
         'type'       => isset($value['type']) ? $value['type'] : null,
         'value'      => $this->getLinkValue($value)
       ];
+
+      // Finally, if it is an array it is a serialized value
+    } elseif (is_array($value)) {
+      $attr = $value;
     }
 
     if (isset($attr['type']) && !$this->isAllowedLinkType($attr['type'])) {
@@ -178,9 +185,9 @@ class LinkField extends Field
     }
 
     return \Craft::$app->getView()->renderTemplate('typedlinkfield/_settings', [
-      'linkNames' => $linkNames,
-      'settings'  => $this->getSettings(),
-    ]) . implode('', $linkSettings);
+        'linkNames' => $linkNames,
+        'settings'  => $this->getSettings(),
+      ]) . implode('', $linkSettings);
   }
 
   /**
