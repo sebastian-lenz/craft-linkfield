@@ -3,8 +3,9 @@
 {% do view.registerAssetBundle('typedlinkfield\\utilities\\CpAssetBundle') %}
 
 {% set type = singleType ? singleType : ( value.type is defined and value.type ? value.type : null) %}
+{% set hasSettings = settings.allowCustomText or settings.allowTarget %}
 
-<div class="linkfield" id="{{ name }}">
+<div class="linkfield{% if hasSettings %} withSettings{% endif %}" id="{{ name }}">
   {% if linkNames|length == 0 %}
     <p>{{ 'No link types available.'|t('typedlinkfield') }}</p>
   {% else %}
@@ -27,7 +28,7 @@
       </div>
     </div>
 
-    {% if settings.allowCustomText or settings.allowTarget %}
+    {% if hasSettings %}
       <div class="linkfield--settings{{ type == '' ? ' hidden' }}">
         {% if settings.allowCustomText %}
           {{ forms.textField({

@@ -1,3 +1,8 @@
+.linkfield.withSettings {
+  padding: 20px;
+  border: 1px solid rgba(0, 0, 20, 0.1);
+}
+
 .linkfield--field {
   display: table;
   width: 100%;
