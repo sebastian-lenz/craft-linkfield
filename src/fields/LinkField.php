@@ -192,9 +192,10 @@ class LinkField extends Field
 
   /**
    * @param $value
+   * @param ElementInterface $element
    * @return bool
    */
-  public function isEmpty($value): bool {
+  public function isValueEmpty($value, ElementInterface $element): bool {
     if ($value instanceof Link) {
       return $value->isEmpty();
     }
