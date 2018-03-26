@@ -2,6 +2,8 @@
 
 namespace typedlinkfield\models;
 
+use craft\base\Element;
+use craft\base\ElementInterface;
 use craft\helpers\Html;
 use craft\helpers\Template;
 use typedlinkfield\Plugin;
@@ -48,6 +50,22 @@ class Link extends Model
    */
   public $value;
 
+  /**
+   * @var ElementInterface|null
+   */
+  private $owner;
+
+
+  /**
+   * Link constructor.
+   * @param array $config
+   */
+  public function __construct($config = []) {
+    $this->owner = $config['owner'];
+    unset($config['owner']);
+
+    parent::__construct($config);
+  }
 
   /**
    * @return null|\craft\base\ElementInterface
@@ -116,6 +134,26 @@ class Link extends Model
     return array_key_exists($this->type, $linkTypes)
       ? $linkTypes[$this->type]
       : null;
+  }
+
+  /**
+   * @return ElementInterface|null
+   */
+  public function getOwner() {
+    return $this->owner;
+  }
+
+  /**
+   * @return \craft\models\Site
+   */
+  public function getOwnerSite() {
+    if ($this->owner instanceof Element) {
+      try {
+        return $this->owner->getSite();
+      } catch (\Exception $e) { }
+    }
+
+    return \Craft::$app->sites->currentSite;
   }
 
   /**

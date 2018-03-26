@@ -54,8 +54,20 @@ class ElementLinkType extends Model implements LinkTypeInterface
       return null;
     }
 
+    $query = [
+      'id' => $link->value,
+      'site' => $link->getOwnerSite(),
+    ];
+
+    if (\Craft::$app->request->getIsCpRequest()) {
+      $query += [
+        'enabledForSite' => null,
+        'status' => null,
+      ];
+    }
+
     $elementType = $this->elementType;
-    return $elementType::findOne($link->value);
+    return $elementType::findOne($query);
   }
 
   /**

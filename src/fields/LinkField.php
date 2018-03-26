@@ -70,6 +70,7 @@ class LinkField extends Field
       'allowCustomText' => $this->allowCustomText,
       'allowTarget'     => $this->allowTarget,
       'defaultText'     => $this->defaultText,
+      'owner'           => $element,
     ];
 
     // If value is a string we are loading the data from the database
