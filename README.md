@@ -65,20 +65,36 @@ will be used as the link content.
 
 ## API
 
-You can register additional link types by registering them via the `addLinkType` function of the plugin. If you just 
-want to add another element type, you can do it like this:
+You can register additional link types by listening to the `EVENT_REGISTER_LINK_TYPES` 
+event of the plugin. If you just want to add another element type, you can do it like this in
+your module:
 
 ```php
-$plugin = \typedlinkfield\Plugin::getInstance();
-$linkType = new \typedlinkfield\models\ElementLinkType('user');
-$plugin->addLinkType('user', $linkType);
+use craft\commerce\elements\Product;
+use typedlinkfield\Plugin as LinkPlugin;
+use typedlinkfield\events\LinkTypeEvent;
+use typedlinkfield\models\ElementLinkType;
+use yii\base\Event;
+
+/**
+ * Custom module class.
+ */
+class Module extends \yii\base\Module
+{
+  public function init() {
+    parent::init();
+    Event::on(
+      LinkPlugin::class,
+      LinkPlugin::EVENT_REGISTER_LINK_TYPES,
+      function(LinkTypeEvent $event) {
+        $event->linkTypes['product'] = new ElementLinkType(Product::class);
+      }
+    );
+  }
+}
 ```
 
 
 Each link type must have an unique name and a definition object implementing `typedlinkfield\modles\LinkTypeInterface`. 
 Take a look at the bundled link types `ElementLinkType` and `InputLinkType` to get an idea of how to write your own 
 link type definitions.
-
-## Notice
-
-This plugin is loosely based upon [FruitLinkIt plugin for Craft CMS](https://github.com/fruitstudios/LinkIt).

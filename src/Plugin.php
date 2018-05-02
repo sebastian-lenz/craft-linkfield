@@ -2,15 +2,13 @@
 
 namespace typedlinkfield;
 
-use craft\elements\Asset;
-use craft\elements\Category;
-use craft\elements\Entry;
 use craft\events\RegisterComponentTypesEvent;
 use craft\services\Fields;
+use typedlinkfield\events\LinkTypeEvent;
 use typedlinkfield\fields\LinkField;
-use typedlinkfield\models\LinkTypeInterface;
 use typedlinkfield\models\ElementLinkType;
 use typedlinkfield\models\InputLinkType;
+use typedlinkfield\models\LinkTypeInterface;
 use yii\base\Event;
 
 /**
@@ -23,6 +21,11 @@ class Plugin extends \craft\base\Plugin
    * @var LinkTypeInterface[]
    */
   private $linkTypes;
+
+  /**
+   * @event events\LinkTypeEvent
+   */
+  const EVENT_REGISTER_LINK_TYPES = 'registerLinkTypes';
 
 
   /**
@@ -43,10 +46,12 @@ class Plugin extends \craft\base\Plugin
    * @param LinkTypeInterface $type
    */
   public function addLinkType(string $name, LinkTypeInterface $type) {
-    if (!isset($this->linkTypes)) {
-      $this->resetLinkTypes();
-    }
+    \Craft::$app->getDeprecator()->log(
+      'typedlinkfield\\Plugin::addLinkType()',
+      'typedlinkfield\\Plugin::addLinkType() is deprecated and will be removed. Use the event Plugin::EVENT_REGISTER_LINK_TYPES to add new link types.'
+    );
 
+    $this->getLinkTypes();
     $this->linkTypes[$name] = $type;
   }
 
@@ -55,23 +60,27 @@ class Plugin extends \craft\base\Plugin
    */
   public function getLinkTypes() {
     if (!isset($this->linkTypes)) {
-      $this->resetLinkTypes();
+      $event = new LinkTypeEvent();
+      $event->linkTypes = $this->createDefaultLinkTypes();
+      $this->trigger(self::EVENT_REGISTER_LINK_TYPES, $event);
+
+      $this->linkTypes = $event->linkTypes;
     }
 
     return $this->linkTypes;
   }
 
   /**
-   * @return void
+   * @return LinkTypeInterface[]
    */
-  private function resetLinkTypes() {
-    $this->linkTypes = [
-      'url'      => new InputLinkType('Url', [ 'inputType' => 'url' ]),
-      'email'    => new InputLinkType('Mail', [ 'inputType' => 'email' ]),
-      'tel'      => new InputLinkType('Telephone', [ 'inputType' => 'tel' ]),
-      'asset'    => new ElementLinkType(Asset::class),
-      'category' => new ElementLinkType(Category::class),
-      'entry'    => new ElementLinkType(Entry::class),
+  private function createDefaultLinkTypes() {
+    return [
+      'url'       => new InputLinkType('Url', [ 'inputType' => 'url' ]),
+      'email'     => new InputLinkType('Mail', [ 'inputType' => 'email' ]),
+      'tel'       => new InputLinkType('Telephone', [ 'inputType' => 'tel' ]),
+      'asset'     => new ElementLinkType(\craft\elements\Asset::class),
+      'category'  => new ElementLinkType(\craft\elements\Category::class),
+      'entry'     => new ElementLinkType(\craft\elements\Entry::class),
     ];
   }
 
