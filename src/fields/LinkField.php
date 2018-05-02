@@ -94,7 +94,9 @@ class LinkField extends Field
 
       // Finally, if it is an array it is a serialized value
     } elseif (is_array($value)) {
-      $attr = $value;
+      $attr = [
+        'owner' => $element,
+      ] + $value;
     }
 
     if (isset($attr['type']) && !$this->isAllowedLinkType($attr['type'])) {
