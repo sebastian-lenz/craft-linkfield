@@ -81,6 +81,7 @@ class Plugin extends \craft\base\Plugin
       'asset'     => new ElementLinkType(\craft\elements\Asset::class),
       'category'  => new ElementLinkType(\craft\elements\Category::class),
       'entry'     => new ElementLinkType(\craft\elements\Entry::class),
+      'globalset' => new ElementLinkType(\craft\elements\GlobalSet::class),
     ];
   }
 
