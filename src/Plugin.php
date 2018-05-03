@@ -39,6 +39,12 @@ class Plugin extends \craft\base\Plugin
       Fields::EVENT_REGISTER_FIELD_TYPES,
       [$this, 'onRegisterFieldTypes']
     );
+
+    Event::on(
+      LinkField::class,
+      'craftQlGetFieldSchema',
+      [utilities\CraftQLListener::class, 'onCraftQlGetFieldSchema']
+    );
   }
 
   /**
