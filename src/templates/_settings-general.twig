@@ -1,0 +1,29 @@
+{% import '_includes/forms' as forms %}
+
+{{ forms.selectField({
+  label: 'Default link type'|t('typedlinkfield'),
+  instructions: 'Select the preselected link type.'|t('typedlinkfield'),
+  id: 'defaultLinkName',
+  name: 'defaultLinkName',
+  options: linkNames,
+  value: settings.defaultLinkName,
+}) }}
+
+{{ forms.textField({
+  label: 'Default link text'|t('typedlinkfield'),
+  instructions: 'Set a default value for this links text value, can be overridden if custom link text option is selected.'|t('typedlinkfield'),
+  name: 'defaultText',
+  value: settings.defaultText
+}) }}
+
+{{ forms.checkboxField({
+  label: 'Allow custom link text'|t('typedlinkfield'),
+  name: 'allowCustomText',
+  checked: settings.allowCustomText
+}) }}
+
+{{ forms.checkboxField({
+  label: 'Allow option to open link in new window'|t('typedlinkfield'),
+  name: 'allowTarget',
+  checked: settings.allowTarget
+}) }}

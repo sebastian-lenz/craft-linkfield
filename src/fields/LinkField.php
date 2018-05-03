@@ -48,6 +48,22 @@ class LinkField extends Field
 
 
   /**
+   * @param bool $isNew
+   * @return bool
+   */
+  public function beforeSave(bool $isNew): bool {
+    $this->allowedLinkNames = array_filter($this->allowedLinkNames);
+    foreach ($this->allowedLinkNames as $linkName) {
+      if ($linkName === '*') {
+        $this->allowedLinkNames = '*';
+        break;
+      }
+    }
+
+    return parent::beforeSave($isNew);
+  }
+
+  /**
    * Get Content Column Type
    * Used to set the correct column type in the DB
    * @return string
@@ -198,19 +214,51 @@ class LinkField extends Field
    * @throws \yii\base\Exception
    */
   public function getSettingsHtml() {
-    $linkTypes = Plugin::getInstance()->getLinkTypes();
+    $settings = $this->getSettings();
+    $allowedLinkNames = $settings['allowedLinkNames'];
+    $linkTypes = [];
     $linkNames = [];
     $linkSettings = [];
 
-    foreach ($linkTypes as $linkTypeName => $linkType) {
+    $allTypesAllowed = false;
+    if (!is_array($allowedLinkNames)) {
+      $allTypesAllowed = $allowedLinkNames == '*';
+    } else {
+      foreach ($allowedLinkNames as $linkName) {
+        if ($linkName === '*') {
+          $allTypesAllowed = true;
+          break;
+        }
+      }
+    }
+
+    foreach (Plugin::getInstance()->getLinkTypes() as $linkTypeName => $linkType) {
+      $linkTypes[] = array(
+        'displayName' => $linkType->getDisplayName(),
+        'enabled'     => $allTypesAllowed || (is_array($allowedLinkNames) && in_array($linkTypeName, $allowedLinkNames)),
+        'name'        => $linkTypeName,
+        'group'       => $linkType->getDisplayGroup(),
+        'settings'    => $linkType->getSettingsHtml($linkTypeName, $this),
+      );
+
       $linkNames[$linkTypeName] = $linkType->getDisplayName();
       $linkSettings[] = $linkType->getSettingsHtml($linkTypeName, $this);
     }
 
+    usort($linkTypes, function($a, $b) {
+      return $a['group'] === $b['group']
+        ? strcmp($a['displayName'], $b['displayName'])
+        : strcmp($a['group'], $b['group']);
+    });
+
     return \Craft::$app->getView()->renderTemplate('typedlinkfield/_settings', [
-        'linkNames' => $linkNames,
-        'settings'  => $this->getSettings(),
-      ]) . implode('', $linkSettings);
+      'allTypesAllowed' => $allTypesAllowed,
+      'name'            => 'linkField',
+      'nameNs'          => \Craft::$app->view->namespaceInputId('linkField'),
+      'linkTypes'       => $linkTypes,
+      'linkNames'       => $linkNames,
+      'settings'        => $settings,
+    ]);
   }
 
   /**

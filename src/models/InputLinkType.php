@@ -21,6 +21,11 @@ class InputLinkType extends Model implements LinkTypeInterface
   /**
    * @var string
    */
+  public $displayGroup = 'Common';
+
+  /**
+   * @var string
+   */
   public $inputType;
 
   /**
@@ -31,12 +36,17 @@ class InputLinkType extends Model implements LinkTypeInterface
 
   /**
    * ElementLinkType constructor.
-   * @param string $displayName
+   * @param string|array $displayName
    * @param array $options
    */
-  public function __construct(string $displayName, array $options = []) {
+  public function __construct($displayName, array $options = []) {
+    if (is_array($displayName)) {
+      $options = $displayName;
+    } else {
+      $options['displayName'] = $displayName;
+    }
+
     parent::__construct($options);
-    $this->displayName = $displayName;
   }
 
   /**
@@ -53,6 +63,13 @@ class InputLinkType extends Model implements LinkTypeInterface
    */
   public function getDisplayName(): string {
     return \Craft::t('typedlinkfield', $this->displayName);
+  }
+
+  /**
+   * @return string
+   */
+  public function getDisplayGroup(): string {
+    return \Craft::t('typedlinkfield', $this->displayGroup);
   }
 
   /**

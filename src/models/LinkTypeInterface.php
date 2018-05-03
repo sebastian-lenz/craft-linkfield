@@ -22,6 +22,11 @@ interface LinkTypeInterface
   public function getDisplayName(): string;
 
   /**
+   * @return string
+   */
+  public function getDisplayGroup(): string;
+
+  /**
    * @param Link $link
    * @return null|ElementInterface
    */

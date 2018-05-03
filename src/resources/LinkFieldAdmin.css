@@ -1,0 +1,93 @@
+.linkFieldAdmin {
+  display: table;
+  width: 100%;
+
+  border: 1px solid #e3e5e8;
+
+  table-layout: fixed;
+}
+
+.linkFieldAdmin--tabs,
+.linkFieldAdmin--body {
+  display: table-cell;
+  vertical-align: top;
+}
+
+.linkFieldAdmin--tabs {
+  width: 250px;
+
+  border-right: 1px solid #e3e5e8;
+  background: #f1f5f8;
+}
+
+.linkFieldAdmin--tabsGroup {
+  margin-right: -1px;
+  padding: 20px 10px 0 10px;
+
+  background: #f1f5f8;
+  border-right: 1px solid #e3e5e8;
+  border-bottom: 1px solid #e3e5e8;
+
+  line-height: 40px;
+  font-weight: bold;
+}
+
+.linkFieldAdmin--tabsRow {
+  position: relative;
+  margin-right: -1px;
+  padding: 0 55px 0 10px;
+
+  background: #f1f5f8;
+  border-right: 1px solid #e3e5e8;
+  border-bottom: 1px solid #e3e5e8;
+
+  line-height: 40px;
+}
+
+.linkFieldAdmin--tabsRow:last-child {
+  margin-bottom: 20px;
+}
+
+.linkFieldAdmin--tabsRow.selected {
+  background: #fff;
+  border-right-color: transparent;
+}
+
+.linkFieldAdmin--tabsLightswitch {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+}
+
+.linkFieldAdmin--tabsLightswitch.hidden {
+  display: none;
+}
+
+.linkFieldAdmin--tabsTab {
+  overflow: hidden;
+  width: 100%;
+  padding: 0;
+
+  background: transparent;
+  outline: none;
+  border: none;
+  border-radius: 0;
+
+  font-size: 14px;
+  text-align: left;
+  line-height: 40px;
+  white-space: nowrap;
+  vertical-align: top;
+  text-overflow: ellipsis;
+
+  cursor: pointer;
+}
+
+.linkFieldAdmin--bodyContent {
+  display: none;
+  padding: 20px;
+}
+
+.linkFieldAdmin--bodyContent.selected {
+  display: block;
+}

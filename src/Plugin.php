@@ -81,13 +81,45 @@ class Plugin extends \craft\base\Plugin
    */
   private function createDefaultLinkTypes() {
     return [
-      'url'       => new InputLinkType('Url', [ 'inputType' => 'url' ]),
-      'email'     => new InputLinkType('Mail', [ 'inputType' => 'email' ]),
-      'tel'       => new InputLinkType('Telephone', [ 'inputType' => 'tel' ]),
-      'asset'     => new ElementLinkType(\craft\elements\Asset::class),
-      'category'  => new ElementLinkType(\craft\elements\Category::class),
-      'entry'     => new ElementLinkType(\craft\elements\Entry::class),
-      'globalset' => new ElementLinkType(\craft\elements\GlobalSet::class),
+      'url' => new InputLinkType([
+        'displayName'  => 'Url',
+        'displayGroup' => 'Input fields',
+        'inputType'    => 'url'
+      ]),
+      'email' => new InputLinkType([
+        'displayName'  => 'Mail',
+        'displayGroup' => 'Input fields',
+        'inputType'    => 'email'
+      ]),
+      'tel' => new InputLinkType([
+        'displayName'  => 'Telephone',
+        'displayGroup' => 'Input fields',
+        'inputType'    => 'tel'
+      ]),
+      'asset' => new ElementLinkType([
+        'displayGroup' => 'Craft elements',
+        'elementType'  => \craft\elements\Asset::class,
+      ]),
+      'category' => new ElementLinkType([
+        'displayGroup' => 'Craft elements',
+        'elementType'  => \craft\elements\Category::class
+      ]),
+      'entry' => new ElementLinkType([
+        'displayGroup' => 'Craft elements',
+        'elementType'  => \craft\elements\Entry::class
+      ]),
+      'globalset' => new ElementLinkType([
+        'displayGroup' => 'Craft elements',
+        'elementType'  => \craft\elements\GlobalSet::class
+      ]),
+      'tag' => new ElementLinkType([
+        'displayGroup' => 'Craft elements',
+        'elementType'  => \craft\elements\Tag::class
+      ]),
+      'user' => new ElementLinkType([
+        'displayGroup' => 'Craft elements',
+        'elementType'  => \craft\elements\User::class
+      ]),
     ];
   }
 

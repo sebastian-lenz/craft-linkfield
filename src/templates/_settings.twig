@@ -1,39 +1,59 @@
 {% import '_includes/forms' as forms %}
 
-{{ forms.checkboxSelectField({
-  label: 'Link types'|t('typedlinkfield'),
-  instructions: 'Select the types of links would you like available.'|t('typedlinkfield'),
-  id: 'allowedLinkNames',
-  name: 'allowedLinkNames',
-  options: linkNames,
-  values: settings.allowedLinkNames,
-  showAllOption: true,
-}) }}
+{% do view.registerAssetBundle('typedlinkfield\\utilities\\CpAdminAssetBundle') %}
+{% set group = '' %}
 
-{{ forms.selectField({
-  label: 'Default link type'|t('typedlinkfield'),
-  instructions: 'Select the preselected link type.'|t('typedlinkfield'),
-  id: 'defaultLinkName',
-  name: 'defaultLinkName',
-  options: linkNames,
-  value: settings.defaultLinkName,
-}) }}
+<div class="linkFieldAdmin" id="{{ name }}">
+  <div class="linkFieldAdmin--tabs">
+    <div class="linkFieldAdmin--tabsRow selected" data-name="_general">
+      <button class="linkFieldAdmin--tabsTab">General settings</button>
+    </div>
 
-{{ forms.textField({
-  label: 'Default link text'|t('typedlinkfield'),
-  instructions: 'Set a default value for this links text value, can be overridden if custom link text option is selected.'|t('typedlinkfield'),
-  name: 'defaultText',
-  value: settings.defaultText
-}) }}
+    <div class="linkFieldAdmin--tabsRow all">
+      <div class="linkFieldAdmin--tabsLightswitch">
+        {{- forms.lightswitch({
+          name: 'allowedLinkNames[]',
+          on: allTypesAllowed,
+          value: '*',
+        }) -}}
+      </div>
+      Enable all
+    </div>
 
-{{ forms.checkboxField({
-  label: 'Allow custom link text'|t('typedlinkfield'),
-  name: 'allowCustomText',
-  checked: settings.allowCustomText
-}) }}
+    {%- for linkType in linkTypes -%}
+      {%- if linkType.group != group -%}
+        {%- set group = linkType.group -%}
+        <div class="linkFieldAdmin--tabsGroup">{{ group }}</div>
+      {%- endif -%}
 
-{{ forms.checkboxField({
-  label: 'Allow option to open link in new window'|t('typedlinkfield'),
-  name: 'allowTarget',
-  checked: settings.allowTarget
-}) }}
+      <div class="linkFieldAdmin--tabsRow" data-name="{{ linkType.name }}">
+        <div class="linkFieldAdmin--tabsLightswitch{% if allTypesAllowed %} hidden{% endif %}">
+          {{- forms.lightswitch({
+            name: 'allowedLinkNames[]',
+            on: linkType.enabled,
+            value: linkType.name,
+          }) -}}
+        </div>
+
+        <button class="linkFieldAdmin--tabsTab">
+          {{- linkType.displayName -}}
+        </button>
+      </div>
+    {%- endfor -%}
+  </div>
+  <div class="linkFieldAdmin--body">
+    <div class="linkFieldAdmin--bodyContent selected" data-name="_general">
+      {% include 'typedlinkfield/_settings-general' %}
+    </div>
+
+    {%- for linkType in linkTypes -%}
+      <div class="linkFieldAdmin--bodyContent" data-name="{{ linkType.name }}">
+        {{- linkType.settings|raw -}}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% js %}
+  new LinkFieldAdmin("{{ nameNs }}");
+{% endjs %}

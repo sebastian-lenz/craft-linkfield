@@ -18,14 +18,25 @@ class ElementLinkType extends Model implements LinkTypeInterface
    */
   public $elementType;
 
+  /**
+   * @var string
+   */
+  public $displayGroup = 'Common';
+
 
   /**
    * ElementLinkType constructor.
-   * @param string $elementType
+   * @param string|array $elementType
+   * @param array $options
    */
-  public function __construct(string $elementType) {
-    parent::__construct();
-    $this->elementType = $elementType;
+  public function __construct($elementType, array $options = []) {
+    if (is_array($elementType)) {
+      $options = $elementType;
+    } else {
+      $options['elementType'] = $elementType;
+    }
+
+    parent::__construct($options);
   }
 
   /**
@@ -43,6 +54,13 @@ class ElementLinkType extends Model implements LinkTypeInterface
   public function getDisplayName(): string {
     $elementType = $this->elementType;
     return $elementType::displayName();
+  }
+
+  /**
+   * @return string
+   */
+  public function getDisplayGroup(): string {
+    return \Craft::t('typedlinkfield', $this->displayGroup);
   }
 
   /**
