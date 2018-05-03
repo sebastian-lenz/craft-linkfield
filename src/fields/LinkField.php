@@ -108,6 +108,26 @@ class LinkField extends Field
   }
 
   /**
+   * @return LinkTypeInterface[]
+   */
+  public function getAllowedLinkTypes() {
+    $allowedLinkNames = $this->allowedLinkNames;
+    $linkTypes = Plugin::getInstance()->getLinkTypes();
+
+    if (is_string($allowedLinkNames)) {
+      if ($allowedLinkNames === '*') {
+        return $linkTypes;
+      }
+
+      $allowedLinkNames = [$allowedLinkNames];
+    }
+
+    return array_filter($linkTypes, function($linkTypeName) use ($allowedLinkNames) {
+      return in_array($linkTypeName, $allowedLinkNames);
+    }, ARRAY_FILTER_USE_KEY);
+  }
+
+  /**
    * @return array
    */
   public function getElementValidationRules(): array {
@@ -213,26 +233,6 @@ class LinkField extends Field
   private function isAllowedLinkType($type) {
     $allowedLinkTypes = $this->getAllowedLinkTypes();
     return array_key_exists($type, $allowedLinkTypes);
-  }
-
-  /**
-   * @return LinkTypeInterface[]
-   */
-  private function getAllowedLinkTypes() {
-    $allowedLinkNames = $this->allowedLinkNames;
-    $linkTypes = Plugin::getInstance()->getLinkTypes();
-
-    if (is_string($allowedLinkNames)) {
-      if ($allowedLinkNames === '*') {
-        return $linkTypes;
-      }
-
-      $allowedLinkNames = [$allowedLinkNames];
-    }
-
-    return array_filter($linkTypes, function($linkTypeName) use ($allowedLinkNames) {
-      return in_array($linkTypeName, $allowedLinkNames);
-    }, ARRAY_FILTER_USE_KEY);
   }
 
   /**
