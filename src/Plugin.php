@@ -80,7 +80,7 @@ class Plugin extends \craft\base\Plugin
    * @return LinkTypeInterface[]
    */
   private function createDefaultLinkTypes() {
-    return [
+    $result = [
       'url' => new InputLinkType([
         'displayName'  => 'Url',
         'displayGroup' => 'Input fields',
@@ -97,30 +97,39 @@ class Plugin extends \craft\base\Plugin
         'inputType'    => 'tel'
       ]),
       'asset' => new ElementLinkType([
-        'displayGroup' => 'Craft elements',
+        'displayGroup' => 'Craft CMS',
         'elementType'  => \craft\elements\Asset::class,
       ]),
       'category' => new ElementLinkType([
-        'displayGroup' => 'Craft elements',
+        'displayGroup' => 'Craft CMS',
         'elementType'  => \craft\elements\Category::class
       ]),
       'entry' => new ElementLinkType([
-        'displayGroup' => 'Craft elements',
+        'displayGroup' => 'Craft CMS',
         'elementType'  => \craft\elements\Entry::class
       ]),
       'globalset' => new ElementLinkType([
-        'displayGroup' => 'Craft elements',
+        'displayGroup' => 'Craft CMS',
         'elementType'  => \craft\elements\GlobalSet::class
       ]),
       'tag' => new ElementLinkType([
-        'displayGroup' => 'Craft elements',
+        'displayGroup' => 'Craft CMS',
         'elementType'  => \craft\elements\Tag::class
       ]),
       'user' => new ElementLinkType([
-        'displayGroup' => 'Craft elements',
+        'displayGroup' => 'Craft CMS',
         'elementType'  => \craft\elements\User::class
       ]),
     ];
+
+    if (class_exists('craft\commerce\elements\Product')) {
+      $result['product'] = new ElementLinkType([
+        'displayGroup' => 'Craft commerce',
+        'elementType'  => 'craft\commerce\elements\Product'
+      ]);
+    }
+
+    return $result;
   }
 
   /**
