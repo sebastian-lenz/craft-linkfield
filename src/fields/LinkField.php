@@ -245,6 +245,7 @@ class LinkField extends Field
       $linkSettings[] = $linkType->getSettingsHtml($linkTypeName, $this);
     }
 
+    asort($linkNames);
     usort($linkTypes, function($a, $b) {
       return $a['group'] === $b['group']
         ? strcmp($a['displayName'], $b['displayName'])
