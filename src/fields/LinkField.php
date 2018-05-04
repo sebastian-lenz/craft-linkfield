@@ -183,6 +183,8 @@ class LinkField extends Field
       $linkInputs[] = $linkType->getInputHtml($linkTypeName, $this, $value, $element);
     }
 
+    asort($linkNames);
+
     return \Craft::$app->getView()->renderTemplate('typedlinkfield/_input', [
       'linkInputs' => implode('', $linkInputs),
       'linkNames'  => $linkNames,
