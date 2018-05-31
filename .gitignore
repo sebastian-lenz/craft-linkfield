@@ -1,4 +1,5 @@
 /.idea
+/etc
 /vendor
 .DS_Store
 composer.lock
