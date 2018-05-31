@@ -1,6 +1,8 @@
 ## 1.0.9
 - Add new administration interface.
 - Add experimental GraphQL query support.
+- Add Craft Commerce product and Solspace Calendar event support.
+- Remove global set element type.
 
 ## 1.0.8
 - Add event `registerLinkTypes`. Use this event to register custom link types.

@@ -114,10 +114,19 @@ class Plugin extends \craft\base\Plugin
       ]),
     ];
 
+    // Add craft commerce elements
     if (class_exists('craft\commerce\elements\Product')) {
-      $result['product'] = new ElementLinkType([
+      $result['craftCommerce-product'] = new ElementLinkType([
         'displayGroup' => 'Craft commerce',
         'elementType'  => 'craft\commerce\elements\Product'
+      ]);
+    }
+
+    // Add solspace calendar elements
+    if (class_exists('Solspace\Calendar\Elements\Event')) {
+      $result['solspaceCalendar-event'] = new ElementLinkType([
+        'displayGroup' => 'Solspace calendar',
+        'elementType'  => 'Solspace\Calendar\Elements\Event'
       ]);
     }
 
