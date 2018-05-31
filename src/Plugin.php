@@ -112,10 +112,6 @@ class Plugin extends \craft\base\Plugin
         'displayGroup' => 'Craft CMS',
         'elementType'  => \craft\elements\GlobalSet::class
       ]),
-      'tag' => new ElementLinkType([
-        'displayGroup' => 'Craft CMS',
-        'elementType'  => \craft\elements\Tag::class
-      ]),
       'user' => new ElementLinkType([
         'displayGroup' => 'Craft CMS',
         'elementType'  => \craft\elements\User::class
