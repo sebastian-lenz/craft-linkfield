@@ -11,7 +11,7 @@
 
 {{ forms.textField({
   label: 'Default link text'|t('typedlinkfield'),
-  instructions: 'Set a default value for this links text value, can be overridden if custom link text option is selected.'|t('typedlinkfield'),
+  instructions: 'Set the default value of the link text.'|t('typedlinkfield'),
   name: 'defaultText',
   value: settings.defaultText
 }) }}
@@ -23,7 +23,7 @@
 }) }}
 
 {{ forms.checkboxField({
-  label: 'Allow option to open link in new window'|t('typedlinkfield'),
+  label: 'Allow links to open in new window'|t('typedlinkfield'),
   name: 'allowTarget',
   checked: settings.allowTarget
 }) }}

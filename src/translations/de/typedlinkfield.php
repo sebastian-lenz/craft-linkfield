@@ -3,7 +3,7 @@
 return [
   '{elementName} sources'                                        => '{elementName}-Quellen',
   'Allow custom link text'                                       => 'Erlaube benutzerdefinierte Linktexte',
-  'Allow option to open link in new window'                      => 'Erlaube Links die in einem neuen Fenster öffnen',
+  'Allow links to open in new window'                            => 'Erlaube Links die in einem neuen Fenster öffnen',
   'Custom link text'                                             => 'Eigener Linktext',
   'Default link text'                                            => 'Standard Linktext',
   'Default link type'                                            => 'Standard Linktyp',
@@ -20,7 +20,7 @@ return [
   'Select the available sources.'                                => 'Wählen Sie die verfügbaren Quellen aus.',
   'Select the preselected link type.'                            => 'Wählen Sie den voreingestellten Linktyp aus.',
   'Select the types of links would you like available.'          => 'Wählen Sie die verfügbaren Linktypen aus.',
-  'Set a default value for this links text value, can be overridden if custom link text option is selected.' => 'Der Standardwert des Linktexts. Kann überschrieben werden wenn die Option `Benutzerdefinierte Linktexte` aktiviert ist.',
+  'Set the default value of the link text.'                      => 'Der Standardwert des Linktexts.',
   'Telephone'                                                    => 'Telefon',
   'Url'                                                          => 'Url',
 ];
