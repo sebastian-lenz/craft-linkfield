@@ -4,10 +4,10 @@ namespace typedlinkfield\models;
 
 use craft\base\Element;
 use craft\base\ElementInterface;
+use craft\base\Model;
 use craft\helpers\Html;
 use craft\helpers\Template;
 use typedlinkfield\Plugin;
-use yii\base\Model;
 
 /**
  * Class Link
