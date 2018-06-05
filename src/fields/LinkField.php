@@ -52,11 +52,13 @@ class LinkField extends Field
    * @return bool
    */
   public function beforeSave(bool $isNew): bool {
-    $this->allowedLinkNames = array_filter($this->allowedLinkNames);
-    foreach ($this->allowedLinkNames as $linkName) {
-      if ($linkName === '*') {
-        $this->allowedLinkNames = '*';
-        break;
+    if (is_array($this->allowedLinkNames)) {
+      $this->allowedLinkNames = array_filter($this->allowedLinkNames);
+      foreach ($this->allowedLinkNames as $linkName) {
+        if ($linkName === '*') {
+          $this->allowedLinkNames = '*';
+          break;
+        }
       }
     }
 
