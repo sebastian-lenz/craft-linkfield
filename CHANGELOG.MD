@@ -1,3 +1,6 @@
+## 1.0.10
+- Fix an issue when creating new fields, see https://github.com/sebastian-lenz/craft-linkfield/pull/22
+
 ## 1.0.9
 - Add new administration interface.
 - Add experimental GraphQL query support.

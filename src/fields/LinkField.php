@@ -60,6 +60,8 @@ class LinkField extends Field
           break;
         }
       }
+    } else {
+      $this->allowedLinkNames = '*';
     }
 
     return parent::beforeSave($isNew);
