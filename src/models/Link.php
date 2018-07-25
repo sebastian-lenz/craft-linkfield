@@ -184,6 +184,21 @@ class Link extends Model
   }
 
   /**
+   * Try to use provided custom text or field default.
+   * Allows user to specify a fallback string if the custom text and default are not set.
+   *
+   * @param string $fallbackText
+   * @return void
+   */
+  public function getCustomText($fallbackText = "Learn More") {
+    if ($this->allowCustomText && !empty($this->customText)) {
+      return $this->customText;
+    }
+
+    return $this->defaultText ? $this->defaultText : $fallbackText;
+  }
+
+  /**
    * @return null|string
    */
   public function getUrl() {
