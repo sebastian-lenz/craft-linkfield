@@ -39,6 +39,7 @@ You can use the following accessors to get the different properties of the link:
 {{ item.myLinkField.getUrl() }}
 {{ item.myLinkField.hasElement() }}
 {{ item.myLinkField.isEmpty() }}
+{{ item.myLinkField.getCustomText() }}
 ```
 
 Use the `getLink` utility function to render a full html link:

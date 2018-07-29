@@ -86,6 +86,11 @@ class Plugin extends \craft\base\Plugin
         'displayGroup' => 'Input fields',
         'inputType'    => 'url'
       ]),
+      'custom' => new InputLinkType([
+        'displayName'  => 'Custom',
+        'displayGroup' => 'Input fields',
+        'inputType'    => 'text'
+      ]),
       'email' => new InputLinkType([
         'displayName'  => 'Mail',
         'displayGroup' => 'Input fields',
