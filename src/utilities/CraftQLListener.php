@@ -7,7 +7,6 @@ use craft\elements\Asset;
 use craft\elements\Entry;
 use markhuot\CraftQL\Builders\Schema;
 use markhuot\CraftQL\Events\GetFieldSchema;
-use GraphQL\Type\Definition\InputObjectType;
 use typedlinkfield\fields\LinkField;
 use typedlinkfield\models\ElementLinkType;
 use typedlinkfield\models\Link;
