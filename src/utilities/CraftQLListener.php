@@ -2,6 +2,7 @@
 
 namespace typedlinkfield\utilities;
 
+use craft\elements\Category;
 use craft\elements\Asset;
 use craft\elements\Entry;
 use markhuot\CraftQL\Builders\Schema;
@@ -20,9 +21,7 @@ class CraftQLListener {
    * @var array
    */
   static $QL_TYPES = [
-    // Category seems to be deprecated and GlobalSet has no interface we can refer to:
-    // Category::class  => \markhuot\CraftQL\Types\CategoryInterface::class,
-    // GlobalSet::class => \markhuot\CraftQL\Types\GlobalsSet::class,
+    Category::class  => \markhuot\CraftQL\Types\CategoryInterface::class,
     Asset::class     => \markhuot\CraftQL\Types\VolumeInterface::class,
     Entry::class     => \markhuot\CraftQL\Types\EntryInterface::class,
   ];
@@ -67,11 +66,16 @@ class CraftQLListener {
       $types[] = $linkName;
     }
 
-    $object->addBooleanField('allowCustomText');
-    $object->addBooleanField('allowTarget');
+    $link = $object->addStringField('link');
+    $link->addStringArgument('text');
+    $link->resolve(function($link, $args) {
+        return $link instanceof Link ? (string) $link->getLink($args['text'] ?? null) : '';
+    });
+
     $object->addStringField('customText');
     $object->addStringField('defaultText');
     $object->addStringField('target');
+    $object->addStringField('text');
     $object->addEnumField('type')->values($types);
     $object->addStringField('url')->resolve(function($link) {
       return $link instanceof Link ? $link->getUrl() : '';
