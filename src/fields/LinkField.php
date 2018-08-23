@@ -42,6 +42,16 @@ class LinkField extends Field
   public $defaultText = '';
 
   /**
+   * @var bool
+   */
+  public $enableAriaLabel = false;
+
+  /**
+   * @var bool
+   */
+  public $enableTitle = false;
+
+  /**
    * @var array
    */
   public $typeSettings = array();
@@ -90,6 +100,8 @@ class LinkField extends Field
       'allowCustomText' => $this->allowCustomText,
       'allowTarget'     => $this->allowTarget,
       'defaultText'     => $this->defaultText,
+      'enableAriaLabel' => $this->enableAriaLabel,
+      'enableTitle'     => $this->enableTitle,
       'owner'           => $element,
     ];
 
@@ -98,7 +110,14 @@ class LinkField extends Field
       $attr += array_filter(
         json_decode($value, true) ?: [],
         function ($key) {
-          return in_array($key, [ 'customText', 'target', 'type', 'value' ]);
+          return in_array($key, [
+            'ariaLabel',
+            'customText',
+            'target',
+            'title',
+            'type',
+            'value'
+          ]);
         },
         ARRAY_FILTER_USE_KEY
       );
@@ -106,8 +125,10 @@ class LinkField extends Field
       // If it is an array and the field `isCpFormData` is set, we are saving a cp form
     } else if (is_array($value) && isset($value['isCpFormData'])) {
       $attr += [
+        'ariaLabel'  => $this->enableAriaLabel && isset($value['ariaLabel']) ? $value['ariaLabel'] : null,
         'customText' => $this->allowCustomText && isset($value['customText']) ? $value['customText'] : null,
         'target'     => $this->allowTarget && isset($value['target']) ? $value['target'] : null,
+        'title'      => $this->enableTitle && isset($value['title']) ? $value['title'] : null,
         'type'       => isset($value['type']) ? $value['type'] : null,
         'value'      => $this->getLinkValue($value)
       ];

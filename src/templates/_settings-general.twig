@@ -27,3 +27,15 @@
   name: 'allowTarget',
   checked: settings.allowTarget
 }) }}
+
+{{ forms.checkboxField({
+  label: 'Enable aria label support'|t('typedlinkfield'),
+  name: 'enableAriaLabel',
+  checked: settings.enableAriaLabel
+}) }}
+
+{{ forms.checkboxField({
+  label: 'Enable title support'|t('typedlinkfield'),
+  name: 'enableTitle',
+  checked: settings.enableTitle
+}) }}

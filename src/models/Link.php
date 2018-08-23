@@ -26,7 +26,12 @@ class Link extends Model
   public $allowTarget;
 
   /**
-   * @var string
+   * @var string|null
+   */
+  public $ariaLabel;
+
+  /**
+   * @var string|null
    */
   public $customText;
 
@@ -36,9 +41,24 @@ class Link extends Model
   public $defaultText;
 
   /**
+   * @var bool
+   */
+  public $enableAriaLabel;
+
+  /**
+   * @var bool
+   */
+  public $enableTitle;
+
+  /**
    * @var string
    */
   public $target;
+
+  /**
+   * @var string|null
+   */
+  public $title;
 
   /**
    * @var string
@@ -65,6 +85,13 @@ class Link extends Model
     unset($config['owner']);
 
     parent::__construct($config);
+  }
+
+  /**
+   * @return null|string
+   */
+  public function getAriaLabel() {
+    return $this->ariaLabel;
   }
 
   /**
@@ -104,9 +131,20 @@ class Link extends Model
     }
 
     $attr = [ 'href' => $url ];
+
+    $ariaLabel = $this->getAriaLabel();
+    if (!empty($ariaLabel)) {
+      $attr['arial-label'] = $ariaLabel;
+    }
+
     $target = $this->getTarget();
-    if (!is_null($target)) {
+    if (!empty($target)) {
       $attr['target'] = $target;
+    }
+
+    $title = $this->getTitle();
+    if (!empty($title)) {
+      $attr['title'] = $title;
     }
 
     // If a string is passed, override the text component
@@ -181,6 +219,13 @@ class Link extends Model
     }
 
     return \Craft::t('site', $this->defaultText);
+  }
+
+  /**
+   * @return null|string
+   */
+  public function getTitle() {
+    return $this->title;
   }
 
   /**

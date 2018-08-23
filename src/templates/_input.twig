@@ -30,6 +30,16 @@
 
     {% if hasSettings %}
       <div class="linkfield--settings{{ type == '' ? ' hidden' }}">
+        {% if settings.allowTarget %}
+          {{ forms.checkboxField({
+            id: name~'-Target',
+            name: name~'[target]',
+            value: '_blank',
+            label: 'Open link in new window?'|t('typedlinkfield'),
+            checked: value.target is defined and value.target == '_blank' ? true : null
+          }) }}
+        {% endif %}
+
         {% if settings.allowCustomText %}
           {{ forms.textField({
             id: name~'-customText',
@@ -40,13 +50,21 @@
           }) }}
         {% endif %}
 
-        {% if settings.allowTarget %}
-          {{ forms.checkboxField({
-            id: name~'-Target',
-            name: name~'[target]',
-            value: '_blank',
-            label: 'Open link in new window?'|t('typedlinkfield'),
-            checked: value.target is defined and value.target == '_blank' ? true : null
+        {% if settings.enableAriaLabel %}
+          {{ forms.textField({
+            id: name~'-AriaLabel',
+            name: name~'[ariaLabel]',
+            label: 'Aria label'|t('typedlinkfield'),
+            value: value.ariaLabel is defined ? value.ariaLabel : ""
+          }) }}
+        {% endif %}
+
+        {% if settings.enableTitle %}
+          {{ forms.textField({
+            id: name~'-Title',
+            name: name~'[title]',
+            label: 'Title'|t('typedlinkfield'),
+            value: value.title is defined ? value.title : ""
           }) }}
         {% endif %}
       </div>
