@@ -211,13 +211,14 @@ class LinkField extends Field
     asort($linkNames);
 
     return \Craft::$app->getView()->renderTemplate('typedlinkfield/_input', [
-      'linkInputs' => implode('', $linkInputs),
-      'linkNames'  => $linkNames,
-      'name'       => $this->handle,
-      'nameNs'     => \Craft::$app->view->namespaceInputId($this->handle),
-      'settings'   => $this->getSettings(),
-      'singleType' => $singleType,
-      'value'      => $value,
+      'hasSettings' => $this->hasSettings(),
+      'linkInputs'  => implode('', $linkInputs),
+      'linkNames'   => $linkNames,
+      'name'        => $this->handle,
+      'nameNs'      => \Craft::$app->view->namespaceInputId($this->handle),
+      'settings'    => $this->getSettings(),
+      'singleType'  => $singleType,
+      'value'       => $value,
     ]);
   }
 
@@ -287,6 +288,17 @@ class LinkField extends Field
       'linkNames'       => $linkNames,
       'settings'        => $settings,
     ]);
+  }
+
+  /**
+   * @return boolean
+   */
+  public function hasSettings() {
+    return (
+      $this->allowCustomText ||
+      $this->enableAriaLabel ||
+      $this->enableTitle
+    );
   }
 
   /**

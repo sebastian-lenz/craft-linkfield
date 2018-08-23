@@ -3,13 +3,12 @@
 {% do view.registerAssetBundle('typedlinkfield\\utilities\\CpAssetBundle') %}
 
 {% set type = singleType ? singleType : ( value.type is defined and value.type ? value.type : null) %}
-{% set hasSettings = settings.allowCustomText or settings.allowTarget %}
 
 <div class="linkfield{% if hasSettings %} withSettings{% endif %}" id="{{ name }}">
   {% if linkNames|length == 0 %}
     <p>{{ 'No link types available.'|t('typedlinkfield') }}</p>
   {% else %}
-    <div class="linkfield--field field">
+    <div class="linkfield--field{% if hasSettings %} field{% endif %}">
       {% if singleType %}
         <input type="hidden" id="{{ name }}-type" name="{{ name }}[type]" value="{{ type }}" />
       {% else %}
@@ -26,20 +25,22 @@
       <div class="linkfield--typeOptions{% if singleType %} single{% endif %}">
         {{ linkInputs|raw }}
       </div>
-    </div>
 
-    {% if hasSettings %}
-      <div class="linkfield--settings{{ type == '' ? ' hidden' }}">
-        {% if settings.allowTarget %}
+      {% if settings.allowTarget %}
+        <div class="linkfield--target">
           {{ forms.checkboxField({
             id: name~'-Target',
             name: name~'[target]',
             value: '_blank',
-            label: 'Open link in new window?'|t('typedlinkfield'),
+            label: 'Open in new window?'|t('typedlinkfield'),
             checked: value.target is defined and value.target == '_blank' ? true : null
           }) }}
-        {% endif %}
+        </div>
+      {% endif %}
+    </div>
 
+    {% if hasSettings %}
+      <div class="linkfield--settings{{ type == '' ? ' hidden' }}">
         {% if settings.allowCustomText %}
           {{ forms.textField({
             id: name~'-customText',
