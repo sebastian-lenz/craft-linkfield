@@ -85,6 +85,12 @@ class CraftQLListener {
       return $link instanceof Link ? $link->getUrl() : '';
     });
 
+    $object->addField('element')
+      ->type(\markhuot\CraftQL\Types\ElementInterface::class)
+      ->resolve(function($link) {
+        return $link instanceof Link ? $link->getElement() : null;
+      });
+
     $event->handled = true;
     $event->schema->addField($field)->type($object);
   }
