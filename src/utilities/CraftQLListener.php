@@ -72,6 +72,10 @@ class CraftQLListener {
         return $link instanceof Link ? (string) $link->getLink($args['text'] ?? null) : '';
     });
 
+    // Deprecated: Will be removed in 2.0
+    $object->addBooleanField('allowCustomText');
+    $object->addBooleanField('allowTarget');
+
     $object->addStringField('customText');
     $object->addStringField('defaultText');
     $object->addStringField('target');
