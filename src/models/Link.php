@@ -188,7 +188,7 @@ class Link extends Model
    * Allows user to specify a fallback string if the custom text and default are not set.
    *
    * @param string $fallbackText
-   * @return void
+   * @return string
    */
   public function getCustomText($fallbackText = "Learn More") {
     if ($this->allowCustomText && !empty($this->customText)) {
