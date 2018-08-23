@@ -1,3 +1,14 @@
+## 1.0.12
+- New `aria-label` and `title` fields. Can be turned on in field settings. Will render as attributes in `getLink()` and can be queried using `getAriaLabel()` and `getTitle()`.
+- New more compact field display
+- GraphQL: Add support for categories 
+- GraphQL: New fields `element`, `link` and `text`
+- GraphQL: Deprecation: The fields `allowCustomText` and `allowTarget` are deprecated as there seems to be no use case for them.
+ 
+## 1.0.11
+- New default link type `custom` without any validation, e.g. for relative links
+- New getCustomText() method on link model
+
 ## 1.0.10
 - Fix an issue when creating new fields, see https://github.com/sebastian-lenz/craft-linkfield/pull/22
 
