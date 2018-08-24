@@ -2,7 +2,7 @@
 - New `aria-label` and `title` fields. Can be turned on in field settings. Will render as attributes in `getLink()` and can be queried using `getAriaLabel()` and `getTitle()`.
 - New more compact field display
 - GraphQL: Add support for categories 
-- GraphQL: New fields `element`, `link` and `text`
+- GraphQL: New fields `link` and `text`
 - GraphQL: Deprecation: The fields `allowCustomText` and `allowTarget` are deprecated as there seems to be no use case for them.
  
 ## 1.0.11
