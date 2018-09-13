@@ -126,7 +126,7 @@ class SiteLinkType extends Model implements LinkTypeInterface
         'settings'     => $field->getLinkTypeSettings($linkTypeName, $this),
         'elementName'  => $this->getDisplayName(),
         'linkTypeName' => $linkTypeName,
-        'siteOptions'      => $this->getSiteOptions(),
+        'siteOptions'  => $this->getSiteOptions(),
       ]);
     } catch (\Throwable $exception) {
       return Html::tag('p', \Craft::t(
@@ -141,8 +141,14 @@ class SiteLinkType extends Model implements LinkTypeInterface
    * @return array
    */
   protected function getSiteOptions($siteIds = null) {
+    if ($siteIds === '*') {
+      $siteIds = null;
+    } elseif ($siteIds === '') {
+      $siteIds = [];
+    }
+
     $options = array_map(function($site) use ($siteIds) {
-      if (!$site->hasUrls || ($siteIds && !in_array($site->id, $siteIds))) {
+      if (!$site->hasUrls || (is_array($siteIds) && !in_array($site->id, $siteIds))) {
         return null;
       }
 
