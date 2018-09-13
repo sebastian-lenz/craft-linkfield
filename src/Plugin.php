@@ -117,6 +117,10 @@ class Plugin extends \craft\base\Plugin
         'displayGroup' => 'Craft CMS',
         'elementType'  => \craft\elements\User::class
       ]),
+      'site' => new SiteLinkType([
+        'displayGroup' => 'Craft CMS',
+        'displayName'  => 'Site',
+      ]),
     ];
 
     // Add craft commerce elements
