@@ -8,6 +8,7 @@ use typedlinkfield\events\LinkTypeEvent;
 use typedlinkfield\fields\LinkField;
 use typedlinkfield\models\ElementLinkType;
 use typedlinkfield\models\InputLinkType;
+use typedlinkfield\models\SiteLinkType;
 use typedlinkfield\models\LinkTypeInterface;
 use yii\base\Event;
 
