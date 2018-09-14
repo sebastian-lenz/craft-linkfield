@@ -2,6 +2,7 @@
 
 namespace typedlinkfield\models;
 
+use Craft;
 use craft\base\ElementInterface;
 use craft\helpers\Html;
 use typedlinkfield\fields\LinkField;
@@ -167,13 +168,15 @@ class InputLinkType extends Model implements LinkTypeInterface
       return null;
     }
 
+    $url = Craft::getAlias($link->value);
+
     switch ($this->inputType) {
       case('email'):
-        return 'mailto:' . $link->value;
+        return 'mailto:' . $url;
       case('tel'):
-        return 'tel:' . $link->value;
+        return 'tel:' . $url;
       default:
-        return $link->value;
+        return $url;
     }
   }
 
@@ -212,7 +215,7 @@ class InputLinkType extends Model implements LinkTypeInterface
       return null;
     }
 
-    $value = $link->value;
+    $value = $this->getUrl($link);
 
     switch ($this->inputType) {
       case('email'):
