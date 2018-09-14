@@ -84,12 +84,12 @@ class SiteLinkType extends Model implements LinkTypeInterface
     $settings   = $field->getLinkTypeSettings($linkTypeName, $this);
     $siteIds    = $settings['sites'];
     $isSelected = $value->type === $linkTypeName;
-    $value = $isSelected ? $value : null;
+    $selectedSite = $isSelected ? $this->getSite($value) : null;
     $selectFieldOptions = [
       'id'      => $field->handle . '-' . $linkTypeName,
       'name'    => $field->handle . '[' . $linkTypeName . ']',
       'options' => $this->getSiteOptions($siteIds),
-      'value'   => $value->value,
+      'value'   => $selectedSite->id ?? null,
     ];
 
     try {
