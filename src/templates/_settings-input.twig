@@ -6,3 +6,10 @@
   name: 'typeSettings['~linkTypeName~'][disableValidation]',
   checked: settings.disableValidation,
 })}}
+
+{{ forms.checkboxField({
+  label: 'Allow use of aliases'|t('typedlinkfield'),
+  id: 'typeSettings-'~linkTypeName~'-allowAliases',
+  name: 'typeSettings['~linkTypeName~'][allowAliases]',
+  checked: settings.allowAliases,
+})}}

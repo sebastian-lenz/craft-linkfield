@@ -97,12 +97,8 @@ class LinkField extends Field
     }
 
     $attr = [
-      'allowCustomText' => $this->allowCustomText,
-      'allowTarget'     => $this->allowTarget,
-      'defaultText'     => $this->defaultText,
-      'enableAriaLabel' => $this->enableAriaLabel,
-      'enableTitle'     => $this->enableTitle,
-      'owner'           => $element,
+      'linkField' => $this,
+      'owner'     => $element,
     ];
 
     // If value is a string we are loading the data from the database

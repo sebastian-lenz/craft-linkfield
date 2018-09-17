@@ -7,6 +7,7 @@ use craft\base\ElementInterface;
 use craft\base\Model;
 use craft\helpers\Html;
 use craft\helpers\Template;
+use typedlinkfield\fields\LinkField;
 use typedlinkfield\Plugin;
 
 /**
@@ -16,16 +17,6 @@ use typedlinkfield\Plugin;
 class Link extends Model
 {
   /**
-   * @var bool
-   */
-  public $allowCustomText;
-
-  /**
-   * @var bool
-   */
-  public $allowTarget;
-
-  /**
    * @var string|null
    */
   public $ariaLabel;
@@ -34,21 +25,6 @@ class Link extends Model
    * @var string|null
    */
   public $customText;
-
-  /**
-   * @var string
-   */
-  public $defaultText;
-
-  /**
-   * @var bool
-   */
-  public $enableAriaLabel;
-
-  /**
-   * @var bool
-   */
-  public $enableTitle;
 
   /**
    * @var string
@@ -71,6 +47,11 @@ class Link extends Model
   public $value;
 
   /**
+   * @var LinkField|null
+   */
+  private $linkField;
+
+  /**
    * @var ElementInterface|null
    */
   private $owner;
@@ -81,10 +62,36 @@ class Link extends Model
    * @param array $config
    */
   public function __construct($config = []) {
-    $this->owner = $config['owner'];
+    $this->linkField = isset($config['linkField'])
+      ? $config['linkField']
+      : null;
+
+    $this->owner = isset($config['owner'])
+      ? $config['owner']
+      : null;
+
+    unset($config['linkField']);
     unset($config['owner']);
 
     parent::__construct($config);
+  }
+
+  /**
+   * @return bool
+   */
+  public function getAllowCustomText() {
+    return is_null($this->linkField)
+      ? false
+      : $this->linkField->allowCustomText;
+  }
+
+  /**
+   * @return bool
+   */
+  public function getAllowTarget() {
+    return is_null($this->linkField)
+      ? false
+      : $this->linkField->allowTarget;
   }
 
   /**
@@ -95,11 +102,38 @@ class Link extends Model
   }
 
   /**
+   * @return string
+   */
+  public function getDefaultText() {
+    return is_null($this->linkField)
+      ? ''
+      : $this->linkField->defaultText;
+  }
+
+  /**
    * @return null|\craft\base\ElementInterface
    */
   public function getElement() {
     $linkType = $this->getLinkType();
     return is_null($linkType) ? null : $linkType->getElement($this);
+  }
+
+  /**
+   * @return bool
+   */
+  public function getEnableAriaLabel() {
+    return is_null($this->linkField)
+      ? false
+      : $this->linkField->enableAriaLabel;
+  }
+
+  /**
+   * @return bool
+   */
+  public function getEnableTitle() {
+    return is_null($this->linkField)
+      ? false
+      : $this->linkField->enableTitle;
   }
 
   /**
@@ -165,6 +199,13 @@ class Link extends Model
   }
 
   /**
+   * @return null|LinkField
+   */
+  public function getLinkField() {
+    return $this->linkField;
+  }
+
+  /**
    * @return LinkTypeInterface|null
    */
   public function getLinkType() {
@@ -198,14 +239,16 @@ class Link extends Model
    * @return null|string
    */
   public function getTarget() {
-    return $this->allowTarget && !empty($this->target) ? $this->target : null;
+    return $this->getAllowTarget() && !empty($this->target)
+      ? $this->target
+      : null;
   }
 
   /**
    * @return null|string
    */
   public function getText() {
-    if ($this->allowCustomText && !empty($this->customText)) {
+    if ($this->getAllowCustomText() && !empty($this->customText)) {
       return $this->customText;
     }
 
@@ -218,7 +261,7 @@ class Link extends Model
       }
     }
 
-    return \Craft::t('site', $this->defaultText);
+    return \Craft::t('site', $this->getDefaultText());
   }
 
   /**
@@ -236,11 +279,12 @@ class Link extends Model
    * @return string
    */
   public function getCustomText($fallbackText = "Learn More") {
-    if ($this->allowCustomText && !empty($this->customText)) {
+    if ($this->getAllowCustomText() && !empty($this->customText)) {
       return $this->customText;
     }
 
-    return $this->defaultText ? $this->defaultText : $fallbackText;
+    $defaultText = $this->getDefaultText();
+    return empty($defaultText) ? $defaultText : $fallbackText;
   }
 
   /**

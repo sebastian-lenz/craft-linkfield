@@ -55,6 +55,7 @@ class InputLinkType extends Model implements LinkTypeInterface
    */
   public function getDefaultSettings(): array {
     return [
+      'allowAliases'      => false,
       'disableValidation' => false,
     ];
   }
@@ -131,6 +132,28 @@ class InputLinkType extends Model implements LinkTypeInterface
   }
 
   /**
+   * @param Link $link
+   * @return null|string
+   */
+  public function getRawUrl(Link $link) {
+    if ($this->isEmpty($link)) {
+      return null;
+    }
+
+    $url = $link->value;
+    $field = $link->getLinkField();
+
+    if (!is_null($field)) {
+      $settings = $field->getLinkTypeSettings($link->type, $this);
+      if ($settings['allowAliases']) {
+        $url = Craft::getAlias($url);
+      }
+    }
+
+    return $url;
+  }
+
+  /**
    * @param string $linkTypeName
    * @param LinkField $field
    * @return string
@@ -164,11 +187,10 @@ class InputLinkType extends Model implements LinkTypeInterface
    * @return null|string
    */
   public function getUrl(Link $link) {
-    if ($this->isEmpty($link)) {
+    $url = $this->getRawUrl($link);
+    if (is_null($url)) {
       return null;
     }
-
-    $url = Craft::getAlias($link->value);
 
     switch ($this->inputType) {
       case('email'):
@@ -206,7 +228,8 @@ class InputLinkType extends Model implements LinkTypeInterface
    * @return array|null
    */
   public function validateValue(LinkField $field, Link $link) {
-    if ($this->isEmpty($link)) {
+    $value = $this->getRawUrl($link);
+    if (is_null($value)) {
       return null;
     }
 
@@ -214,8 +237,6 @@ class InputLinkType extends Model implements LinkTypeInterface
     if ($settings['disableValidation']) {
       return null;
     }
-
-    $value = $this->getUrl($link);
 
     switch ($this->inputType) {
       case('email'):
