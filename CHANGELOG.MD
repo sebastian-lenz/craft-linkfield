@@ -1,3 +1,7 @@
+## 1.0.13
+- New link type "Site"
+- Support for aliases on all input link types
+
 ## 1.0.12
 - New `aria-label` and `title` fields. Can be turned on in field settings. Will render as attributes in `getLink()` and can be queried using `getAriaLabel()` and `getTitle()`.
 - New more compact field display
