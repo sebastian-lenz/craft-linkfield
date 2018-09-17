@@ -8,6 +8,7 @@ use typedlinkfield\events\LinkTypeEvent;
 use typedlinkfield\fields\LinkField;
 use typedlinkfield\models\ElementLinkType;
 use typedlinkfield\models\InputLinkType;
+use typedlinkfield\models\SiteLinkType;
 use typedlinkfield\models\LinkTypeInterface;
 use yii\base\Event;
 
@@ -116,6 +117,10 @@ class Plugin extends \craft\base\Plugin
       'user' => new ElementLinkType([
         'displayGroup' => 'Craft CMS',
         'elementType'  => \craft\elements\User::class
+      ]),
+      'site' => new SiteLinkType([
+        'displayGroup' => 'Craft CMS',
+        'displayName'  => 'Site',
       ]),
     ];
 
