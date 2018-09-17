@@ -19,7 +19,12 @@ class SiteLinkType extends Model implements LinkTypeInterface
    * @var string
    */
   public $displayGroup = 'Common';
+
+  /**
+   * @var string
+   */
   public $displayName;
+
 
   /**
    * SiteLinkType constructor.
@@ -28,14 +33,13 @@ class SiteLinkType extends Model implements LinkTypeInterface
    */
   public function __construct($displayName, array $options = []) {
     if (is_array($displayName)) {
-       $options = $displayName;
+      $options = $displayName;
     } else {
-       $options['displayName'] = $displayName;
+      $options['displayName'] = $displayName;
     }
 
     parent::__construct($options);
   }
-
 
   /**
    * @return array
@@ -49,17 +53,16 @@ class SiteLinkType extends Model implements LinkTypeInterface
   /**
    * @return string
    */
-
-    public function getDisplayName(): string {
-     return \Craft::t('typedlinkfield', $this->displayName);
-    }
+  public function getDisplayName(): string {
+    return \Craft::t('typedlinkfield', $this->displayName);
+  }
 
   /**
    * @return string
    */
-   public function getDisplayGroup(): string {
-     return \Craft::t('typedlinkfield', $this->displayGroup);
-   }
+  public function getDisplayGroup(): string {
+    return \Craft::t('typedlinkfield', $this->displayGroup);
+  }
 
   /**
    * @param Link $link
@@ -81,10 +84,11 @@ class SiteLinkType extends Model implements LinkTypeInterface
    * @return string
    */
   public function getInputHtml(string $linkTypeName, LinkField $field, Link $value, ElementInterface $element): string {
-    $settings   = $field->getLinkTypeSettings($linkTypeName, $this);
-    $siteIds    = $settings['sites'];
-    $isSelected = $value->type === $linkTypeName;
+    $settings     = $field->getLinkTypeSettings($linkTypeName, $this);
+    $siteIds      = $settings['sites'];
+    $isSelected   = $value->type === $linkTypeName;
     $selectedSite = $isSelected ? $this->getSite($value) : null;
+
     $selectFieldOptions = [
       'id'      => $field->handle . '-' . $linkTypeName,
       'name'    => $field->handle . '[' . $linkTypeName . ']',
@@ -102,7 +106,9 @@ class SiteLinkType extends Model implements LinkTypeInterface
       return Html::tag('p', \Craft::t(
         'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
-        [ 'name' => $this->getDisplayName() ]
+        [
+          'name' => $this->getDisplayName()
+        ]
       ));
     }
   }
@@ -132,12 +138,15 @@ class SiteLinkType extends Model implements LinkTypeInterface
       return Html::tag('p', \Craft::t(
         'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
-        [ 'name' => $this->getDisplayName() ]
+        [
+          'name' => $this->getDisplayName()
+        ]
       ));
     }
   }
 
   /**
+   * @param string|array|null $siteIds
    * @return array
    */
   protected function getSiteOptions($siteIds = null) {
@@ -147,7 +156,7 @@ class SiteLinkType extends Model implements LinkTypeInterface
       $siteIds = [];
     }
 
-    $options = array_map(function($site) use ($siteIds) {
+    $options = array_map(function ($site) use ($siteIds) {
       if (!$site->hasUrls || (is_array($siteIds) && !in_array($site->id, $siteIds))) {
         return null;
       }
@@ -208,7 +217,6 @@ class SiteLinkType extends Model implements LinkTypeInterface
     return null;
   }
 
-
   /**
    * @param Link $link
    * @return ElementInterface|null
@@ -222,7 +230,6 @@ class SiteLinkType extends Model implements LinkTypeInterface
    * @return ElementInterface|null
    */
   public function hasElement(Link $link): bool {
-      return false;
+    return false;
   }
-
 }
