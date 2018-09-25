@@ -1,3 +1,6 @@
+## 1.0.14
+- Fix exception when trying to revert to revisions saved with 1.0.12 or before.
+
 ## 1.0.13
 - New link type "Site"
 - Support for aliases on all input link types

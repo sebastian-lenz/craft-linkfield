@@ -134,6 +134,15 @@ class LinkField extends Field
       $attr = [
         'owner' => $element,
       ] + $value;
+
+      // See https://github.com/sebastian-lenz/craft-linkfield/issues/38
+      // If a link was saved prior to v1.0.13, these properties are serialized
+      // to the revision table.
+      unset($attr['allowCustomText']);
+      unset($attr['allowTarget']);
+      unset($attr['defaultText']);
+      unset($attr['enableAriaLabel']);
+      unset($attr['enableTitle']);
     }
 
     if (isset($attr['type']) && !$this->isAllowedLinkType($attr['type'])) {
