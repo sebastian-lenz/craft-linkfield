@@ -124,6 +124,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
 
     try {
       return \Craft::$app->view->renderTemplate('typedlinkfield/_input-element', [
+        'disabled'           => $field->isStatic(),
         'isSelected'         => $isSelected,
         'linkTypeName'       => $linkTypeName,
         'selectFieldOptions' => $selectFieldOptions,

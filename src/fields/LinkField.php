@@ -56,6 +56,11 @@ class LinkField extends Field
    */
   public $typeSettings = array();
 
+  /**
+   * @var bool
+   */
+  private $isStatic = false;
+
 
   /**
    * @param bool $isNew
@@ -217,6 +222,7 @@ class LinkField extends Field
 
     return \Craft::$app->getView()->renderTemplate('typedlinkfield/_input', [
       'hasSettings' => $this->hasSettings(),
+      'isStatic'    => $this->isStatic,
       'linkInputs'  => implode('', $linkInputs),
       'linkNames'   => $linkNames,
       'name'        => $this->handle,
@@ -296,6 +302,17 @@ class LinkField extends Field
   }
 
   /**
+   * @inheritdoc
+   */
+  public function getStaticHtml($value, ElementInterface $element): string {
+    $this->isStatic = true;
+    $result = parent::getStaticHtml($value, $element);
+    $this->isStatic = false;
+
+    return $result;
+  }
+
+  /**
    * @return boolean
    */
   public function hasSettings() {
@@ -304,6 +321,13 @@ class LinkField extends Field
       $this->enableAriaLabel ||
       $this->enableTitle
     );
+  }
+
+  /**
+   * @return bool
+   */
+  public function isStatic() {
+    return $this->isStatic;
   }
 
   /**

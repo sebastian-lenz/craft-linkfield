@@ -14,6 +14,7 @@
       {% else %}
         <div class="linkfield--type">
           {{ forms.select({
+            disabled: isStatic,
             id: name~'-Type',
             name: name~'[type]',
             options: linkNames,
@@ -29,6 +30,7 @@
       {% if settings.allowTarget %}
         <div class="linkfield--target">
           {{ forms.checkboxField({
+            disabled: isStatic,
             id: name~'-Target',
             name: name~'[target]',
             value: '_blank',
@@ -43,6 +45,7 @@
       <div class="linkfield--settings{{ type == '' ? ' hidden' }}">
         {% if settings.allowCustomText %}
           {{ forms.textField({
+            disabled: isStatic,
             id: name~'-customText',
             name: name~'[customText]',
             placeholder: settings.defaultText == '' ? 'Custom link text'|t('typedlinkfield') : settings.defaultText|t('site'),
@@ -53,6 +56,7 @@
 
         {% if settings.enableAriaLabel %}
           {{ forms.textField({
+            disabled: isStatic,
             id: name~'-AriaLabel',
             name: name~'[ariaLabel]',
             label: 'Aria label'|t('typedlinkfield'),
@@ -62,6 +66,7 @@
 
         {% if settings.enableTitle %}
           {{ forms.textField({
+            disabled: isStatic,
             id: name~'-Title',
             name: name~'[title]',
             label: 'Title'|t('typedlinkfield'),

@@ -90,10 +90,11 @@ class SiteLinkType extends Model implements LinkTypeInterface
     $selectedSite = $isSelected ? $this->getSite($value) : null;
 
     $selectFieldOptions = [
-      'id'      => $field->handle . '-' . $linkTypeName,
-      'name'    => $field->handle . '[' . $linkTypeName . ']',
-      'options' => $this->getSiteOptions($siteIds),
-      'value'   => $selectedSite->id ?? null,
+      'disabled' => $field->isStatic(),
+      'id'       => $field->handle . '-' . $linkTypeName,
+      'name'     => $field->handle . '[' . $linkTypeName . ']',
+      'options'  => $this->getSiteOptions($siteIds),
+      'value'    => $selectedSite->id ?? null,
     ];
 
     try {

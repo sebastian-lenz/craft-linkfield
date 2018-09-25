@@ -1,5 +1,18 @@
 {% import "_includes/forms" as forms %}
 
 <div class="linkfield--typeOption {{ linkTypeName }}{{ isSelected ? '' : ' hidden' }}">
-  {{ forms.elementSelect(selectFieldOptions) }}
+  {% if disabled %}
+    <div class="elementselect">
+      <div class="elements">
+        {% for element in selectFieldOptions.elements %}
+          {% include "_elements/element" with {
+            context: 'field',
+            size: 'small'
+          } %}
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    {{ forms.elementSelect(selectFieldOptions) }}
+  {% endif %}
 </div>

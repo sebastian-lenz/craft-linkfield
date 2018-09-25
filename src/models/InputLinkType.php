@@ -95,9 +95,10 @@ class InputLinkType extends Model implements LinkTypeInterface
     $value      = $isSelected ? $value->value : '';
 
     $textFieldOptions = [
-      'id'    => $field->handle . '-' . $linkTypeName,
-      'name'  => $field->handle . '[' . $linkTypeName . ']',
-      'value' => $value,
+      'disabled' => $field->isStatic(),
+      'id'       => $field->handle . '-' . $linkTypeName,
+      'name'     => $field->handle . '[' . $linkTypeName . ']',
+      'value'    => $value,
     ];
 
     if (isset($this->inputType) && !$settings['disableValidation']) {
