@@ -64,10 +64,9 @@ class ElementLinkType extends Model implements LinkTypeInterface
   }
 
   /**
-   * @param Link $link
-   * @return null|ElementInterface
+   * @inheritdoc
    */
-  public function getElement(Link $link) {
+  public function getElement(Link $link, $ignoreStatus = false) {
     if ($this->isEmpty($link)) {
       return null;
     }
@@ -77,7 +76,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
       'site' => $link->getOwnerSite(),
     ];
 
-    if (\Craft::$app->request->getIsCpRequest()) {
+    if ($ignoreStatus || \Craft::$app->request->getIsCpRequest()) {
       $query += [
         'enabledForSite' => null,
         'status' => null,
@@ -226,11 +225,10 @@ class ElementLinkType extends Model implements LinkTypeInterface
   }
 
   /**
-   * @param Link $link
-   * @return bool
+   * @inheritdoc
    */
-  public function hasElement(Link $link): bool {
-    $element = $this->getElement($link);
+  public function hasElement(Link $link, $ignoreStatus = false): bool {
+    $element = $this->getElement($link, $ignoreStatus);
     return !is_null($element);
   }
 

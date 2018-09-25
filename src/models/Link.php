@@ -111,11 +111,14 @@ class Link extends Model
   }
 
   /**
+   * @param bool $ignoreStatus
    * @return null|\craft\base\ElementInterface
    */
-  public function getElement() {
+  public function getElement($ignoreStatus = false) {
     $linkType = $this->getLinkType();
-    return is_null($linkType) ? null : $linkType->getElement($this);
+    return is_null($linkType)
+      ? null
+      : $linkType->getElement($this, $ignoreStatus);
   }
 
   /**
@@ -296,11 +299,14 @@ class Link extends Model
   }
 
   /**
+   * @param bool $ignoreStatus
    * @return bool
    */
-  public function hasElement() {
+  public function hasElement($ignoreStatus = false) {
     $linkType = $this->getLinkType();
-    return is_null($linkType) ? false : $linkType->hasElement($this);
+    return is_null($linkType)
+      ? false
+      : $linkType->hasElement($this, $ignoreStatus);
   }
 
   /**

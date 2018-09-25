@@ -28,9 +28,10 @@ interface LinkTypeInterface
 
   /**
    * @param Link $link
+   * @param bool $ignoreStatus
    * @return null|ElementInterface
    */
-  public function getElement(Link $link);
+  public function getElement(Link $link, $ignoreStatus = false);
 
   /**
    * @param string $linkTypeName
@@ -68,9 +69,10 @@ interface LinkTypeInterface
 
   /**
    * @param Link $link
+   * @param bool $ignoreStatus
    * @return bool
    */
-  public function hasElement(Link $link): bool;
+  public function hasElement(Link $link, $ignoreStatus = false): bool;
 
   /**
    * @param Link $link

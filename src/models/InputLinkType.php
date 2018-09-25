@@ -75,10 +75,9 @@ class InputLinkType extends Model implements LinkTypeInterface
   }
 
   /**
-   * @param Link $link
-   * @return ElementInterface|null
+   * @inheritdoc
    */
-  public function getElement(Link $link) {
+  public function getElement(Link $link, $ignoreStatus = false) {
     return null;
   }
 
@@ -204,10 +203,9 @@ class InputLinkType extends Model implements LinkTypeInterface
   }
 
   /**
-   * @param Link $link
-   * @return bool
+   * @inheritdoc
    */
-  public function hasElement(Link $link): bool {
+  public function hasElement(Link $link, $ignoreStatus = false): bool {
     return false;
   }
 

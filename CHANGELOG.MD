@@ -1,5 +1,6 @@
 ## 1.0.14
 - Fix exception when trying to revert to revisions saved with 1.0.12 or before.
+- Model methods `getElement` and `hasElement` accept new parameter `ignoreStatus`.
 
 ## 1.0.13
 - New link type "Site"
