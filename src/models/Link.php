@@ -162,43 +162,65 @@ class Link extends Model
    */
   public function getLink($attributesOrText = null) {
     $text = $this->getText();
-    $url = $this->getUrl();
-    if (is_null($text) || is_null($url)) {
+    $extraAttributes = null;
+
+    if (is_string($attributesOrText)) {
+      // If a string is passed, override the text component
+      $text = $attributesOrText;
+
+    } elseif (is_array($attributesOrText)) {
+      // If an array is passed, use it as tag attributes
+      $extraAttributes = $attributesOrText;
+      if (array_key_exists('text', $extraAttributes)) {
+        $text = $extraAttributes['text'];
+        unset($extraAttributes['text']);
+      }
+    }
+
+    $attributes = $this->getLinkAttributes($extraAttributes);
+    if (is_null($attributes) || is_null($text)) {
       return null;
     }
 
-    $attr = [ 'href' => $url ];
+    return Template::raw(Html::tag('a', $text, $attributes));
+  }
+
+  /**
+   * Return an array defining the common link attributes (`href`, `target`
+   * `title` and `arial-label`) of this link.
+   * Returns NULL if this link has no target url.
+   *
+   * @param null|array $extraAttributes
+   * @return array|null
+   */
+  public function getLinkAttributes($extraAttributes = null) {
+    $url = $this->getUrl();
+    if (is_null($url)) {
+      return null;
+    }
+
+    $attributes = [ 'href' => $url ];
 
     $ariaLabel = $this->getAriaLabel();
     if (!empty($ariaLabel)) {
-      $attr['arial-label'] = $ariaLabel;
+      $attributes['arial-label'] = $ariaLabel;
     }
 
     $target = $this->getTarget();
     if (!empty($target)) {
-      $attr['target'] = $target;
+      $attributes['target'] = $target;
     }
 
     $title = $this->getTitle();
     if (!empty($title)) {
-      $attr['title'] = $title;
+      $attributes['title'] = $title;
     }
 
-    // If a string is passed, override the text component
-    if (is_string($attributesOrText)) {
-      $text = $attributesOrText;
-
-    // If an array is passed, use it as tag attributes
-    } elseif (is_array($attributesOrText)) {
-      if (array_key_exists('text', $attributesOrText)) {
-        $text = $attributesOrText['text'];
-        unset($attributesOrText['text']);
-      }
-
-      $attr = $attributesOrText + $attr;
+    if (is_array($extraAttributes)) {
+      $attributes = $extraAttributes + $attributes;
     }
 
-    return Template::raw(Html::tag('a', $text, $attr));
+    return $attributes;
   }
 
   /**
