@@ -4,6 +4,7 @@ namespace typedlinkfield\fields;
 
 use craft\base\ElementInterface;
 use craft\base\Field;
+use craft\helpers\Json;
 use typedlinkfield\Plugin;
 use typedlinkfield\models\Link;
 use typedlinkfield\models\LinkTypeInterface;
@@ -106,25 +107,12 @@ class LinkField extends Field
       'owner'     => $element,
     ];
 
-    // If value is a string we are loading the data from the database
     if (is_string($value)) {
-      $attr += array_filter(
-        json_decode($value, true) ?: [],
-        function ($key) {
-          return in_array($key, [
-            'ariaLabel',
-            'customText',
-            'target',
-            'title',
-            'type',
-            'value'
-          ]);
-        },
-        ARRAY_FILTER_USE_KEY
-      );
+      // If value is a string we are loading the data from the database
+      $attr += Json::decode($value, true);
 
-      // If it is an array and the field `isCpFormData` is set, we are saving a cp form
     } else if (is_array($value) && isset($value['isCpFormData'])) {
+      // If it is an array and the field `isCpFormData` is set, we are saving a cp form
       $attr += [
         'ariaLabel'  => $this->enableAriaLabel && isset($value['ariaLabel']) ? $value['ariaLabel'] : null,
         'customText' => $this->allowCustomText && isset($value['customText']) ? $value['customText'] : null,
@@ -134,20 +122,11 @@ class LinkField extends Field
         'value'      => $this->getLinkValue($value)
       ];
 
-      // Finally, if it is an array it is a serialized value
     } elseif (is_array($value)) {
+      // Finally, if it is an array it is a serialized value
       $attr = [
         'owner' => $element,
       ] + $value;
-
-      // See https://github.com/sebastian-lenz/craft-linkfield/issues/38
-      // If a link was saved prior to v1.0.13, these properties are serialized
-      // to the revision table.
-      unset($attr['allowCustomText']);
-      unset($attr['allowTarget']);
-      unset($attr['defaultText']);
-      unset($attr['enableAriaLabel']);
-      unset($attr['enableTitle']);
     }
 
     if (isset($attr['type']) && !$this->isAllowedLinkType($attr['type'])) {
@@ -155,7 +134,26 @@ class LinkField extends Field
       $attr['value'] = null;
     }
 
-    return new Link($attr);
+    // See https://github.com/sebastian-lenz/craft-linkfield/issues/38
+    // See https://github.com/sebastian-lenz/craft-linkfield/issues/42
+    // If a link was saved prior to v1.0.13, these properties are serialized
+    // to the revision table.
+    return new Link(array_filter(
+      $attr,
+      function ($key) {
+        return in_array($key, [
+          'ariaLabel',
+          'customText',
+          'linkField',
+          'owner',
+          'target',
+          'title',
+          'type',
+          'value'
+        ]);
+      },
+      ARRAY_FILTER_USE_KEY
+    ));
   }
 
   /**
