@@ -177,7 +177,7 @@ class Link extends Model
       }
     }
 
-    $attributes = $this->getLinkAttributes($extraAttributes);
+    $attributes = $this->getRawLinkAttributes($extraAttributes);
     if (is_null($attributes) || is_null($text)) {
       return null;
     }
@@ -186,41 +186,17 @@ class Link extends Model
   }
 
   /**
-   * Return an array defining the common link attributes (`href`, `target`
-   * `title` and `arial-label`) of this link.
-   * Returns NULL if this link has no target url.
+   * Return the attributes of this link as a rendered html string.
    *
-   * @param null|array $extraAttributes
-   * @return array|null
+   * @param array|null $extraAttributes
+   * @return \Twig_Markup
    */
   public function getLinkAttributes($extraAttributes = null) {
-    $url = $this->getUrl();
-    if (is_null($url)) {
-      return null;
-    }
-
-    $attributes = [ 'href' => $url ];
-
-    $ariaLabel = $this->getAriaLabel();
-    if (!empty($ariaLabel)) {
-      $attributes['arial-label'] = $ariaLabel;
-    }
-
-    $target = $this->getTarget();
-    if (!empty($target)) {
-      $attributes['target'] = $target;
-    }
-
-    $title = $this->getTitle();
-    if (!empty($title)) {
-      $attributes['title'] = $title;
-    }
-
-    if (is_array($extraAttributes)) {
-      $attributes = $extraAttributes + $attributes;
-    }
-
-    return $attributes;
+    $attributes = $this->getRawLinkAttributes($extraAttributes);
+    return Template::raw(is_null($attributes)
+      ? ''
+      : Html::renderTagAttributes($attributes)
+    );
   }
 
   /**
@@ -258,6 +234,44 @@ class Link extends Model
     }
 
     return \Craft::$app->sites->currentSite;
+  }
+
+  /**
+   * Return an array defining the common link attributes (`href`, `target`
+   * `title` and `arial-label`) of this link.
+   * Returns NULL if this link has no target url.
+   *
+   * @param null|array $extraAttributes
+   * @return array|null
+   */
+  public function getRawLinkAttributes($extraAttributes = null) {
+    $url = $this->getUrl();
+    if (is_null($url)) {
+      return null;
+    }
+
+    $attributes = [ 'href' => $url ];
+
+    $ariaLabel = $this->getAriaLabel();
+    if (!empty($ariaLabel)) {
+      $attributes['arial-label'] = $ariaLabel;
+    }
+
+    $target = $this->getTarget();
+    if (!empty($target)) {
+      $attributes['target'] = $target;
+    }
+
+    $title = $this->getTitle();
+    if (!empty($title)) {
+      $attributes['title'] = $title;
+    }
+
+    if (is_array($extraAttributes)) {
+      $attributes = $extraAttributes + $attributes;
+    }
+
+    return $attributes;
   }
 
   /**
