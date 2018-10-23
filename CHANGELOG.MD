@@ -1,3 +1,7 @@
+## 1.0.15
+- Fix issues when loading models with unexpected model attributes.
+- Add method `getLinkAttributes` to model, return rendered link attributes. 
+
 ## 1.0.14
 - Fix exception when trying to revert to revisions saved with 1.0.12 or before.
 - Model methods `getElement` and `hasElement` accept new parameter `ignoreStatus`.

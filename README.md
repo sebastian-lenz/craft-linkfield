@@ -34,6 +34,7 @@ You can use the following accessors to get the different properties of the link:
 
 ```
 {{ item.myLinkField.getElement() }}
+{{ item.myLinkField.getLinkAttributes() }}
 {{ item.myLinkField.getTarget() }}
 {{ item.myLinkField.getText() }}
 {{ item.myLinkField.getUrl() }}
@@ -62,6 +63,16 @@ will be used as the link content.
   target: '_blank',
   text: 'Imprint',
 }) }}
+```
+
+You can also compose your own markup quickly by simply consuming the link
+attributes exposed by `getLinkAttributes` on the link model. This method accepts
+an additional parameter allowing you to inject additional attributes as an
+associative array.
+```
+<a {{ entry.linkField.getLinkAttributes() }}>
+  <span>Custom markup</span>
+</a>
 ```
 
 ## API
