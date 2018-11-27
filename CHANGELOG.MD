@@ -1,3 +1,7 @@
+## 1.0.16
+- Allow custom queries on element links
+- Add option to automatically add `rel="noopener noreferrer"` to links opening in a new window
+
 ## 1.0.15
 - Fix issues when loading models with unexpected model attributes.
 - Add method `getLinkAttributes` to model, return rendered link attributes. 

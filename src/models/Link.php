@@ -24,6 +24,11 @@ class Link extends Model
   /**
    * @var string|null
    */
+  public $customQuery;
+
+  /**
+   * @var string|null
+   */
   public $customText;
 
   /**

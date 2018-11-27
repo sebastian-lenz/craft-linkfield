@@ -13,6 +13,17 @@
       </div>
     </div>
   {% else %}
-    {{ forms.elementSelect(selectFieldOptions) }}
+    {% if queryFieldOptions %}
+      <div class="linkfield--elementRow">
+        <div class="linkfield--elementRowSelect">
+          {{ forms.elementSelect(selectFieldOptions) }}
+        </div>
+        <div class="linkfield--elementRowQuery">
+          {{ forms.text(queryFieldOptions) }}
+        </div>
+      </div>
+    {% else %}
+      {{ forms.elementSelect(selectFieldOptions) }}
+    {% endif %}
   {% endif %}
 </div>

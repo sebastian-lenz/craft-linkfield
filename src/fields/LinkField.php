@@ -119,12 +119,13 @@ class LinkField extends Field
     } else if (is_array($value) && isset($value['isCpFormData'])) {
       // If it is an array and the field `isCpFormData` is set, we are saving a cp form
       $attr += [
-        'ariaLabel'  => $this->enableAriaLabel && isset($value['ariaLabel']) ? $value['ariaLabel'] : null,
-        'customText' => $this->allowCustomText && isset($value['customText']) ? $value['customText'] : null,
-        'target'     => $this->allowTarget && isset($value['target']) ? $value['target'] : null,
-        'title'      => $this->enableTitle && isset($value['title']) ? $value['title'] : null,
-        'type'       => isset($value['type']) ? $value['type'] : null,
-        'value'      => $this->getLinkValue($value)
+        'ariaLabel'   => $this->enableAriaLabel && isset($value['ariaLabel']) ? $value['ariaLabel'] : null,
+        'customQuery' => isset($value['customQuery']) ? $value['customQuery'] : null,
+        'customText'  => $this->allowCustomText && isset($value['customText']) ? $value['customText'] : null,
+        'target'      => $this->allowTarget && isset($value['target']) ? $value['target'] : null,
+        'title'       => $this->enableTitle && isset($value['title']) ? $value['title'] : null,
+        'type'        => isset($value['type']) ? $value['type'] : null,
+        'value'       => $this->getLinkValue($value)
       ];
 
     } elseif (is_array($value)) {
@@ -148,6 +149,7 @@ class LinkField extends Field
       function ($key) {
         return in_array($key, [
           'ariaLabel',
+          'customQuery',
           'customText',
           'linkField',
           'owner',

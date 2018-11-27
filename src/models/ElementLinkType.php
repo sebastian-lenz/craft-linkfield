@@ -5,6 +5,7 @@ namespace typedlinkfield\models;
 use craft\base\ElementInterface;
 use craft\helpers\Html;
 use typedlinkfield\fields\LinkField;
+use typedlinkfield\utilities\Url;
 use yii\base\Model;
 
 /**
@@ -44,6 +45,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
    */
   public function getDefaultSettings(): array {
     return [
+      'allowCustomQuery' => false,
       'sources' => '*',
     ];
   }
@@ -121,11 +123,23 @@ class ElementLinkType extends Model implements LinkTypeInterface
       'sourceElementId' => !empty($element->id) ? $element->id : null,
     ];
 
+    $queryFieldOptions = null;
+    if ($settings['allowCustomQuery']) {
+      $queryFieldOptions = [
+        'disabled'    => $field->isStatic(),
+        'id'          => $field->handle . '-customQuery',
+        'name'        => $field->handle . '[customQuery]',
+        'placeholder' => \Craft::t('typedlinkfield', 'Query, starts with "#" or "?"'),
+        'value'       => empty($value->customQuery) ? '' : $value->customQuery,
+      ];
+    }
+
     try {
       return \Craft::$app->view->renderTemplate('typedlinkfield/_input-element', [
         'disabled'           => $field->isStatic(),
         'isSelected'         => $isSelected,
         'linkTypeName'       => $linkTypeName,
+        'queryFieldOptions'  => $queryFieldOptions,
         'selectFieldOptions' => $selectFieldOptions,
       ]);
     } catch (\Throwable $exception) {
@@ -221,7 +235,33 @@ class ElementLinkType extends Model implements LinkTypeInterface
       return null;
     }
 
-    return $element->getUrl();
+    $url = $element->getUrl();
+    $settings = $link->getLinkField()->getLinkTypeSettings($link->type, $this);
+    $customQuery = is_string($link->customQuery) ? trim($link->customQuery) : '';
+
+    if (
+      $settings['allowCustomQuery'] &&
+      in_array(substr($customQuery, 0, 1), ['#', '?'])
+    ) {
+      try {
+        $baseUrl = new Url($url);
+        $customQueryUrl = new Url($customQuery);
+
+        $baseUrl->setQuery(
+          $baseUrl->getQuery() +
+          $customQueryUrl->getQuery()
+        );
+
+        $fragment = $customQueryUrl->getFragment();
+        if (!empty($fragment)) {
+          $baseUrl->setFragment($fragment);
+        }
+
+        $url = (string)$baseUrl;
+      } catch (\Throwable $error) {}
+    }
+
+    return $url;
   }
 
   /**

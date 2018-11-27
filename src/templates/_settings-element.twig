@@ -9,3 +9,11 @@
   values: settings.sources,
   showAllOption: true,
 })}}
+
+{{ forms.checkboxField({
+  label: 'Allow users to enter custom queries that will be appended to the url'|t('typedlinkfield'),
+  name: 'allowCustomQuery',
+  id: 'typeSettings-'~linkTypeName~'-allowCustomQuery',
+  name: 'typeSettings['~linkTypeName~'][allowCustomQuery]',
+  checked: settings.allowCustomQuery
+}) }}

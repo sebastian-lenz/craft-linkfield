@@ -32,3 +32,17 @@
 .linkfield--typeOptions.single {
   padding-left: 0;
 }
+
+
+.linkfield--elementRow {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.linkfield--elementRowSelect {
+  flex: 1;
+}
+
+.linkfield--elementRowQuery {
+  width: 200px;
+}
