@@ -22,11 +22,21 @@
   checked: settings.allowCustomText
 }) }}
 
+&nbsp;
+
 {{ forms.checkboxField({
   label: 'Allow links to open in new window'|t('typedlinkfield'),
   name: 'allowTarget',
   checked: settings.allowTarget
 }) }}
+
+{{ forms.checkboxField({
+  label: 'Set link relation to "noopener noreferrer" when opening links in new window '|t('typedlinkfield'),
+  name: 'autoNoReferrer',
+  checked: settings.autoNoReferrer
+}) }}
+
+&nbsp;
 
 {{ forms.checkboxField({
   label: 'Enable aria label support'|t('typedlinkfield'),

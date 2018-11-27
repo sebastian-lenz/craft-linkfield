@@ -260,6 +260,10 @@ class Link extends Model
     $target = $this->getTarget();
     if (!empty($target)) {
       $attributes['target'] = $target;
+
+      if ($target === '_blank' && $this->linkField->autoNoReferrer) {
+        $attributes['rel'] = 'noopener noreferrer';
+      }
     }
 
     $title = $this->getTitle();

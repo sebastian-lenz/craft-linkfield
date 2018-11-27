@@ -33,6 +33,11 @@ class LinkField extends Field
   public $allowTarget = false;
 
   /**
+   * @var bool
+   */
+  public $autoNoReferrer = false;
+
+  /**
    * @var string
    */
   public $defaultLinkName = '';
