@@ -117,6 +117,7 @@ class LinkField extends Field
       try {
         $attr += Json::decode($value, true);
       } catch (\Exception $e) {}
+      
     } else if (is_array($value) && isset($value['isCpFormData'])) {
       // If it is an array and the field `isCpFormData` is set, we are saving a cp form
       $attr += [
