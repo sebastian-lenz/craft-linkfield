@@ -114,8 +114,10 @@ class LinkField extends Field
 
     if (is_string($value)) {
       // If value is a string we are loading the data from the database
-      $attr += Json::decode($value, true);
-
+      try {
+        $attr += Json::decode($value, true);
+      } catch (\Exception $e) {}
+      
     } else if (is_array($value) && isset($value['isCpFormData'])) {
       // If it is an array and the field `isCpFormData` is set, we are saving a cp form
       $attr += [
@@ -128,7 +130,7 @@ class LinkField extends Field
         'value'       => $this->getLinkValue($value)
       ];
 
-    } elseif (is_array($value)) {
+    } else if (is_array($value)) {
       // Finally, if it is an array it is a serialized value
       $attr = [
         'owner' => $element,
