@@ -332,7 +332,9 @@ class Link extends Model
     }
 
     $defaultText = $this->getDefaultText();
-    return empty($defaultText) ? $defaultText : $fallbackText;
+    return empty($defaultText)
+      ? $fallbackText
+      : $defaultText;
   }
 
   /**
