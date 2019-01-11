@@ -4,9 +4,7 @@ php:
 services:
 - mysql
 env:
-- TEST_DB_USER=root
-- TEST_DB_PASS=
-- TEST_DB_NAME=test
+- TEST_DB_USER=root TEST_DB_PASS= TEST_DB_NAME=test
 before_install:
 - travis_retry composer self-update
 - composer install
