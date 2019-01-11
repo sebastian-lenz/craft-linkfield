@@ -1,0 +1,13 @@
+language: php
+php:
+- 7.1
+services:
+- mysql
+env:
+- TEST_DB_USER=root
+- TEST_DB_PASS=
+- TEST_DB_NAME=test
+before_install:
+- travis_retry composer self-update
+- composer install
+script: composer test

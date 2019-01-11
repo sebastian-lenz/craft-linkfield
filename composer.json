@@ -17,5 +17,12 @@
     "name": "Typed link field",
     "developer": "Sebastian Lenz",
     "developerUrl": "https://github.com/sebastian-lenz/"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.5"
+  },
+  "scripts": {
+    "test": "./vendor/bin/phpunit ./tests",
+    "testWithCoverage": "./vendor/bin/phpunit --coverage-html ./tests/coverage --whitelist ./src  ./tests"
   }
 }
