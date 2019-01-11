@@ -236,7 +236,15 @@ class ElementLinkType extends Model implements LinkTypeInterface
     }
 
     $url = $element->getUrl();
-    $settings = $link->getLinkField()->getLinkTypeSettings($link->type, $this);
+    $field = $link->getLinkField();
+
+    // For appending the custom query we need access to the link field
+    // instance which might not be available during initial element creation
+    if (is_null($field)) {
+      return $url;
+    }
+
+    $settings = $field->getLinkTypeSettings($link->type, $this);
     $customQuery = is_string($link->customQuery) ? trim($link->customQuery) : '';
 
     if (
