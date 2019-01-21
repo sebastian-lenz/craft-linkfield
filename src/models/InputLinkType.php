@@ -222,6 +222,13 @@ class InputLinkType extends Model implements LinkTypeInterface
   }
 
   /**
+   * @inheritdoc
+   */
+  public function validateSettings(array $settings): array {
+    return $settings;
+  }
+
+  /**
    * @param LinkField $field
    * @param Link $link
    * @return array|null

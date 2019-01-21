@@ -5,6 +5,7 @@ namespace typedlinkfield\models;
 use craft\base\ElementInterface;
 use craft\helpers\Html;
 use typedlinkfield\fields\LinkField;
+use typedlinkfield\utilities\ElementSourceValidator;
 use typedlinkfield\utilities\Url;
 use yii\base\Model;
 
@@ -290,6 +291,23 @@ class ElementLinkType extends Model implements LinkTypeInterface
     }
 
     return true;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function validateSettings(array $settings): array {
+    if (
+      array_key_exists('sources', $settings) &&
+      is_array($settings['sources'])
+    ) {
+      $settings['sources'] = ElementSourceValidator::apply(
+        $this->elementType,
+        $settings['sources']
+      );
+    }
+
+    return $settings;
   }
 
   /**

@@ -7,6 +7,7 @@ use craft\base\ElementInterface;
 use craft\helpers\Html;
 use craft\models\Site;
 use typedlinkfield\fields\LinkField;
+use typedlinkfield\utilities\ElementSourceValidator;
 use yii\base\Model;
 
 /**
@@ -207,6 +208,13 @@ class SiteLinkType extends Model implements LinkTypeInterface
     }
 
     return true;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function validateSettings(array $settings): array {
+    return $settings;
   }
 
   /**
