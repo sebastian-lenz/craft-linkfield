@@ -6,7 +6,7 @@
 <div class="linkFieldAdmin" id="{{ name }}">
   <div class="linkFieldAdmin--tabs">
     <div class="linkFieldAdmin--tabsRow selected" data-name="_general">
-      <button class="linkFieldAdmin--tabsTab">General settings</button>
+      <button class="linkFieldAdmin--tabsTab">{{ 'General settings'|t('typedlinkfield') }}</button>
     </div>
 
     <div class="linkFieldAdmin--tabsRow all">
@@ -17,7 +17,7 @@
           value: '*',
         }) -}}
       </div>
-      Enable all
+      {{ 'Enable all'|t('typedlinkfield') }}
     </div>
 
     {%- for linkType in linkTypes -%}
