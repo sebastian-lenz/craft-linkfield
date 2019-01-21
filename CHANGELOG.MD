@@ -1,8 +1,9 @@
 ## 1.0.16
-- Allow custom queries on element links
-- Add option to automatically add `rel="noopener noreferrer"` to links opening in a new window
+- Hotfix: Try to maintain field settings in Craft 3.1
 - Fix non-json strings issue (see https://github.com/sebastian-lenz/craft-linkfield/pull/46)
 - Fix Link::getCustomText() returning the wrong value (see https://github.com/sebastian-lenz/craft-linkfield/issues/45)
+- Allow custom queries on element links
+- Add option to automatically add `rel="noopener noreferrer"` to links opening in a new window
 
 ## 1.0.15
 - Fix issues when loading models with unexpected model attributes.
