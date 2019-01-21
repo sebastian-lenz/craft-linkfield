@@ -1,5 +1,5 @@
 ## 1.0.16
-- Hotfix: Try to maintain field settings in Craft 3.1
+- Hotfix: Try to maintain field settings in Craft 3.1 (see https://github.com/sebastian-lenz/craft-linkfield/issues/49)
 - Fix non-json strings issue (see https://github.com/sebastian-lenz/craft-linkfield/pull/46)
 - Fix Link::getCustomText() returning the wrong value (see https://github.com/sebastian-lenz/craft-linkfield/issues/45)
 - Allow custom queries on element links
