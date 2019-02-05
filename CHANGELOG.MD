@@ -1,3 +1,6 @@
+## 1.0.17
+- Fix: Rewriting element sources from Craft 3.0 fails (see https://github.com/sebastian-lenz/craft-linkfield/issues/50)
+
 ## 1.0.16
 - Hotfix: Try to maintain field settings in Craft 3.1 (see https://github.com/sebastian-lenz/craft-linkfield/issues/49)
 - Fix non-json strings issue (see https://github.com/sebastian-lenz/craft-linkfield/pull/46)
