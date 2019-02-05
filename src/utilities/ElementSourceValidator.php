@@ -97,7 +97,9 @@ class ElementSourceValidator
     }
 
     // Did not find a perfect match, return the maybe hit
-    return $maybeSource;
+    return is_null($maybeSource)
+      ? null
+      : $maybeSource['key'];
   }
 
   /**
