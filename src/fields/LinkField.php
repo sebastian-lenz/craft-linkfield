@@ -112,7 +112,7 @@ class LinkField extends Field
       'owner'     => $element,
     ];
 
-    if (is_string($value)) {
+    if (is_string($value) && Json::decode($value)) {
       // If value is a string we are loading the data from the database
       try {
         $attr += Json::decode($value, true);
