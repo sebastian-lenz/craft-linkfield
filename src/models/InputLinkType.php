@@ -259,6 +259,7 @@ class InputLinkType extends Model implements LinkTypeInterface
         break;
 
       case('url'):
+        $value = idn_to_ascii($value,IDNA_NONTRANSITIONAL_TO_ASCII,INTL_IDNA_VARIANT_UTS46);
         if (!filter_var($value, FILTER_VALIDATE_URL)) {
           return [\Craft::t('typedlinkfield', 'Please enter a valid url.'), []];
         }
