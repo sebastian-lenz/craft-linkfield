@@ -113,12 +113,15 @@ class LinkField extends Field
       'owner'     => $element,
     ];
 
-    if (is_string($value) && Json::decode($value)) {
+    if (is_string($value)) {
       // If value is a string we are loading the data from the database
       try {
-        $attr += Json::decode($value, true);
+        $decodedValue = Json::decode($value, true);
+        if (is_array($decodedValue)) {
+          $attr += $decodedValue;
+        }
       } catch (\Exception $e) {}
-      
+
     } else if (is_array($value) && isset($value['isCpFormData'])) {
       // If it is an array and the field `isCpFormData` is set, we are saving a cp form
       $attr += [
