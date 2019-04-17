@@ -166,7 +166,7 @@ abstract class AbstractLinkFieldTest extends TestCase
     // Load the files
     $craftSrcPath = $composerPath . '/craftcms/cms/src';
     $craftLibPath = $composerPath . '/craftcms/cms/lib';
-    require $craftSrcPath . '/Yii.php';
+    require $craftLibPath . '/yii2/Yii.php';
     require $craftSrcPath . '/Craft.php';
 
     // Set aliases
