@@ -52,6 +52,11 @@ class Link extends Model
   public $value;
 
   /**
+   * @var ElementInterface
+   */
+  private $prefetchedElement;
+
+  /**
    * @var LinkField|null
    */
   private $linkField;
@@ -120,10 +125,23 @@ class Link extends Model
    * @return null|\craft\base\ElementInterface
    */
   public function getElement($ignoreStatus = false) {
-    $linkType = $this->getLinkType();
-    return is_null($linkType)
-      ? null
-      : $linkType->getElement($this, $ignoreStatus);
+    if (
+      !isset($this->prefetchedElement) ||
+      $this->prefetchedElement->getId() != $this->value
+    ) {
+      $linkType = $this->getLinkType();
+      $element = is_null($linkType)
+        ? null
+        : $linkType->getElement($this, $ignoreStatus);
+
+      if ($ignoreStatus) {
+        return $element;
+      } else {
+        $this->prefetchedElement = $element;
+      }
+    }
+
+    return $this->prefetchedElement;
   }
 
   /**
@@ -362,6 +380,13 @@ class Link extends Model
   public function isEmpty(): bool {
     $linkType = $this->getLinkType();
     return is_null($linkType) ? true : $linkType->isEmpty($this);
+  }
+
+  /**
+   * @internal
+   */
+  public function setPrefetchedElement($element) {
+    $this->prefetchedElement = $element;
   }
 
   /**

@@ -5,6 +5,7 @@ namespace typedlinkfield\fields;
 use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\helpers\Json;
+use typedlinkfield\models\ElementLinkType;
 use typedlinkfield\Plugin;
 use typedlinkfield\models\Link;
 use typedlinkfield\models\LinkTypeInterface;
@@ -198,8 +199,7 @@ class LinkField extends Field
    * @param Link $value
    * @param ElementInterface|null $element
    * @return string
-   * @throws \Twig_Error_Loader
-   * @throws \yii\base\Exception
+   * @throws \Throwable
    */
   public function getInputHtml($value, ElementInterface $element = null): string {
     $linkTypes = $this->getAllowedLinkTypes();
@@ -258,8 +258,7 @@ class LinkField extends Field
 
   /**
    * @return string
-   * @throws \Twig_Error_Loader
-   * @throws \yii\base\Exception
+   * @throws \Throwable
    */
   public function getSettingsHtml() {
     $settings = $this->getSettings();

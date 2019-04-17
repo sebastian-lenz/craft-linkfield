@@ -218,7 +218,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
    * @return null|string
    */
   public function getText(Link $link) {
-    $element = $this->getElement($link);
+    $element = $link->getElement();
     if (is_null($element)) {
       return null;
     }
@@ -231,7 +231,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
    * @return null|string
    */
   public function getUrl(Link $link) {
-    $element = $this->getElement($link);
+    $element = $link->getElement();
     if (is_null($element)) {
       return null;
     }
@@ -277,7 +277,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
    * @inheritdoc
    */
   public function hasElement(Link $link, $ignoreStatus = false): bool {
-    $element = $this->getElement($link, $ignoreStatus);
+    $element = $link->getElement($ignoreStatus);
     return !is_null($element);
   }
 
