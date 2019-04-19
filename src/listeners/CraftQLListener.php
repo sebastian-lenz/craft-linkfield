@@ -12,6 +12,7 @@ use lenz\linkfield\models\LinkType;
 use markhuot\CraftQL\Builders\Schema;
 use markhuot\CraftQL\Events\GetFieldSchema;
 use markhuot\CraftQL\Types\CategoryInterface;
+use markhuot\CraftQL\Types\ElementInterface;
 use markhuot\CraftQL\Types\EntryInterface;
 use markhuot\CraftQL\Types\VolumeInterface;
 
@@ -33,15 +34,16 @@ class CraftQLListener {
    * @param string $linkName
    * @param LinkType $linkType
    * @param Schema $schema
+   * @return bool
    */
   private static function addElementTypeField($linkName, LinkType $linkType, Schema $schema) {
     if (!($linkType instanceof ElementLinkType)) {
-      return;
+      return false;
     }
 
     $elementType = $linkType->elementType;
     if (!isset(self::$QL_TYPES[$elementType])) {
-      return;
+      return false;
     }
 
     $schema->addField($linkName)
@@ -50,6 +52,8 @@ class CraftQLListener {
         $element = $link instanceof Link ? $link->getElement() : null;
         return $element instanceof $elementType ? $element : null;
       });
+
+    return true;
   }
 
   /**
@@ -62,9 +66,17 @@ class CraftQLListener {
     }
 
     $object = $event->schema->createObjectType(ucfirst($field->handle) . 'LinkType');
+    $hasElementField = false;
     $types = array();
     foreach ($field->getEnabledLinkTypes() as $linkName => $linkType) {
-      self::addElementTypeField($linkName, $linkType, $object);
+      if (
+        self::addElementTypeField($linkName, $linkType, $object) &&
+        !$hasElementField
+      ) {
+        $hasElementField = true;
+        $object->addField('element')->type(ElementInterface::class);
+      }
+
       $types[] = $linkName;
     }
 
