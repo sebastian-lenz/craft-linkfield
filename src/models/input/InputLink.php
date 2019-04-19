@@ -20,6 +20,15 @@ class InputLink extends Link
 
 
   /**
+   * @inheritDoc
+   */
+  public function attributes() {
+    return array_merge(parent::attributes(), [
+      'url',
+    ]);
+  }
+
+  /**
    * @return string
    */
   public function getPlainUrl() {

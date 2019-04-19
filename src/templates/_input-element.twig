@@ -13,6 +13,9 @@
       </div>
     </div>
   {% else %}
+    {% if siteField %}
+      {{ forms.hidden(siteField) }}
+    {% endif %}
     {% if queryField %}
       <div class="linkfield--elementRow">
         <div class="linkfield--elementRowSelect">

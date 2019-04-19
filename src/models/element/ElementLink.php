@@ -49,6 +49,18 @@ class ElementLink extends Link
   /**
    * @inheritDoc
    */
+  public function attributes() {
+    return array_merge(parent::attributes(), [
+      'customQuery',
+      'linkedId',
+      'linkedSiteId',
+      'linkedTitle',
+    ]);
+  }
+
+  /**
+   * @inheritDoc
+   */
   public function getElement($ignoreStatus = false) {
     if (
       !isset($this->_element) ||
@@ -76,8 +88,8 @@ class ElementLink extends Link
   /**
    * @return int
    */
-  public function getTargetSiteId() {
-    return is_null($this->linkedSiteId)
+  public function getSiteId() {
+    return !$this->_linkType->allowCrossSiteLink || is_null($this->linkedSiteId)
       ? $this->getOwnerSite()->id
       : $this->linkedSiteId;
   }
@@ -130,6 +142,13 @@ class ElementLink extends Link
   }
 
   /**
+   * @return bool
+   */
+  public function isCrossSiteLink() {
+    return $this->getSiteId() !== $this->getOwnerSite()->id;
+  }
+
+  /**
    * @inheritDoc
    */
   public function isEmpty(): bool {
@@ -157,13 +176,17 @@ class ElementLink extends Link
     }
 
     $elementType = $this->_linkType->elementType;
-    if (!$ignoreStatus && isset($this->_loader)) {
+    if (
+      !$ignoreStatus &&
+      !$this->isCrossSiteLink() &&
+      isset($this->_loader)
+    ) {
       return $this->_loader->loadElement($elementType, $this->linkedId);
     }
 
     $query = $elementType::find()
       ->id($this->linkedId)
-      ->siteId($this->getTargetSiteId());
+      ->siteId($this->getSiteId());
 
     if ($ignoreStatus || \Craft::$app->request->getIsCpRequest()) {
       $query->enabledForSite(false);

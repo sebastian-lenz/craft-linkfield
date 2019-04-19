@@ -17,3 +17,11 @@
   name: "typeSettings[#{linkType.name}][allowCustomQuery]",
   checked: linkType.allowCustomQuery
 }) }}
+
+{{ forms.checkboxField({
+  label: 'Allow links to reference a different site'|t('typedlinkfield'),
+  name: 'allowCrossSiteLink',
+  id: "typeSettings-#{linkType.name}-allowCrossSiteLink",
+  name: "typeSettings[#{linkType.name}][allowCrossSiteLink]",
+  checked: linkType.allowCrossSiteLink
+}) }}

@@ -83,6 +83,18 @@ class Link extends Model
   }
 
   /**
+   * @inheritDoc
+   */
+  public function attributes() {
+    return [
+      'ariaLabel',
+      'customText',
+      'target',
+      'title',
+    ];
+  }
+
+  /**
    * @return bool
    */
   public function getAllowCustomText(): bool {

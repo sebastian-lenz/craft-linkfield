@@ -23,6 +23,15 @@ class SiteLink extends Link
   /**
    * @inheritDoc
    */
+  public function attributes() {
+    return array_merge(parent::attributes(), [
+      'linkedSiteId',
+    ]);
+  }
+
+  /**
+   * @inheritDoc
+   */
   public function getIntrinsicText() {
     $site = $this->getSite();
     return is_null($site)

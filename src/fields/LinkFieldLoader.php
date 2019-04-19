@@ -143,6 +143,10 @@ class LinkFieldLoader
         continue;
       }
 
+      if ($link->isCrossSiteLink()) {
+        continue;
+      }
+
       $type = $link->getLinkType()->elementType;
       if (!isset($this->_elementIds[$type])) {
         $this->_elementIds[$type] = [];
