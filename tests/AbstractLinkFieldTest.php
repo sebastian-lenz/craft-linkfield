@@ -14,8 +14,8 @@ use craft\models\Site;
 use craft\services\Config;
 use PHPUnit\Framework\TestCase;
 
-use typedlinkfield\fields\LinkField;
-use typedlinkfield\Plugin;
+use lenz\linkfield\fields\LinkField;
+use lenz\linkfield\Plugin;
 
 /**
  * Class AbstractLinkFieldTest
@@ -50,9 +50,9 @@ abstract class AbstractLinkFieldTest extends TestCase
   protected static function createLinkField($options) {
     $fieldsService = Craft::$app->getFields();
     $field = $fieldsService->createField([
-        'type'    => LinkField::class,
-        'groupId' => 1,
-      ] + $options);
+      'type'    => LinkField::class,
+      'groupId' => 1,
+    ] + $options);
 
     $fieldsService->saveField($field);
     return $field;
@@ -117,9 +117,9 @@ abstract class AbstractLinkFieldTest extends TestCase
    */
   protected static function createEntry(EntryType $entryType, $options) {
     $entry = new Entry([
-        'typeId'    => $entryType->id,
-        'sectionId' => $entryType->sectionId,
-      ] + $options);
+      'typeId'    => $entryType->id,
+      'sectionId' => $entryType->sectionId,
+    ] + $options);
 
     Craft::$app->elements->saveElement($entry);
     return $entry;
@@ -286,5 +286,9 @@ abstract class AbstractLinkFieldTest extends TestCase
     $infoProperty = $appReflection->getProperty('_info');
     $infoProperty->setAccessible(true);
     $infoProperty->setValue(Craft::$app, null);
+
+    // Install the plugin
+    $install = new \lenz\linkfield\migrations\Install();
+    $install->safeUp();
   }
 }
