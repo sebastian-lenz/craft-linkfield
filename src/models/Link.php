@@ -1,18 +1,21 @@
 <?php
 
-namespace typedlinkfield\models;
+namespace lenz\linkfield\models;
 
+use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Model;
 use craft\helpers\Html;
 use craft\helpers\Template;
-use typedlinkfield\fields\LinkField;
-use typedlinkfield\Plugin;
+use craft\models\Site;
+use Exception;
+use lenz\linkfield\fields\LinkField;
+use lenz\linkfield\Plugin;
+use Twig\Markup;
 
 /**
  * Class Link
- * @package typedlinkfield\models
  */
 class Link extends Model
 {
@@ -20,11 +23,6 @@ class Link extends Model
    * @var string|null
    */
   public $ariaLabel;
-
-  /**
-   * @var string|null
-   */
-  public $customQuery;
 
   /**
    * @var string|null
@@ -42,66 +40,64 @@ class Link extends Model
   public $title;
 
   /**
-   * @var string
-   */
-  public $type;
-
-  /**
-   * @var mixed
-   */
-  public $value;
-
-  /**
-   * @var ElementInterface
-   */
-  private $prefetchedElement;
-
-  /**
    * @var LinkField|null
    */
-  private $linkField;
+  protected $_field;
+
+  /**
+   * @var LinkType
+   */
+  protected $_linkType;
 
   /**
    * @var ElementInterface|null
    */
-  private $owner;
+  protected $_owner;
 
 
   /**
    * Link constructor.
+   * @param LinkField $field
+   * @param LinkType $linkType
+   * @param ElementInterface $owner
    * @param array $config
    */
-  public function __construct($config = []) {
-    $this->linkField = isset($config['linkField'])
-      ? $config['linkField']
-      : null;
+  public function __construct(
+    LinkField $field,
+    LinkType $linkType,
+    ElementInterface $owner = null,
+    $config = []
+  ) {
+    $this->_field    = $field;
+    $this->_linkType = $linkType;
+    $this->_owner    = $owner;
 
-    $this->owner = isset($config['owner'])
-      ? $config['owner']
-      : null;
-
-    unset($config['linkField']);
-    unset($config['owner']);
-
-    parent::__construct($config);
+    $attributes = $this->attributes();
+    parent::__construct(array_filter(
+      $config,
+      function ($key) use ($attributes) {
+        return in_array($key, $attributes);
+      },
+      ARRAY_FILTER_USE_KEY
+    ));
   }
 
   /**
    * @return bool
    */
-  public function getAllowCustomText() {
-    return is_null($this->linkField)
+  public function getAllowCustomText(): bool {
+    return is_null($this->_field)
       ? false
-      : $this->linkField->allowCustomText;
+      : $this->_field->allowCustomText;
   }
 
   /**
    * @return bool
    */
-  public function getAllowTarget() {
-    return is_null($this->linkField)
+  public function getAllowTarget(): bool {
+    return is_null($this->_field)
       ? false
-      : $this->linkField->allowTarget;
+      : $this->_field->allowTarget;
   }
 
   /**
@@ -112,54 +108,61 @@ class Link extends Model
   }
 
   /**
+   * Try to use provided custom text or field default.
+   * Allows user to specify a fallback string if the custom text and default are not set.
+   *
+   * @param string $fallbackText
+   * @return string
+   */
+  public function getCustomText($fallbackText = "Learn More") {
+    if ($this->getAllowCustomText() && !empty($this->customText)) {
+      return $this->customText;
+    }
+
+    $defaultText = $this->getDefaultText();
+    return empty($defaultText)
+      ? $fallbackText
+      : Craft::t('site', $defaultText);
+  }
+
+  /**
    * @return string
    */
   public function getDefaultText() {
-    return is_null($this->linkField)
-      ? ''
-      : $this->linkField->defaultText;
+    return $this->_field->defaultText;
   }
 
   /**
    * @param bool $ignoreStatus
-   * @return null|\craft\base\ElementInterface
+   * @return null|ElementInterface
    */
   public function getElement($ignoreStatus = false) {
-    if (
-      !isset($this->prefetchedElement) ||
-      $this->prefetchedElement->getId() != $this->value
-    ) {
-      $linkType = $this->getLinkType();
-      $element = is_null($linkType)
-        ? null
-        : $linkType->getElement($this, $ignoreStatus);
-
-      if ($ignoreStatus) {
-        return $element;
-      } else {
-        $this->prefetchedElement = $element;
-      }
-    }
-
-    return $this->prefetchedElement;
+    return null;
   }
 
   /**
    * @return bool
    */
   public function getEnableAriaLabel() {
-    return is_null($this->linkField)
+    return is_null($this->_field)
       ? false
-      : $this->linkField->enableAriaLabel;
+      : $this->_field->enableAriaLabel;
   }
 
   /**
    * @return bool
    */
   public function getEnableTitle() {
-    return is_null($this->linkField)
+    return is_null($this->_field)
       ? false
-      : $this->linkField->enableTitle;
+      : $this->_field->enableTitle;
+  }
+
+  /**
+   * @return string
+   */
+  public function getIntrinsicText() {
+    return '';
   }
 
   /**
@@ -181,7 +184,7 @@ class Link extends Model
    * ```
    *
    * @param array|string|null $attributesOrText
-   * @return null|\Twig_Markup
+   * @return null|Markup
    */
   public function getLink($attributesOrText = null) {
     $text = $this->getText();
@@ -212,7 +215,7 @@ class Link extends Model
    * Return the attributes of this link as a rendered html string.
    *
    * @param array|null $extraAttributes
-   * @return \Twig_Markup
+   * @return Markup
    */
   public function getLinkAttributes($extraAttributes = null) {
     $attributes = $this->getRawLinkAttributes($extraAttributes);
@@ -225,38 +228,35 @@ class Link extends Model
   /**
    * @return null|LinkField
    */
-  public function getLinkField() {
-    return $this->linkField;
+  public function getField() {
+    return $this->_field;
   }
 
   /**
-   * @return LinkTypeInterface|null
+   * @return LinkType|null
    */
   public function getLinkType() {
-    $linkTypes = Plugin::getInstance()->getLinkTypes();
-    return array_key_exists($this->type, $linkTypes)
-      ? $linkTypes[$this->type]
-      : null;
+    return $this->_linkType;
   }
 
   /**
    * @return ElementInterface|null
    */
   public function getOwner() {
-    return $this->owner;
+    return $this->_owner;
   }
 
   /**
-   * @return \craft\models\Site
+   * @return Site
    */
   public function getOwnerSite() {
-    if ($this->owner instanceof Element) {
+    if ($this->_owner instanceof Element) {
       try {
-        return $this->owner->getSite();
-      } catch (\Exception $e) { }
+        return $this->_owner->getSite();
+      } catch (Exception $e) { }
     }
 
-    return \Craft::$app->sites->currentSite;
+    return Craft::$app->sites->currentSite;
   }
 
   /**
@@ -284,7 +284,7 @@ class Link extends Model
     if (!empty($target)) {
       $attributes['target'] = $target;
 
-      if ($target === '_blank' && $this->linkField->autoNoReferrer) {
+      if ($target === '_blank' && $this->_field->autoNoReferrer) {
         $attributes['rel'] = 'noopener noreferrer';
       }
     }
@@ -311,23 +311,23 @@ class Link extends Model
   }
 
   /**
-   * @return null|string
+   * @param string $fallbackText
+   * @return string
    */
-  public function getText() {
+  public function getText($fallbackText = "Learn More") {
     if ($this->getAllowCustomText() && !empty($this->customText)) {
       return $this->customText;
     }
 
-    $linkType = $this->getLinkType();
-    if (!is_null($linkType)) {
-      $linkText = $linkType->getText($this);
-
-      if (!is_null($linkText)) {
-        return $linkText;
-      }
+    $text = $this->getIntrinsicText();
+    if (!empty($text)) {
+      return $text;
     }
 
-    return \Craft::t('site', $this->getDefaultText());
+    $text = $this->getDefaultText();
+    return empty($text)
+      ? $fallbackText
+      : Craft::t('site', $text);
   }
 
   /**
@@ -338,29 +338,17 @@ class Link extends Model
   }
 
   /**
-   * Try to use provided custom text or field default.
-   * Allows user to specify a fallback string if the custom text and default are not set.
-   *
-   * @param string $fallbackText
    * @return string
    */
-  public function getCustomText($fallbackText = "Learn More") {
-    if ($this->getAllowCustomText() && !empty($this->customText)) {
-      return $this->customText;
-    }
-
-    $defaultText = $this->getDefaultText();
-    return empty($defaultText)
-      ? $fallbackText
-      : $defaultText;
+  public function getType() {
+    return $this->_linkType->name;
   }
 
   /**
    * @return null|string
    */
   public function getUrl() {
-    $linkType = $this->getLinkType();
-    return is_null($linkType) ? null : $linkType->getUrl($this);
+    return null;
   }
 
   /**
@@ -368,25 +356,21 @@ class Link extends Model
    * @return bool
    */
   public function hasElement($ignoreStatus = false) {
-    $linkType = $this->getLinkType();
-    return is_null($linkType)
-      ? false
-      : $linkType->hasElement($this, $ignoreStatus);
+    return false;
   }
 
   /**
    * @return bool
    */
   public function isEmpty(): bool {
-    $linkType = $this->getLinkType();
-    return is_null($linkType) ? true : $linkType->isEmpty($this);
+    return true;
   }
 
   /**
-   * @internal
+   * @param ElementInterface|null $value
    */
-  public function setPrefetchedElement($element) {
-    $this->prefetchedElement = $element;
+  public function setOwner(ElementInterface $value = null) {
+    $this->_owner = $value;
   }
 
   /**

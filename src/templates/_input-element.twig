@@ -1,10 +1,10 @@
 {% import "_includes/forms" as forms %}
 
-<div class="linkfield--typeOption {{ linkTypeName }}{{ isSelected ? '' : ' hidden' }}">
+<div class="linkfield--typeOption {{ linkType.name }}{{ selected ? '' : ' hidden' }}">
   {% if disabled %}
     <div class="elementselect">
       <div class="elements">
-        {% for element in selectFieldOptions.elements %}
+        {% for element in elementField.elements %}
           {% include "_elements/element" with {
             context: 'field',
             size: 'small'
@@ -13,17 +13,17 @@
       </div>
     </div>
   {% else %}
-    {% if queryFieldOptions %}
+    {% if queryField %}
       <div class="linkfield--elementRow">
         <div class="linkfield--elementRowSelect">
-          {{ forms.elementSelect(selectFieldOptions) }}
+          {{ forms.elementSelect(elementField) }}
         </div>
         <div class="linkfield--elementRowQuery">
-          {{ forms.text(queryFieldOptions) }}
+          {{ forms.text(queryField) }}
         </div>
       </div>
     {% else %}
-      {{ forms.elementSelect(selectFieldOptions) }}
+      {{ forms.elementSelect(elementField) }}
     {% endif %}
   {% endif %}
 </div>

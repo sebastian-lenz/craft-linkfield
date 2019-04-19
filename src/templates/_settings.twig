@@ -1,6 +1,6 @@
 {% import '_includes/forms' as forms %}
 
-{% do view.registerAssetBundle('typedlinkfield\\utilities\\CpAdminAssetBundle') %}
+{% do view.registerAssetBundle('lenz\\linkfield\\assets\\admin\\LinkFieldAdminAsset') %}
 {% set group = '' %}
 
 <div class="linkFieldAdmin" id="{{ name }}">
@@ -12,9 +12,8 @@
     <div class="linkFieldAdmin--tabsRow all">
       <div class="linkFieldAdmin--tabsLightswitch">
         {{- forms.lightswitch({
-          name: 'allowedLinkNames[]',
-          on: allTypesAllowed,
-          value: '*',
+          name: 'enableAllLinkTypes',
+          on: field.enableAllLinkTypes,
         }) -}}
       </div>
       {{ 'Enable all'|t('typedlinkfield') }}
@@ -27,11 +26,10 @@
       {%- endif -%}
 
       <div class="linkFieldAdmin--tabsRow" data-name="{{ linkType.name }}">
-        <div class="linkFieldAdmin--tabsLightswitch{% if allTypesAllowed %} hidden{% endif %}">
+        <div class="linkFieldAdmin--tabsLightswitch{% if field.enableAllLinkTypes %} hidden{% endif %}">
           {{- forms.lightswitch({
-            name: 'allowedLinkNames[]',
+            name: "typeSettings[#{linkType.name}][enabled]",
             on: linkType.enabled,
-            value: linkType.name,
           }) -}}
         </div>
 

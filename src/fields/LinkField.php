@@ -1,20 +1,23 @@
 <?php
 
-namespace typedlinkfield\fields;
+namespace lenz\linkfield\fields;
 
+use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
+use craft\elements\db\ElementQueryInterface;
 use craft\helpers\Json;
-use typedlinkfield\models\ElementLinkType;
-use typedlinkfield\Plugin;
-use typedlinkfield\models\Link;
-use typedlinkfield\models\LinkTypeInterface;
-use typedlinkfield\validators\LinkFieldValidator;
-use yii\db\Schema;
+use Exception;
+use lenz\linkfield\Plugin;
+use lenz\linkfield\models\Link;
+use lenz\linkfield\models\LinkType;
+use lenz\linkfield\records\LinkRecord;
+use Throwable;
+use yii\behaviors\AttributeTypecastBehavior;
 
 /**
  * Class LinkField
- * @package typedlinkfield\fields
+ * @package lenz\linkfield\fields
  */
 class LinkField extends Field
 {
@@ -22,11 +25,6 @@ class LinkField extends Field
    * @var bool
    */
   public $allowCustomText = true;
-
-  /**
-   * @var string|array
-   */
-  public $allowedLinkNames = '*';
 
   /**
    * @var bool
@@ -56,46 +54,55 @@ class LinkField extends Field
   /**
    * @var bool
    */
-  public $enableTitle = false;
-
-  /**
-   * @var array
-   */
-  public $typeSettings = array();
+  public $enableAllLinkTypes = false;
 
   /**
    * @var bool
    */
-  private $isStatic = false;
+  public $enableTitle = false;
+
+  /**
+   * @var LinkType[]
+   */
+  private $_linkTypes;
 
 
   /**
-   * @param bool $isNew
-   * @return bool
+   * @inheritDoc
    */
-  public function beforeSave(bool $isNew): bool {
-    if (is_array($this->allowedLinkNames)) {
-      $this->allowedLinkNames = array_filter($this->allowedLinkNames);
-      foreach ($this->allowedLinkNames as $linkName) {
-        if ($linkName === '*') {
-          $this->allowedLinkNames = '*';
-          break;
-        }
-      }
-    } else {
-      $this->allowedLinkNames = '*';
+  public function afterElementSave(ElementInterface $element, bool $isNew) {
+    parent::afterElementSave($element, $isNew);
+
+    try {
+      $link = $element->getFieldValue($this->handle);
+    } catch (\Throwable $error) {
+      $link = null;
     }
 
-    return parent::beforeSave($isNew);
+    if ($link instanceof Link) {
+      $record = $this->createRecord($element);
+      $link->getLinkType()->createRecord($link, $record);
+      $record->save();
+    }
   }
 
   /**
-   * Get Content Column Type
-   * Used to set the correct column type in the DB
-   * @return string
+   * @inheritDoc
    */
-  public function getContentColumnType(): string {
-    return Schema::TYPE_TEXT;
+  public function behaviors() {
+    return [
+      'typecast' => [
+        'class' => AttributeTypecastBehavior::class,
+      ],
+    ];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function modifyElementsQuery(ElementQueryInterface $query, $value) {
+    LinkFieldLoader::attachTo($this, $query, $value);
+    return null;
   }
 
   /**
@@ -104,87 +111,36 @@ class LinkField extends Field
    * @return Link
    */
   public function normalizeValue($value, ElementInterface $element = null) {
-    if ($value instanceof Link) {
-      return $value;
-    }
-
-    $attr = [
-      'linkField' => $this,
-      'owner'     => $element,
-    ];
-
     if (is_string($value)) {
-      // If value is a string we are loading the data from the database
       try {
-        $decodedValue = Json::decode($value, true);
-        if (is_array($decodedValue)) {
-          $attr += $decodedValue;
-        }
-      } catch (\Exception $e) {}
-
-    } else if (is_array($value) && isset($value['isCpFormData'])) {
-      // If it is an array and the field `isCpFormData` is set, we are saving a cp form
-      $attr += [
-        'ariaLabel'   => $this->enableAriaLabel && isset($value['ariaLabel']) ? $value['ariaLabel'] : null,
-        'customQuery' => isset($value['customQuery']) ? $value['customQuery'] : null,
-        'customText'  => $this->allowCustomText && isset($value['customText']) ? $value['customText'] : null,
-        'target'      => $this->allowTarget && isset($value['target']) ? $value['target'] : null,
-        'title'       => $this->enableTitle && isset($value['title']) ? $value['title'] : null,
-        'type'        => isset($value['type']) ? $value['type'] : null,
-        'value'       => $this->getLinkValue($value)
-      ];
-
-    } else if (is_array($value)) {
-      // Finally, if it is an array it is a serialized value
-      $attr += $value;
+        $value = Json::decode($value, true);
+      } catch (Exception $e) {}
     }
 
-    if (isset($attr['type']) && !$this->isAllowedLinkType($attr['type'])) {
-      $attr['type']  = null;
-      $attr['value'] = null;
+    if (!is_array($value)) {
+      $record = $this->findRecord($element);
+      $value = is_null($record) ? [] : $record->getAttributes();
     }
 
-    // See https://github.com/sebastian-lenz/craft-linkfield/issues/38
-    // See https://github.com/sebastian-lenz/craft-linkfield/issues/42
-    // If a link was saved prior to v1.0.13, these properties are serialized
-    // to the revision table.
-    return new Link(array_filter(
-      $attr,
-      function ($key) {
-        return in_array($key, [
-          'ariaLabel',
-          'customQuery',
-          'customText',
-          'linkField',
-          'owner',
-          'target',
-          'title',
-          'type',
-          'value'
-        ]);
-      },
-      ARRAY_FILTER_USE_KEY
-    ));
+    return $this
+      ->resolveLinkType(isset($value['type']) ? $value['type'] : '')
+      ->createLink($this, $element, $value);
   }
 
   /**
-   * @return LinkTypeInterface[]
+   * @return LinkType[]
    */
-  public function getAllowedLinkTypes() {
-    $allowedLinkNames = $this->allowedLinkNames;
-    $linkTypes = Plugin::getInstance()->getLinkTypes();
-
-    if (is_string($allowedLinkNames)) {
-      if ($allowedLinkNames === '*') {
-        return $linkTypes;
+  public function getAvailableLinkTypes() {
+    if (!isset($this->_linkTypes)) {
+      $linkTypes = Plugin::getInstance()->getLinkTypes($this);
+      foreach ($linkTypes as $name => $linkType) {
+        $linkType->name = $name;
       }
 
-      $allowedLinkNames = [$allowedLinkNames];
+      $this->_linkTypes = $linkTypes;
     }
 
-    return array_filter($linkTypes, function($linkTypeName) use ($allowedLinkNames) {
-      return in_array($linkTypeName, $allowedLinkNames);
-    }, ARRAY_FILTER_USE_KEY);
+    return $this->_linkTypes;
   }
 
   /**
@@ -192,105 +148,57 @@ class LinkField extends Field
    */
   public function getElementValidationRules(): array {
     return [
-      [LinkFieldValidator::class, 'field' => $this],
+      [LinkFieldValidator::class],
     ];
+  }
+
+  /**
+   * @return LinkType[]
+   */
+  public function getEnabledLinkTypes() {
+    if ($this->enableAllLinkTypes) {
+      return $this->getAvailableLinkTypes();
+    }
+
+    return array_filter(
+      $this->getAvailableLinkTypes(),
+      function(LinkType $linkType) {
+        return $linkType->enabled;
+      }
+    );
   }
 
   /**
    * @param Link $value
    * @param ElementInterface|null $element
    * @return string
-   * @throws \Throwable
+   * @throws Throwable
    */
   public function getInputHtml($value, ElementInterface $element = null): string {
-    $linkTypes = $this->getAllowedLinkTypes();
-    $linkNames = [];
-    $linkInputs = [];
-    $singleType = count($linkTypes) === 1 ? array_keys($linkTypes)[0] : null;
-
-    if (!array_key_exists($value->type, $linkTypes) && count($linkTypes) > 0) {
-      $value->type = array_keys($linkTypes)[0];
-      $value->value = null;
-    }
-
-    if (
-      $value->isEmpty() &&
-      !empty($this->defaultLinkName) &&
-      array_key_exists($this->defaultLinkName, $linkTypes)
-    ) {
-      $value->type = $this->defaultLinkName;
-    }
-
-    foreach ($linkTypes as $linkTypeName => $linkType) {
-      $linkNames[$linkTypeName] = $linkType->getDisplayName();
-      $linkInputs[] = $linkType->getInputHtml($linkTypeName, $this, $value, $element);
-    }
-
-    asort($linkNames);
-
-    return \Craft::$app->getView()->renderTemplate('typedlinkfield/_input', [
-      'hasSettings' => $this->hasSettings(),
-      'isStatic'    => $this->isStatic,
-      'linkInputs'  => implode('', $linkInputs),
-      'linkNames'   => $linkNames,
-      'name'        => $this->handle,
-      'nameNs'      => \Craft::$app->view->namespaceInputId($this->handle),
-      'settings'    => $this->getSettings(),
-      'singleType'  => $singleType,
-      'value'       => $value,
-    ]);
-  }
-
-  /**
-   * @param string $linkTypeName
-   * @param LinkTypeInterface $linkType
-   * @return array
-   */
-  public function getLinkTypeSettings(string $linkTypeName, LinkTypeInterface $linkType): array {
-    $settings = $linkType->getDefaultSettings();
-    if (array_key_exists($linkTypeName, $this->typeSettings)) {
-      $settings = $linkType->validateSettings(
-        $this->typeSettings[$linkTypeName] + $settings
-      );
-    }
-
-    return $settings;
+    return $this->render($value, $element);
   }
 
   /**
    * @return string
-   * @throws \Throwable
+   * @throws Throwable
    */
   public function getSettingsHtml() {
-    $settings = $this->getSettings();
-    $allowedLinkNames = $settings['allowedLinkNames'];
+    $namespace = Craft::$app->view->namespaceInputId('linkField');
     $linkTypes = [];
     $linkNames = [];
-    $linkSettings = [];
 
-    $allTypesAllowed = false;
-    if (!is_array($allowedLinkNames)) {
-      $allTypesAllowed = $allowedLinkNames == '*';
-    } else {
-      foreach ($allowedLinkNames as $linkName) {
-        if ($linkName === '*') {
-          $allTypesAllowed = true;
-          break;
-        }
-      }
-    }
+    foreach ($this->getAvailableLinkTypes() as $name => $linkType) {
+      $html             = $linkType->getSettingsHtml($this);
+      $displayName      = $linkType->getDisplayName();
+      $linkNames[$name] = $displayName;
 
-    foreach (Plugin::getInstance()->getLinkTypes() as $linkTypeName => $linkType) {
       $linkTypes[] = array(
-        'displayName' => $linkType->getDisplayName(),
-        'enabled'     => $allTypesAllowed || (is_array($allowedLinkNames) && in_array($linkTypeName, $allowedLinkNames)),
-        'name'        => $linkTypeName,
+        'displayName' => $displayName,
+        'enabled'     => $linkType->enabled,
+        'name'        => $name,
         'group'       => $linkType->getDisplayGroup(),
-        'settings'    => $linkType->getSettingsHtml($linkTypeName, $this),
+        'settings'    => $html,
       );
-
-      $linkNames[$linkTypeName] = $linkType->getDisplayName();
-      $linkSettings[] = $linkType->getSettingsHtml($linkTypeName, $this);
     }
 
     asort($linkNames);
@@ -300,13 +208,12 @@ class LinkField extends Field
         : strcmp($a['group'], $b['group']);
     });
 
-    return \Craft::$app->getView()->renderTemplate('typedlinkfield/_settings', [
-      'allTypesAllowed' => $allTypesAllowed,
-      'name'            => 'linkField',
-      'nameNs'          => \Craft::$app->view->namespaceInputId('linkField'),
-      'linkTypes'       => $linkTypes,
-      'linkNames'       => $linkNames,
-      'settings'        => $settings,
+    return Craft::$app->getView()->renderTemplate('typedlinkfield/_settings', [
+      'field'     => $this,
+      'name'      => 'linkField',
+      'nameNs'    => $namespace,
+      'linkTypes' => $linkTypes,
+      'linkNames' => $linkNames,
     ]);
   }
 
@@ -314,11 +221,16 @@ class LinkField extends Field
    * @inheritdoc
    */
   public function getStaticHtml($value, ElementInterface $element): string {
-    $this->isStatic = true;
-    $result = parent::getStaticHtml($value, $element);
-    $this->isStatic = false;
+    return $this->render($value, $element, true);
+  }
 
-    return $result;
+  /**
+   * @return array
+   */
+  public function getTypeSettings() {
+    return array_map(function(LinkType $linkType) {
+      return $linkType->getSettings();
+    }, $this->getAvailableLinkTypes());
   }
 
   /**
@@ -333,14 +245,7 @@ class LinkField extends Field
   }
 
   /**
-   * @return bool
-   */
-  public function isStatic() {
-    return $this->isStatic;
-  }
-
-  /**
-   * @param $value
+   * @param Link $value
    * @param ElementInterface $element
    * @return bool
    */
@@ -353,32 +258,219 @@ class LinkField extends Field
   }
 
   /**
-   * @param string $type
-   * @return bool
+   * @inheritDoc
    */
-  private function isAllowedLinkType($type) {
-    $allowedLinkTypes = $this->getAllowedLinkTypes();
-    return array_key_exists($type, $allowedLinkTypes);
+  public function rules() {
+    return array_merge(parent::rules(), [
+      ['allowCustomText', 'boolean'],
+      ['allowTarget', 'boolean'],
+      ['autoNoReferrer', 'boolean'],
+      ['defaultLinkName', 'string'],
+      ['defaultText', 'string'],
+      ['enableAriaLabel', 'boolean'],
+      ['enableAllLinkTypes', 'boolean'],
+      ['enableTitle', 'boolean'],
+      ['typeSettings', 'validateTypeSettings'],
+    ]);
   }
 
   /**
-   * @param array $data
-   * @return mixed
+   * @inheritDoc
    */
-  private function getLinkValue(array $data) {
-    $linkTypes = Plugin::getInstance()->getLinkTypes();
-    $type = $data['type'];
-    if (!array_key_exists($type, $linkTypes)) {
+  public function serializeValue($value, ElementInterface $element = null) {
+    if (!($value instanceof Link)) {
       return null;
     }
 
-    return $linkTypes[$type]->getLinkValue($data[$type]);
+    $result = $value->getAttributes();
+    $result['type'] = $value->getLinkType()->name;
+    return $result;
   }
+
+  /**
+   * @inheritDoc
+   */
+  public function settingsAttributes(): array {
+    $attributes = parent::settingsAttributes();
+    $attributes[] = 'typeSettings';
+    return $attributes;
+  }
+
+  /**
+   * @param array $value
+   */
+  public function setTypeSettings(array $value) {
+    foreach ($this->getAvailableLinkTypes() as $linkName => $linkType) {
+      if (array_key_exists($linkName, $value)) {
+        $linkType->setSettings($value[$linkName]);
+      }
+    }
+  }
+
+  /**
+   * @return void
+   */
+  public function validateTypeSettings() {
+    foreach ($this->getAvailableLinkTypes() as $name => $linkType) {
+      if (!$linkType->validate()) {
+        $this->addError('linkTypes', 'Invalid link type settings for link type `' . $name . '`.');
+        return;
+      }
+    }
+  }
+
+
+  // Private methods
+  // ---------------
+
+  /**
+   * @param ElementInterface $element
+   * @return LinkRecord|null
+   */
+  private function createRecord(ElementInterface $element) {
+    $record = $this->findRecord($element);
+    if (is_null($record)) {
+      $record = new LinkRecord([
+        'elementId' => $element->id,
+        'siteId'    => $element->siteId,
+        'fieldId'   => $this->id,
+      ]);
+    }
+
+    return $record;
+  }
+
+  /**
+   * @param ElementInterface $element
+   * @return LinkRecord|null
+   */
+  private function findRecord(ElementInterface $element) {
+    return LinkRecord::findOne([
+      'elementId' => $element->id,
+      'siteId'    => $element->siteId,
+      'fieldId'   => $this->id,
+    ]);
+  }
+
+  /**
+   * @return LinkType|null
+   */
+  private function getDefaultLinkType() {
+    $linkName = $this->defaultLinkName;
+    if (empty($linkName)) {
+      return null;
+    }
+
+    $allowedLinkTypes = $this->getEnabledLinkTypes();
+    return array_key_exists($linkName, $allowedLinkTypes)
+      ? $allowedLinkTypes[$linkName]
+      : null;
+  }
+
+  /**
+   * @param Link $value
+   * @param ElementInterface $element
+   * @return Link
+   */
+  private function getEditLink(Link $value, ElementInterface $element = null) {
+    $defaultLinkType = $this->getDefaultLinkType();
+    if (
+      $value->isEmpty() &&
+      !is_null($defaultLinkType) &&
+      $value->getLinkType() !== $defaultLinkType
+    ) {
+      $value = $defaultLinkType->createLink($this, $value->getOwner(), $value->getAttributes());
+    }
+
+    $value->setOwner($element);
+    return $value;
+  }
+
+  /**
+   * @param Link $value
+   * @param ElementInterface|null $element
+   * @param bool $disabled
+   * @return string
+   * @throws Throwable
+   */
+  private function render(Link $value, ElementInterface $element = null, $disabled = false) {
+    $linkTypes  = $this->getEnabledLinkTypes();
+    $linkNames  = [];
+    $linkInputs = [];
+    $singleType = count($linkTypes) === 1 ? array_keys($linkTypes)[0] : null;
+    $value      = $this->getEditLink($value, $element);
+
+    foreach ($linkTypes as $linkName => $linkType) {
+      $linkNames[$linkName] = $linkType->getDisplayName();
+
+      // try {
+      $html = $linkType->getInputHtml($value, $disabled);
+      /* } catch (\Throwable $error) {
+        $html = Html::tag('p', \Craft::t(
+          'typedlinkfield',
+          'Error: Could not render the template for the field `{name}`.',
+          [ 'name' => $linkType->getDisplayName() ]
+        ));
+      }
+      */
+
+      $linkInputs[] = $html;
+    }
+
+    asort($linkNames);
+
+    return Craft::$app->getView()->renderTemplate(
+      'typedlinkfield/_input',
+      [
+        'disabled'    => $disabled,
+        'field'       => $this,
+        'hasSettings' => $this->hasSettings(),
+        'linkInputs'  => implode('', $linkInputs),
+        'linkNames'   => $linkNames,
+        'name'        => $this->handle,
+        'nameNs'      => Craft::$app->view->namespaceInputId($this->handle),
+        'singleType'  => $singleType,
+        'value'       => $value,
+      ]
+    );
+  }
+
+  /**
+   * @param string $linkName
+   * @return LinkType
+   */
+  private function resolveLinkType($linkName) {
+    $allowedLinkTypes = $this->getEnabledLinkTypes();
+    if (array_key_exists($linkName, $allowedLinkTypes)) {
+      return $allowedLinkTypes[$linkName];
+    }
+
+    if (array_key_exists($this->defaultLinkName, $allowedLinkTypes)) {
+      return $allowedLinkTypes[$this->defaultLinkName];
+    }
+
+    if (count($allowedLinkTypes) > 0) {
+      return reset($allowedLinkTypes);
+    }
+
+    return new LinkType();
+  }
+
+
+  // Static methods
+  // --------------
 
   /**
    * @return string
    */
   static public function displayName(): string {
-    return \Craft::t('typedlinkfield', 'Link field');
+    return Craft::t('typedlinkfield', 'Link field');
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function hasContentColumn(): bool {
+    return false;
   }
 }

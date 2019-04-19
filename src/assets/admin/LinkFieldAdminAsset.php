@@ -1,21 +1,20 @@
 <?php
 
-namespace typedlinkfield\utilities;
+namespace lenz\linkfield\assets\admin;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
 /**
- * Class CpAdminAssetBundle
- * @package typedlinkfield\utilities
+ * Class LinkFieldAdminAsset
  */
-class CpAdminAssetBundle extends AssetBundle
+class LinkFieldAdminAsset extends AssetBundle
 {
   /**
    * @return void
    */
   public function init() {
-    $this->sourcePath = dirname(__DIR__) . '/resources';
+    $this->sourcePath = __DIR__ . '/resources';
     $this->depends    = [ CpAsset::class ];
     $this->js         = [ 'LinkFieldAdmin.js' ];
     $this->css        = [ 'LinkFieldAdmin.css' ];

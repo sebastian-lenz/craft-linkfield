@@ -1,38 +1,40 @@
 <?php
 
-namespace typedlinkfield\utilities;
+namespace lenz\linkfield\listeners;
 
 use craft\elements\Category;
 use craft\elements\Asset;
 use craft\elements\Entry;
+use lenz\linkfield\fields\LinkField;
+use lenz\linkfield\models\element\ElementLinkType;
+use lenz\linkfield\models\Link;
+use lenz\linkfield\models\LinkType;
 use markhuot\CraftQL\Builders\Schema;
 use markhuot\CraftQL\Events\GetFieldSchema;
-use typedlinkfield\fields\LinkField;
-use typedlinkfield\models\ElementLinkType;
-use typedlinkfield\models\Link;
-use typedlinkfield\models\LinkTypeInterface;
+use markhuot\CraftQL\Types\CategoryInterface;
+use markhuot\CraftQL\Types\EntryInterface;
+use markhuot\CraftQL\Types\VolumeInterface;
 
 /**
  * Class CraftQLListener
- * @package typedlinkfield\utilities
  */
 class CraftQLListener {
   /**
    * @var array
    */
   static $QL_TYPES = [
-    Category::class  => \markhuot\CraftQL\Types\CategoryInterface::class,
-    Asset::class     => \markhuot\CraftQL\Types\VolumeInterface::class,
-    Entry::class     => \markhuot\CraftQL\Types\EntryInterface::class,
+    Category::class  => CategoryInterface::class,
+    Asset::class     => VolumeInterface::class,
+    Entry::class     => EntryInterface::class,
   ];
 
 
   /**
    * @param string $linkName
-   * @param LinkTypeInterface $linkType
+   * @param LinkType $linkType
    * @param Schema $schema
    */
-  private static function addElementTypeField($linkName, LinkTypeInterface $linkType, Schema $schema) {
+  private static function addElementTypeField($linkName, LinkType $linkType, Schema $schema) {
     if (!($linkType instanceof ElementLinkType)) {
       return;
     }
@@ -61,7 +63,7 @@ class CraftQLListener {
 
     $object = $event->schema->createObjectType(ucfirst($field->handle) . 'LinkType');
     $types = array();
-    foreach ($field->getAllowedLinkTypes() as $linkName => $linkType) {
+    foreach ($field->getEnabledLinkTypes() as $linkName => $linkType) {
       self::addElementTypeField($linkName, $linkType, $object);
       $types[] = $linkName;
     }
@@ -71,10 +73,6 @@ class CraftQLListener {
     $link->resolve(function($link, $args) {
         return $link instanceof Link ? (string) $link->getLink($args['text'] ?? null) : '';
     });
-
-    // Deprecated: Will be removed in 2.0
-    $object->addBooleanField('allowCustomText');
-    $object->addBooleanField('allowTarget');
 
     $object->addStringField('customText');
     $object->addStringField('defaultText');

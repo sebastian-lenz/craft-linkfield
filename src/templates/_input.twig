@@ -1,6 +1,6 @@
 {% import "_includes/forms" as forms %}
 
-{% do view.registerAssetBundle('typedlinkfield\\utilities\\CpAssetBundle') %}
+{% do view.registerAssetBundle('lenz\\linkfield\\assets\\field\\LinkFieldAsset') %}
 
 {% set type = singleType ? singleType : ( value.type is defined and value.type ? value.type : null) %}
 
@@ -14,7 +14,7 @@
       {% else %}
         <div class="linkfield--type">
           {{ forms.select({
-            disabled: isStatic,
+            disabled: disabled,
             id: name~'-Type',
             name: name~'[type]',
             options: linkNames,
@@ -27,10 +27,10 @@
         {{ linkInputs|raw }}
       </div>
 
-      {% if settings.allowTarget %}
+      {% if field.allowTarget %}
         <div class="linkfield--target">
           {{ forms.checkboxField({
-            disabled: isStatic,
+            disabled: disabled,
             id: name~'-Target',
             name: name~'[target]',
             value: '_blank',
@@ -43,20 +43,20 @@
 
     {% if hasSettings %}
       <div class="linkfield--settings{{ type == '' ? ' hidden' }}">
-        {% if settings.allowCustomText %}
+        {% if field.allowCustomText %}
           {{ forms.textField({
-            disabled: isStatic,
+            disabled: disabled,
             id: name~'-customText',
             name: name~'[customText]',
-            placeholder: settings.defaultText == '' ? 'Custom link text'|t('typedlinkfield') : settings.defaultText|t('site'),
+            placeholder: field.defaultText == '' ? 'Custom link text'|t('typedlinkfield') : field.defaultText|t('site'),
             label: 'Custom link text'|t('typedlinkfield'),
             value: value.customText is defined and value.customText ? value.customText
           }) }}
         {% endif %}
 
-        {% if settings.enableAriaLabel %}
+        {% if field.enableAriaLabel %}
           {{ forms.textField({
-            disabled: isStatic,
+            disabled: disabled,
             id: name~'-AriaLabel',
             name: name~'[ariaLabel]',
             label: 'Aria label'|t('typedlinkfield'),
@@ -64,9 +64,9 @@
           }) }}
         {% endif %}
 
-        {% if settings.enableTitle %}
+        {% if field.enableTitle %}
           {{ forms.textField({
-            disabled: isStatic,
+            disabled: disabled,
             id: name~'-Title',
             name: name~'[title]',
             label: 'Title'|t('typedlinkfield'),
@@ -76,8 +76,6 @@
       </div>
     {% endif %}
   {% endif %}
-
-  <input type="hidden" id="{{ name }}-isCpFormData" name="{{ name }}[isCpFormData]" value="true" />
 </div>
 
 {% js %}

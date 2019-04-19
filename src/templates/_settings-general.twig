@@ -6,20 +6,20 @@
   id: 'defaultLinkName',
   name: 'defaultLinkName',
   options: linkNames,
-  value: settings.defaultLinkName,
+  value: field.defaultLinkName,
 }) }}
 
 {{ forms.textField({
   label: 'Default link text'|t('typedlinkfield'),
   instructions: 'Set the default value of the link text.'|t('typedlinkfield'),
   name: 'defaultText',
-  value: settings.defaultText
+  value: field.defaultText
 }) }}
 
 {{ forms.checkboxField({
   label: 'Allow custom link text'|t('typedlinkfield'),
   name: 'allowCustomText',
-  checked: settings.allowCustomText
+  checked: field.allowCustomText
 }) }}
 
 &nbsp;
@@ -27,13 +27,13 @@
 {{ forms.checkboxField({
   label: 'Allow links to open in new window'|t('typedlinkfield'),
   name: 'allowTarget',
-  checked: settings.allowTarget
+  checked: field.allowTarget
 }) }}
 
 {{ forms.checkboxField({
   label: 'Set link relation to "noopener noreferrer" when opening links in a new window'|t('typedlinkfield'),
   name: 'autoNoReferrer',
-  checked: settings.autoNoReferrer
+  checked: field.autoNoReferrer
 }) }}
 
 &nbsp;
@@ -41,11 +41,11 @@
 {{ forms.checkboxField({
   label: 'Enable aria label support'|t('typedlinkfield'),
   name: 'enableAriaLabel',
-  checked: settings.enableAriaLabel
+  checked: field.enableAriaLabel
 }) }}
 
 {{ forms.checkboxField({
   label: 'Enable title support'|t('typedlinkfield'),
   name: 'enableTitle',
-  checked: settings.enableTitle
+  checked: field.enableTitle
 }) }}

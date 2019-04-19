@@ -1,19 +1,19 @@
 {% import "_includes/forms" as forms %}
 
 {{ forms.checkboxSelectField({
-  label: '{elementName} sources'|t('typedlinkfield', { 'elementName': elementName }),
+  label: '{elementName} sources'|t('typedlinkfield', { 'elementName': linkType.displayName }),
   instructions: 'Select the available sources.'|t('typedlinkfield'),
-  id: 'typeSettings-'~linkTypeName~'-sources',
-  name: 'typeSettings['~linkTypeName~'][sources]',
-  options: sources,
-  values: settings.sources,
+  id: "typeSettings-#{linkType.name}-sources",
+  name: "typeSettings[#{linkType.name}][sources]",
+  options: linkType.availableSources,
+  values: linkType.sources,
   showAllOption: true,
 })}}
 
 {{ forms.checkboxField({
   label: 'Allow users to enter custom queries that will be appended to the url'|t('typedlinkfield'),
   name: 'allowCustomQuery',
-  id: 'typeSettings-'~linkTypeName~'-allowCustomQuery',
-  name: 'typeSettings['~linkTypeName~'][allowCustomQuery]',
-  checked: settings.allowCustomQuery
+  id: "typeSettings-#{linkType.name}-allowCustomQuery",
+  name: "typeSettings[#{linkType.name}][allowCustomQuery]",
+  checked: linkType.allowCustomQuery
 }) }}
