@@ -6,6 +6,7 @@ use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\elements\db\ElementQueryInterface;
+use craft\helpers\Html;
 use craft\helpers\Json;
 use Exception;
 use lenz\linkfield\Plugin;
@@ -111,6 +112,10 @@ class LinkField extends Field
    * @return Link
    */
   public function normalizeValue($value, ElementInterface $element = null) {
+    if ($value instanceof Link) {
+      return $value;
+    }
+
     if (is_string($value)) {
       try {
         $value = Json::decode($value, true);
@@ -188,9 +193,14 @@ class LinkField extends Field
     $linkNames = [];
 
     foreach ($this->getAvailableLinkTypes() as $name => $linkType) {
-      $html             = $linkType->getSettingsHtml($this);
       $displayName      = $linkType->getDisplayName();
       $linkNames[$name] = $displayName;
+      $html = self::safeRender(
+        $linkType,
+        function(LinkType $linkType) {
+          $linkType->getSettingsHtml($this);
+        }
+      );
 
       $linkTypes[] = array(
         'displayName' => $displayName,
@@ -402,19 +412,12 @@ class LinkField extends Field
 
     foreach ($linkTypes as $linkName => $linkType) {
       $linkNames[$linkName] = $linkType->getDisplayName();
-
-      // try {
-      $html = $linkType->getInputHtml($value, $disabled);
-      /* } catch (\Throwable $error) {
-        $html = Html::tag('p', \Craft::t(
-          'typedlinkfield',
-          'Error: Could not render the template for the field `{name}`.',
-          [ 'name' => $linkType->getDisplayName() ]
-        ));
-      }
-      */
-
-      $linkInputs[] = $html;
+      $linkInputs[] = self::safeRender(
+        $linkType,
+        function(LinkType $linkType) use ($value, $disabled) {
+          return $linkType->getInputHtml($value, $disabled);
+        }
+      );
     }
 
     asort($linkNames);
@@ -470,7 +473,25 @@ class LinkField extends Field
   /**
    * @inheritDoc
    */
-  public static function hasContentColumn(): bool {
+  static public function hasContentColumn(): bool {
     return false;
+  }
+
+  /**
+   * @param LinkType $linkType
+   * @param callable $callback
+   * @return string
+   */
+  static private function safeRender(LinkType $linkType, callable $callback) {
+    try {
+      return $callback($linkType);
+    } catch (\Throwable $error) {
+      \Craft::error($error->getMessage());
+      return Html::tag('p', \Craft::t(
+        'typedlinkfield',
+        'Error: Could not render the template for the field `{name}`.',
+        [ 'name' => $linkType->getDisplayName() ]
+      ));
+    }
   }
 }
