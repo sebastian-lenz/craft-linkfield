@@ -41,7 +41,7 @@ class m190417_202153_migrateDataToTable extends Migration
   private function updateFieldInstances() {
     $fields = Craft::$app->getFields();
     $fields->refreshFields();
-    $allFields = $fields->getAllFields();
+    $allFields = $fields->getAllFields(false);
 
     foreach ($allFields as $field) {
       if ($field instanceof LinkField) {
@@ -83,13 +83,13 @@ class m190417_202153_migrateDataToTable extends Migration
         is_numeric($value) ? $value : null,         // linkedId
         is_numeric($value) ? $row['siteId'] : null, // linkedSiteId
         $type,                                      // type
-        is_numeric($value) ? null : $value,         // url
+        is_numeric($value) ? null : $value,         // linkedUrl
         Json::encode($payload)                      // payload
       ];
     }
 
     $this->batchInsert(LinkRecord::TABLE_NAME, [
-      'elementId', 'siteId', 'fieldId', 'linkedId', 'linkedSiteId', 'type', 'url', 'payload'
+      'elementId', 'siteId', 'fieldId', 'linkedId', 'linkedSiteId', 'type', 'linkedUrl', 'payload'
     ], $insertRows);
 
     $this->dropColumn(Table::CONTENT, $columnName);

@@ -4,13 +4,18 @@ namespace lenz\linkfield;
 
 use craft\events\RegisterComponentTypesEvent;
 use craft\services\Fields;
+use craft\utilities\ClearCaches;
 use lenz\linkfield\events\LinkTypeEvent;
 use lenz\linkfield\fields\LinkField;
+use lenz\linkfield\listeners\ElementListener;
+use lenz\linkfield\listeners\ElementListenerState;
 use lenz\linkfield\models\LinkType;
 use yii\base\Event;
 
 /**
  * Class Plugin
+ *
+ * @property ElementListener $elementListener
  */
 class Plugin extends \craft\base\Plugin
 {
@@ -31,6 +36,10 @@ class Plugin extends \craft\base\Plugin
   public function init() {
     parent::init();
 
+    $this->setComponents([
+      'elementListener' => ElementListener::class,
+    ]);
+
     Event::on(
       Fields::class,
       Fields::EVENT_REGISTER_FIELD_TYPES,
@@ -42,6 +51,16 @@ class Plugin extends \craft\base\Plugin
       'craftQlGetFieldSchema',
       [listeners\CraftQLListener::class, 'onCraftQlGetFieldSchema']
     );
+
+    Event::on(
+      ClearCaches::class,
+      ClearCaches::EVENT_REGISTER_CACHE_OPTIONS,
+      [listeners\CacheListener::class, 'onRegisterCacheOptions']
+    );
+
+    if (ElementListenerState::getInstance()->isCacheEnabled()) {
+      $this->elementListener->processStatusChanges();
+    }
   }
 
   /**

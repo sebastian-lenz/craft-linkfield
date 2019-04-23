@@ -47,17 +47,6 @@ class InputLinkType extends LinkType
   /**
    * @inheritDoc
    */
-  public function copyToRecord(Link $link, LinkRecord $record) {
-    parent::copyToRecord($link, $record);
-
-    $record->url = $link instanceof InputLink
-      ? $link->getPlainUrl()
-      : null;
-  }
-
-  /**
-   * @inheritDoc
-   */
   public function getDisplayName(): string {
     return Craft::t('typedlinkfield', $this->displayName);
   }
@@ -120,11 +109,11 @@ class InputLinkType extends LinkType
   protected function getInputField(Link $value, bool $disabled) {
     $field = $this->getFieldSettings(
       $value,
-      'url',
+      'linkedUrl',
       [
         'disabled' => $disabled,
         'value'    => $this->isSelected($value) && $value instanceOf InputLink
-          ? $value->getPlainUrl()
+          ? $value->linkedUrl
           : '',
       ]
     );
@@ -145,7 +134,7 @@ class InputLinkType extends LinkType
    */
   protected function prepareLegacyData($data) {
     return [
-      'url' => (string)$data
+      'linkedUrl' => (string)$data
     ];
   }
 }

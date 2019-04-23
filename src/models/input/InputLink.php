@@ -16,7 +16,7 @@ class InputLink extends Link
   /**
    * @var string
    */
-  public $url;
+  public $linkedUrl;
 
 
   /**
@@ -24,15 +24,8 @@ class InputLink extends Link
    */
   public function attributes() {
     return array_merge(parent::attributes(), [
-      'url',
+      'linkedUrl',
     ]);
-  }
-
-  /**
-   * @return string
-   */
-  public function getPlainUrl() {
-    return $this->url;
   }
 
   /**
@@ -43,7 +36,7 @@ class InputLink extends Link
       return null;
     }
 
-    $url = $this->url;
+    $url = $this->linkedUrl;
     if ($this->getLinkType()->allowAliases) {
       $url = Craft::getAlias($url);
     }
@@ -62,7 +55,7 @@ class InputLink extends Link
    * @inheritDoc
    */
   public function isEmpty(): bool {
-    return empty($this->url);
+    return empty($this->linkedUrl);
   }
 
   /**
@@ -70,7 +63,7 @@ class InputLink extends Link
    */
   public function rules() {
     return array_merge(parent::rules(), [
-      ['url', 'validateUrl']
+      ['linkedUrl', 'validateUrl']
     ]);
   }
 
@@ -83,7 +76,7 @@ class InputLink extends Link
       return;
     }
 
-    $url = $this->url;
+    $url = $this->linkedUrl;
     switch ($linkType->inputType) {
       case 'email':
         if (!filter_var($url, FILTER_VALIDATE_EMAIL)) {

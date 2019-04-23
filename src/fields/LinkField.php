@@ -9,6 +9,8 @@ use craft\elements\db\ElementQueryInterface;
 use craft\helpers\Html;
 use craft\helpers\Json;
 use Exception;
+use lenz\linkfield\listeners\CacheListenerJob;
+use lenz\linkfield\listeners\ElementListenerState;
 use lenz\linkfield\Plugin;
 use lenz\linkfield\models\Link;
 use lenz\linkfield\models\LinkType;
@@ -60,6 +62,11 @@ class LinkField extends Field
   /**
    * @var bool
    */
+  public $enableElementCache = false;
+
+  /**
+   * @var bool
+   */
   public $enableTitle = false;
 
   /**
@@ -85,6 +92,17 @@ class LinkField extends Field
       $link->getLinkType()->createRecord($link, $record);
       $record->save();
     }
+  }
+
+  /**
+   * @param bool $isNew
+   * @throws Exception
+   */
+  public function afterSave(bool $isNew) {
+    parent::afterSave($isNew);
+
+    ElementListenerState::getInstance()->updateFields();
+    CacheListenerJob::createForField($this);
   }
 
   /**
@@ -279,6 +297,7 @@ class LinkField extends Field
       ['defaultText', 'string'],
       ['enableAriaLabel', 'boolean'],
       ['enableAllLinkTypes', 'boolean'],
+      ['enableElementCache', 'boolean'],
       ['enableTitle', 'boolean'],
       ['typeSettings', 'validateTypeSettings'],
     ]);

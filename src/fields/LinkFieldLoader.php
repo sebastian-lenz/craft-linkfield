@@ -189,9 +189,10 @@ class LinkFieldLoader
     $tableName = 'linkfield_' . (self::$_queryTableIndex++);
     $fields = implode(',', [
       '"type"',         "[[{$tableName}.type]]",
-      '"url"',          "[[{$tableName}.url]]",
+      '"linkedUrl"',    "[[{$tableName}.linkedUrl]]",
       '"linkedId"',     "[[{$tableName}.linkedId]]",
       '"linkedSiteId"', "[[{$tableName}.linkedSiteId]]",
+      '"linkedTitle"',  "[[{$tableName}.linkedTitle]]",
       '"payload"',      "[[{$tableName}.payload]]"
     ]);
 

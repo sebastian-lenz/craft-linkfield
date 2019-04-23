@@ -23,7 +23,7 @@ class Install extends Migration
         'siteId'       => $this->integer()->notNull(),
         'fieldId'      => $this->integer()->notNull(),
         'type'         => $this->string(63),
-        'url'          => $this->text(),
+        'linkedUrl'    => $this->text(),
         'linkedId'     => $this->integer(),
         'linkedSiteId' => $this->integer(),
         'linkedTitle'  => $this->string(255),

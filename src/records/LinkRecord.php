@@ -18,7 +18,7 @@ use yii\db\ActiveQueryInterface;
  * @property int $siteId
  * @property int $fieldId
  * @property string $type
- * @property string $url
+ * @property string $linkedUrl
  * @property int $linkedId
  * @property int $linkedSiteId
  * @property string $linkedTitle
@@ -29,7 +29,7 @@ class LinkRecord extends ActiveRecord
   /**
    * @var string
    */
-  const TABLE_NAME = '{{%linkfield}}';
+  const TABLE_NAME = '{{%lenz_linkfield}}';
 
 
   /**

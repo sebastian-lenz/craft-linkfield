@@ -100,7 +100,7 @@ class LinkType extends Model
       'linkedId'     => null,
       'linkedSiteId' => null,
       'linkedTitle'  => null,
-      'url'          => null,
+      'linkedUrl'    => null,
     ];
 
     foreach ($linkAttributes as $name => $value) {

@@ -2,10 +2,14 @@
 
 namespace lenz\linkfield\models\element;
 
+use craft\base\Element;
 use craft\base\ElementInterface;
+use craft\elements\Entry;
 use lenz\linkfield\fields\LinkField;
+use lenz\linkfield\listeners\ElementListener;
 use lenz\linkfield\models\Link;
 use lenz\linkfield\models\LinkType;
+use lenz\linkfield\records\LinkRecord;
 
 /**
  * Class ElementLinkType
@@ -37,6 +41,27 @@ class ElementLinkType extends LinkType
    */
   const MODEL_CLASS = ElementLink::class;
 
+
+  /**
+   * @inheritDoc
+   */
+  public function createRecord(Link $link, LinkRecord $record) {
+    parent::createRecord($link, $record);
+
+    if (
+      $link->getField()->enableElementCache &&
+      $link instanceof ElementLink
+    ) {
+      $element = $link->getElement();
+      if ($element && ElementListener::isElementPublished($element)) {
+        $record->linkedTitle = (string)$element;
+        $record->linkedUrl   = $element->getUrl();
+      } else {
+        $record->linkedTitle = null;
+        $record->linkedUrl   = null;
+      }
+    }
+  }
 
   /**
    * @return array
@@ -172,7 +197,7 @@ class ElementLinkType extends LinkType
     ];
 
     if (!$this->allowCrossSiteLink) {
-      $criteria[] = $linkedSiteId;
+      $criteria['siteId'] = $linkedSiteId;
     }
 
     return $this->getFieldSettings(

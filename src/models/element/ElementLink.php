@@ -31,9 +31,14 @@ class ElementLink extends Link
   public $linkedSiteId;
 
   /**
-   * @var string
+   * @var string|null
    */
   public $linkedTitle;
+
+  /**
+   * @var string|null
+   */
+  public $linkedUrl;
 
   /**
    * @var ElementInterface|null
@@ -55,6 +60,7 @@ class ElementLink extends Link
       'linkedId',
       'linkedSiteId',
       'linkedTitle',
+      'linkedUrl',
     ]);
   }
 
@@ -81,6 +87,13 @@ class ElementLink extends Link
    * @return string
    */
   public function getIntrinsicText() {
+    if (
+      $this->_field->enableElementCache &&
+      !is_null($this->linkedTitle)
+    ) {
+      return $this->linkedTitle;
+    }
+
     $element = $this->getElement();
     return $element ? (string)$element : '';
   }
@@ -98,12 +111,7 @@ class ElementLink extends Link
    * @inheritDoc
    */
   public function getUrl() {
-    $element = $this->getElement();
-    if (is_null($element)) {
-      return null;
-    }
-
-    $url = $element->getUrl();
+    $url = $this->getElementUrl();
     $customQuery = is_string($this->customQuery)
       ? trim($this->customQuery)
       : '';
@@ -152,6 +160,13 @@ class ElementLink extends Link
    * @inheritDoc
    */
   public function isEmpty(): bool {
+    if (
+      $this->_field->enableElementCache &&
+      !is_null($this->linkedUrl)
+    ) {
+      return true;
+    }
+
     return !$this->hasElement();
   }
 
@@ -165,6 +180,25 @@ class ElementLink extends Link
 
   // Protected methods
   // -----------------
+
+  /**
+   * @return string|null
+   */
+  protected function getElementUrl() {
+    if (
+      $this->_field->enableElementCache &&
+      !is_null($this->linkedUrl)
+    ) {
+      return $this->linkedUrl;
+    }
+
+    $element = $this->getElement();
+    if (is_null($element)) {
+      return null;
+    }
+
+    return $element->getUrl();
+  }
 
   /**
    * @param bool $ignoreStatus
