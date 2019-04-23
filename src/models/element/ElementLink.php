@@ -87,10 +87,7 @@ class ElementLink extends Link
    * @return string
    */
   public function getIntrinsicText() {
-    if (
-      $this->_field->enableElementCache &&
-      !is_null($this->linkedTitle)
-    ) {
+    if ($this->_field->enableElementCache) {
       return $this->linkedTitle;
     }
 
@@ -160,11 +157,8 @@ class ElementLink extends Link
    * @inheritDoc
    */
   public function isEmpty(): bool {
-    if (
-      $this->_field->enableElementCache &&
-      !is_null($this->linkedUrl)
-    ) {
-      return true;
+    if ($this->_field->enableElementCache) {
+      return is_null($this->linkedUrl);
     }
 
     return !$this->hasElement();
@@ -185,10 +179,7 @@ class ElementLink extends Link
    * @return string|null
    */
   protected function getElementUrl() {
-    if (
-      $this->_field->enableElementCache &&
-      !is_null($this->linkedUrl)
-    ) {
+    if ($this->_field->enableElementCache) {
       return $this->linkedUrl;
     }
 

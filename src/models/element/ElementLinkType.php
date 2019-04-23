@@ -2,9 +2,7 @@
 
 namespace lenz\linkfield\models\element;
 
-use craft\base\Element;
 use craft\base\ElementInterface;
-use craft\elements\Entry;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\listeners\ElementListener;
 use lenz\linkfield\models\Link;
