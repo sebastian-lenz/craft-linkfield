@@ -58,7 +58,10 @@ class Plugin extends \craft\base\Plugin
       [listeners\CacheListener::class, 'onRegisterCacheOptions']
     );
 
-    if (ElementListenerState::getInstance()->isCacheEnabled()) {
+    if (
+      \Craft::$app->isInstalled &&
+      ElementListenerState::getInstance()->isCacheEnabled()
+    ) {
       $this->elementListener->processStatusChanges();
     }
   }

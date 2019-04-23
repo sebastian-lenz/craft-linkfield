@@ -38,8 +38,8 @@ class BasicTest extends AbstractLinkFieldTest
     $link = $this->createAndFetchEntry([
       'title'          => 'URL Link',
       'basicLinkField' => self::$field->normalizeValue([
-        'type' => 'url',
-        'url'  => self::TEST_URL,
+        'type'      => 'url',
+        'linkedUrl' => self::TEST_URL,
       ]),
     ]);
 
@@ -130,7 +130,7 @@ class BasicTest extends AbstractLinkFieldTest
         'customText'  => self::TEST_CAPTION,
         'title'       => self::TEST_TITLE,
         'type'        => 'url',
-        'url'         => 'http://www.google.de',
+        'linkedUrl'   => 'http://www.google.de',
       ]),
     ]);
 
