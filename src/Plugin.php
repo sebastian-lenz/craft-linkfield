@@ -2,14 +2,17 @@
 
 namespace lenz\linkfield;
 
+use Craft;
 use craft\events\RegisterComponentTypesEvent;
 use craft\services\Fields;
+use craft\services\Plugins;
 use craft\utilities\ClearCaches;
 use lenz\linkfield\events\LinkTypeEvent;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\listeners\ElementListener;
 use lenz\linkfield\listeners\ElementListenerState;
 use lenz\linkfield\models\LinkType;
+use Throwable;
 use yii\base\Event;
 
 /**
@@ -47,6 +50,12 @@ class Plugin extends \craft\base\Plugin
     );
 
     Event::on(
+      Plugins::class,
+      Plugins::EVENT_AFTER_LOAD_PLUGINS,
+      [$this, 'onAfterLoadPlugins']
+    );
+
+    Event::on(
       LinkField::class,
       'craftQlGetFieldSchema',
       [listeners\CraftQLListener::class, 'onCraftQlGetFieldSchema']
@@ -57,13 +66,6 @@ class Plugin extends \craft\base\Plugin
       ClearCaches::EVENT_REGISTER_CACHE_OPTIONS,
       [listeners\CacheListener::class, 'onRegisterCacheOptions']
     );
-
-    if (
-      \Craft::$app->isInstalled &&
-      ElementListenerState::getInstance()->isCacheEnabled()
-    ) {
-      $this->elementListener->processStatusChanges();
-    }
   }
 
   /**
@@ -74,6 +76,22 @@ class Plugin extends \craft\base\Plugin
     $event = new LinkTypeEvent($field);
     $this->trigger(self::EVENT_REGISTER_LINK_TYPES, $event);
     return $event->linkTypes;
+  }
+
+  /**
+   * @return void
+   */
+  public function onAfterLoadPlugins() {
+    try {
+      if (
+        Craft::$app->isInstalled &&
+        ElementListenerState::getInstance()->isCacheEnabled()
+      ) {
+        $this->elementListener->processStatusChanges();
+      }
+    } catch (Throwable $error) {
+      Craft::error($error->getMessage());
+    }
   }
 
   /**
