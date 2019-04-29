@@ -5,8 +5,10 @@ namespace typedlinkfield\models;
 use Craft;
 use craft\base\ElementInterface;
 use craft\helpers\Html;
+use craft\validators\UrlValidator;
 use typedlinkfield\fields\LinkField;
 use yii\base\Model;
+use yii\validators\EmailValidator;
 
 /**
  * Class InputLinkType
@@ -244,10 +246,16 @@ class InputLinkType extends Model implements LinkTypeInterface
       return null;
     }
 
+    $enableIDN = (
+      Craft::$app->getI18n()->getIsIntlLoaded() &&
+      defined('INTL_IDNA_VARIANT_UTS46')
+    );
+
     switch ($this->inputType) {
       case('email'):
-        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-          return [\Craft::t('typedlinkfield', 'Please enter a valid email address.'), []];
+        (new EmailValidator(['enableIDN' => $enableIDN]))->validate($value, $error);
+        if (!is_null($error)) {
+          return [$error, []];
         }
         break;
 
@@ -259,9 +267,9 @@ class InputLinkType extends Model implements LinkTypeInterface
         break;
 
       case('url'):
-        $value = idn_to_ascii($value,IDNA_NONTRANSITIONAL_TO_ASCII,INTL_IDNA_VARIANT_UTS46);
-        if (!filter_var($value, FILTER_VALIDATE_URL)) {
-          return [\Craft::t('typedlinkfield', 'Please enter a valid url.'), []];
+        (new UrlValidator(['enableIDN' => $enableIDN]))->validate($value, $error);
+        if (!is_null($error)) {
+          return [$error, []];
         }
         break;
     }
