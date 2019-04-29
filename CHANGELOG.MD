@@ -1,5 +1,8 @@
 # Release Notes for Typed Link Field
 
+## 2.0.0-beta.3 - 2019-04-29
+- Fix an issue when another plugin tries to access a link field before the plugin has been loaded (see https://github.com/sebastian-lenz/craft-linkfield/issues/61)
+
 ## 2.0.0-beta.2 - 2019-04-29
 - Merge hotfix from v1.0.19
 
