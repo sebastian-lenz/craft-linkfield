@@ -70,12 +70,13 @@ class InputLink extends Link
   }
 
   /**
-   * @return array|void|null
+   * @param string $attribute
+   * @return array|null
    */
-  public function validateUrl() {
+  public function validateUrl($attribute) {
     $linkType = $this->getLinkType();
     if ($this->isEmpty() || $linkType->disableValidation) {
-      return;
+      return null;
     }
 
     $url = $this->linkedUrl;
@@ -88,21 +89,21 @@ class InputLink extends Link
       case 'email':
         (new EmailValidator(['enableIDN' => $enableIDN]))->validate($url, $error);
         if (!is_null($error)) {
-          return [$error, []];
+          $this->addError($attribute, $error);
         }
         break;
 
       case 'tel':
         $regexp = '/^[0-9+\(\)#\.\s\/ext-]+$/';
         if (!filter_var($url, FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $regexp)))) {
-          return [Craft::t('typedlinkfield', 'Please enter a valid phone number.'), []];
+          $this->addError($attribute, Craft::t('typedlinkfield', 'Please enter a valid phone number.'));
         }
         break;
 
       case 'url':
         (new UrlValidator(['enableIDN' => $enableIDN]))->validate($url, $error);
         if (!is_null($error)) {
-          return [$error, []];
+          $this->addError($attribute, $error);
         }
         break;
     }

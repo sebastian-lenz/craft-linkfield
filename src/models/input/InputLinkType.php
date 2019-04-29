@@ -111,6 +111,7 @@ class InputLinkType extends LinkType
       $value,
       'linkedUrl',
       [
+        'class'    => $value->hasErrors('linkedUrl') ? 'error' : '',
         'disabled' => $disabled,
         'value'    => $this->isSelected($value) && $value instanceOf InputLink
           ? $value->linkedUrl

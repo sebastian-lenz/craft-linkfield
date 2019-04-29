@@ -20,8 +20,15 @@ class LinkFieldValidator extends Validator
       return ['The given value is not a valid link.'];
     }
 
-    return $value->validate()
-      ? null
-      : $value->errors;
+    if ($value->validate()) {
+      return null;
+    }
+
+    $error = implode(' ', array_map(
+      'ucfirst',
+      $value->getFirstErrors()
+    ));
+
+    return [$error, []];
   }
 }

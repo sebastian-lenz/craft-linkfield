@@ -179,8 +179,6 @@ class ElementLinkType extends LinkType
    * @return array
    */
   protected function getElementField(Link $value) {
-    $owner = $value->getOwner();
-
     if ($this->isSelected($value) && $value instanceof ElementLink) {
       $linkedElements = array_filter([ $value->getElement() ]);
       $linkedSiteId   = $value->getSiteId();
