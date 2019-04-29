@@ -113,15 +113,14 @@ class ElementLinkType extends Model implements LinkTypeInterface
     } catch (\Exception $e) {}
 
     $selectFieldOptions = [
-      'criteria'        => $criteria,
-      'elementType'     => $this->elementType,
-      'elements'        => $elements,
-      'id'              => $field->handle . '-' . $linkTypeName,
-      'limit'           => 1,
-      'name'            => $field->handle . '[' . $linkTypeName . ']',
-      'storageKey'      => 'field.' . $field->handle,
-      'sources'         => $sources === '*' ? null : $sources,
-      'sourceElementId' => !empty($element->id) ? $element->id : null,
+      'criteria'    => $criteria,
+      'elementType' => $this->elementType,
+      'elements'    => $elements,
+      'id'          => $field->handle . '-' . $linkTypeName,
+      'limit'       => 1,
+      'name'        => $field->handle . '[' . $linkTypeName . ']',
+      'storageKey'  => 'field.' . $field->handle,
+      'sources'     => $sources === '*' ? null : $sources,
     ];
 
     $queryFieldOptions = null;
