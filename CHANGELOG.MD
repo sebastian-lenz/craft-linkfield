@@ -1,11 +1,16 @@
 # Release Notes for Typed Link Field
 
+## 1.0.19 - 2019-04-29
+Yesterdays release unfortunately contains a change to the url validator that causes trouble, we therefore issue a hotfix. 
+- Fix url validation not accepting long urls (see https://github.com/sebastian-lenz/craft-linkfield/issues/62)
+- Remove element source restriction on element link fields
+
+> {note} Big update ahead! We are working on version 2 and we would be pleased to receive your feedback, please see https://github.com/sebastian-lenz/craft-linkfield/issues/61
+
 ## 1.0.18 - 2019-04-28
 - Fix an issue when loading empty field values (see https://github.com/sebastian-lenz/craft-linkfield/issues/55, https://github.com/sebastian-lenz/craft-linkfield/pull/56)
 - Fix an issue causing the page preview to not work probably (https://github.com/sebastian-lenz/craft-linkfield/issues/53)
 - Allow domains with non-ASCII characters (see https://github.com/sebastian-lenz/craft-linkfield/pull/57)
-
-> {note} Big update ahead! We are working on version 2 and we would be pleased to receive your feedback, please see https://github.com/sebastian-lenz/craft-linkfield/issues/61
 
 ## 1.0.17 - 2019-02-05
 - Fix: Rewriting element sources from Craft 3.0 fails (see https://github.com/sebastian-lenz/craft-linkfield/issues/50)
