@@ -69,16 +69,6 @@ class Plugin extends \craft\base\Plugin
   }
 
   /**
-   * @param LinkField $field
-   * @return LinkType[]
-   */
-  public function getLinkTypes(LinkField $field) {
-    $event = new LinkTypeEvent($field);
-    $this->trigger(self::EVENT_REGISTER_LINK_TYPES, $event);
-    return $event->linkTypes;
-  }
-
-  /**
    * @return void
    */
   public function onAfterLoadPlugins() {
@@ -99,5 +89,27 @@ class Plugin extends \craft\base\Plugin
    */
   public function onRegisterFieldTypes(RegisterComponentTypesEvent $event) {
     $event->types[] = LinkField::class;
+  }
+
+
+  // Static methods
+  // --------------
+
+  /**
+   * @param LinkField $field
+   * @return LinkType[]
+   */
+  public static function getLinkTypes(LinkField $field) {
+    $event = new LinkTypeEvent($field);
+    $plugin = self::getInstance();
+
+    if (is_null($plugin)) {
+      Craft::warning('Link field `getLinkTypes` called before the plugin has been loaded.');
+      Event::trigger(self::class, self::EVENT_REGISTER_LINK_TYPES, $event);
+    } else {
+      $plugin->trigger(self::EVENT_REGISTER_LINK_TYPES, $event);
+    }
+
+    return $event->linkTypes;
   }
 }

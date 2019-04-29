@@ -155,7 +155,7 @@ class LinkField extends Field
    */
   public function getAvailableLinkTypes() {
     if (!isset($this->_linkTypes)) {
-      $linkTypes = Plugin::getInstance()->getLinkTypes($this);
+      $linkTypes = Plugin::getLinkTypes($this);
       foreach ($linkTypes as $name => $linkType) {
         $linkType->name = $name;
       }
