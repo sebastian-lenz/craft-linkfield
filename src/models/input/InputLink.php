@@ -3,7 +3,9 @@
 namespace lenz\linkfield\models\input;
 
 use Craft;
+use craft\validators\UrlValidator;
 use lenz\linkfield\models\Link;
+use yii\validators\EmailValidator;
 
 /**
  * Class InputLink
@@ -77,10 +79,16 @@ class InputLink extends Link
     }
 
     $url = $this->linkedUrl;
+    $enableIDN = (
+      Craft::$app->getI18n()->getIsIntlLoaded() &&
+      defined('INTL_IDNA_VARIANT_UTS46')
+    );
+
     switch ($linkType->inputType) {
       case 'email':
-        if (!filter_var($url, FILTER_VALIDATE_EMAIL)) {
-          return [Craft::t('typedlinkfield', 'Please enter a valid email address.'), []];
+        (new EmailValidator(['enableIDN' => $enableIDN]))->validate($url, $error);
+        if (!is_null($error)) {
+          return [$error, []];
         }
         break;
 
@@ -92,9 +100,9 @@ class InputLink extends Link
         break;
 
       case 'url':
-        $url = idn_to_ascii($url,IDNA_NONTRANSITIONAL_TO_ASCII,INTL_IDNA_VARIANT_UTS46);
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-          return [Craft::t('typedlinkfield', 'Please enter a valid url.'), []];
+        (new UrlValidator(['enableIDN' => $enableIDN]))->validate($url, $error);
+        if (!is_null($error)) {
+          return [$error, []];
         }
         break;
     }

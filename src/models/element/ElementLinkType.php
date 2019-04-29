@@ -207,7 +207,6 @@ class ElementLinkType extends LinkType
         'elements'        => $linkedElements,
         'limit'           => 1,
         'showSiteMenu'    => $this->allowCrossSiteLink,
-        'sourceElementId' => is_null($owner) ? null : $owner->getId(),
         'sources'         => $this->sources === '*' ? null : $this->sources,
         'storageKey'      => "linkfield.{$value->getField()->handle}.{$this->name}",
       ]
