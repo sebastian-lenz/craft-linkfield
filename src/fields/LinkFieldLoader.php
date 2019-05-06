@@ -233,6 +233,14 @@ class LinkFieldLoader
    * @return bool
    */
   private static function enableEagerLoad(LinkField $field, ElementQuery $query) {
+    // Ignore count queries
+    if (
+      count($query->select) == 1 &&
+      $query->select[0] == 'COUNT(*)'
+    ) {
+      return false;
+    }
+
     $handle = $field->handle;
     if ($query->with == $handle) {
       $query->with = null;
@@ -243,7 +251,7 @@ class LinkFieldLoader
       $query->with = array_filter(
         $query->with,
         function($with) use ($handle) {
-          return $with == $handle;
+          return $with != $handle;
         }
       );
 
