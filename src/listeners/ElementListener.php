@@ -5,7 +5,6 @@ namespace lenz\linkfield\listeners;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\elements\Entry;
-use craft\events\ModelEvent;
 use lenz\linkfield\records\LinkRecord;
 use yii\base\Event;
 
@@ -23,10 +22,10 @@ class ElementListener
   }
 
   /**
-   * @param ModelEvent $event
+   * @param Event $event
    * @throws \Exception
    */
-  public function onElementChanged(ModelEvent $event) {
+  public function onElementChanged(Event $event) {
     $element = $event->sender;
     if ($element instanceof ElementInterface) {
       ElementListenerState::getInstance()->updateChangeDate();
