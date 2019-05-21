@@ -5,7 +5,12 @@
   "license": "MIT",
   "require": {
     "php": "^7.0",
-    "craftcms/cms": "^3.1.0"
+    "craftcms/cms": "^3.1.0",
+    "sebastianlenz/craft-utils": "dev-master"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.5",
+    "markhuot/craftql": "^1.0.0"
   },
   "autoload": {
     "classmap": ["legacy/"],
@@ -18,10 +23,6 @@
     "name": "Typed link field",
     "developer": "Sebastian Lenz",
     "developerUrl": "https://github.com/sebastian-lenz/"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^7.5",
-    "markhuot/craftql": "^1.0.0"
   },
   "scripts": {
     "test": "./vendor/bin/phpunit ./tests",
