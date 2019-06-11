@@ -42,6 +42,7 @@ abstract class AbstractLinkFieldTest extends TestCase
     self::initCraft();
     self::installCraft();
   }
+
   /**
    * @param array $options
    * @return FieldInterface
@@ -216,12 +217,6 @@ abstract class AbstractLinkFieldTest extends TestCase
         'components' => [
           'config' => $configService,
         ],
-        'modules' => [
-          'typedlinkfield' => Plugin::class,
-        ],
-        'bootstrap' => [
-          'typedlinkfield'
-        ],
       ],
       require "{$craftSrcPath}/config/app.php",
       require "{$craftSrcPath}/config/app.{$appType}.php",
@@ -288,7 +283,6 @@ abstract class AbstractLinkFieldTest extends TestCase
     $infoProperty->setValue(Craft::$app, null);
 
     // Install the plugin
-    $install = new \lenz\linkfield\migrations\Install();
-    $install->safeUp();
+    self::$craft->getPlugins()->installPlugin('typedlinkfield');
   }
 }
