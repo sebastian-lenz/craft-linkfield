@@ -31,6 +31,11 @@ class LinkType extends Model
   public $name;
 
   /**
+   * @var string
+   */
+  protected $_translatedDisplayGroup;
+
+  /**
    * The class of the link model associated with this type.
    * @var string
    */
@@ -90,36 +95,14 @@ class LinkType extends Model
   }
 
   /**
-   * @param Link $link
-   * @param LinkRecord $record
-   */
-  public function createRecord(Link $link, LinkRecord $record) {
-    $payload = [];
-    $recordAttributes = $record->attributes();
-    $linkAttributes = $link->getAttributes() + [
-      'linkedId'     => null,
-      'linkedSiteId' => null,
-      'linkedTitle'  => null,
-      'linkedUrl'    => null,
-    ];
-
-    foreach ($linkAttributes as $name => $value) {
-      if (in_array($name, $recordAttributes)) {
-        $record->$name = $value;
-      } else if (!empty($value)) {
-        $payload[$name] = $value;
-      }
-    }
-
-    $record->payload = \craft\helpers\Json::encode($payload);
-    $record->type = $link->getType();
-  }
-
-  /**
    * @return string
    */
-  public function getDisplayGroup(): string {
-    return \Craft::t('typedlinkfield', $this->displayGroup);
+  public function getTranslatedDisplayGroup(): string {
+    if (!isset($this->_translatedDisplayGroup)) {
+      $this->_translatedDisplayGroup = \Craft::t('typedlinkfield', $this->displayGroup);
+    }
+
+    return $this->_translatedDisplayGroup;
   }
 
   /**
@@ -191,25 +174,37 @@ class LinkType extends Model
     return ['enabled'];
   }
 
+  /**
+   * @param Link $model
+   * @return array
+   */
+  public function toRecordAttributes(Link $model) {
+    $attributes       = [];
+    $payload          = [];
+    $recordAttributes = LinkField::recordModelAttributes();
+    $modelAttributes  = $model->getAttributes() + [
+      'linkedId'     => null,
+      'linkedSiteId' => null,
+      'linkedTitle'  => null,
+      'linkedUrl'    => null,
+    ];
+
+    foreach ($modelAttributes as $name => $value) {
+      if (in_array($name, $recordAttributes)) {
+        $attributes[$name] = $value;
+      } else if (!empty($value)) {
+        $payload[$name] = $value;
+      }
+    }
+
+    $attributes['payload'] = \craft\helpers\Json::encode($payload);
+    $attributes['type'] = $model->getType();
+    return $attributes;
+  }
+
 
   // Protected methods
   // -----------------
-
-  /**
-   * @param Link $value
-   * @param string $name
-   * @param array $data
-   * @return array
-   */
-  protected function getFieldSettings(Link $value, string $name, array $data = []) {
-    $fieldHandle = $value->getField()->handle;
-    $typeName    = $this->name;
-
-    return [
-      'id'   => "{$fieldHandle}-cpForm-{$typeName}-{$name}",
-      'name' => "{$fieldHandle}[cpForm][{$typeName}][{$name}]",
-    ] + $data;
-  }
 
   /**
    * @param array $data

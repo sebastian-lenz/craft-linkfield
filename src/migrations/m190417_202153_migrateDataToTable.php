@@ -19,7 +19,7 @@ class m190417_202153_migrateDataToTable extends Migration
    * @inheritdoc
    */
   public function safeUp() {
-    if (!$this->db->tableExists(LinkRecord::TABLE_NAME)) {
+    if (!$this->db->tableExists(LinkRecord::tableName())) {
       (new Install())->safeUp();
     }
 
@@ -88,7 +88,7 @@ class m190417_202153_migrateDataToTable extends Migration
       ];
     }
 
-    $this->batchInsert(LinkRecord::TABLE_NAME, [
+    $this->batchInsert(LinkRecord::tableName(), [
       'elementId', 'siteId', 'fieldId', 'linkedId', 'linkedSiteId', 'type', 'linkedUrl', 'payload'
     ], $insertRows);
 

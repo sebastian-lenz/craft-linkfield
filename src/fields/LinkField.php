@@ -4,25 +4,21 @@ namespace lenz\linkfield\fields;
 
 use Craft;
 use craft\base\ElementInterface;
-use craft\base\Field;
 use craft\elements\db\ElementQueryInterface;
-use craft\helpers\Html;
-use craft\helpers\Json;
 use Exception;
+use lenz\craft\utils\foreignField\ForeignField;
+use lenz\craft\utils\foreignField\ForeignFieldModel;
 use lenz\linkfield\listeners\CacheListenerJob;
 use lenz\linkfield\listeners\ElementListenerState;
 use lenz\linkfield\Plugin;
 use lenz\linkfield\models\Link;
 use lenz\linkfield\models\LinkType;
 use lenz\linkfield\records\LinkRecord;
-use Throwable;
-use yii\behaviors\AttributeTypecastBehavior;
 
 /**
  * Class LinkField
- * @package lenz\linkfield\fields
  */
-class LinkField extends Field
+class LinkField extends ForeignField
 {
   /**
    * @var bool
@@ -76,25 +72,6 @@ class LinkField extends Field
 
 
   /**
-   * @inheritDoc
-   */
-  public function afterElementSave(ElementInterface $element, bool $isNew) {
-    parent::afterElementSave($element, $isNew);
-
-    try {
-      $link = $element->getFieldValue($this->handle);
-    } catch (\Throwable $error) {
-      $link = null;
-    }
-
-    if ($link instanceof Link) {
-      $record = $this->createRecord($element);
-      $link->getLinkType()->createRecord($link, $record);
-      $record->save();
-    }
-  }
-
-  /**
    * @param bool $isNew
    * @throws Exception
    */
@@ -108,46 +85,9 @@ class LinkField extends Field
   /**
    * @inheritDoc
    */
-  public function behaviors() {
-    return [
-      'typecast' => [
-        'class' => AttributeTypecastBehavior::class,
-      ],
-    ];
-  }
-
-  /**
-   * @inheritDoc
-   */
   public function modifyElementsQuery(ElementQueryInterface $query, $value) {
     LinkFieldLoader::attachTo($this, $query, $value);
     return null;
-  }
-
-  /**
-   * @param $value
-   * @param ElementInterface|null $element
-   * @return Link
-   */
-  public function normalizeValue($value, ElementInterface $element = null) {
-    if ($value instanceof Link) {
-      return $value;
-    }
-
-    if (is_string($value)) {
-      try {
-        $value = Json::decode($value, true);
-      } catch (Exception $e) {}
-    }
-
-    if (!is_array($value)) {
-      $record = $this->findRecord($element);
-      $value = is_null($record) ? [] : $record->getAttributes();
-    }
-
-    return $this
-      ->resolveLinkType(isset($value['type']) ? $value['type'] : '')
-      ->createLink($this, $element, $value);
   }
 
   /**
@@ -160,6 +100,12 @@ class LinkField extends Field
         $linkType->name = $name;
       }
 
+      uasort($linkTypes, function(LinkType $a, LinkType $b) {
+        return $a->getTranslatedDisplayGroup() === $b->getTranslatedDisplayGroup()
+          ? strcmp($a->getDisplayName(), $b->getDisplayName())
+          : strcmp($a->getTranslatedDisplayGroup(), $b->getTranslatedDisplayGroup());
+      });
+
       $this->_linkTypes = $linkTypes;
     }
 
@@ -167,12 +113,15 @@ class LinkField extends Field
   }
 
   /**
-   * @return array
+   * @return string[]
    */
-  public function getElementValidationRules(): array {
-    return [
-      [LinkFieldValidator::class],
-    ];
+  public function getAvailableLinkTypeNames() {
+    $linkNames = array_map(function(LinkType $type) {
+      return $type->getDisplayName();
+    }, $this->getAvailableLinkTypes());
+
+    asort($linkNames);
+    return $linkNames;
   }
 
   /**
@@ -192,64 +141,15 @@ class LinkField extends Field
   }
 
   /**
-   * @param Link $value
-   * @param ElementInterface|null $element
-   * @return string
-   * @throws Throwable
+   * @return string[]
    */
-  public function getInputHtml($value, ElementInterface $element = null): string {
-    return $this->render($value, $element);
-  }
-
-  /**
-   * @return string
-   * @throws Throwable
-   */
-  public function getSettingsHtml() {
-    $namespace = Craft::$app->view->namespaceInputId('linkField');
-    $linkTypes = [];
-    $linkNames = [];
-
-    foreach ($this->getAvailableLinkTypes() as $name => $linkType) {
-      $displayName      = $linkType->getDisplayName();
-      $linkNames[$name] = $displayName;
-      $html = self::safeRender(
-        $linkType,
-        function(LinkType $linkType) {
-          return $linkType->getSettingsHtml($this);
-        }
-      );
-
-      $linkTypes[] = array(
-        'displayName' => $displayName,
-        'enabled'     => $linkType->enabled,
-        'name'        => $name,
-        'group'       => $linkType->getDisplayGroup(),
-        'settings'    => $html,
-      );
-    }
+  public function getEnabledLinkTypeNames() {
+    $linkNames = array_map(function(LinkType $type) {
+      return $type->getDisplayName();
+    }, $this->getEnabledLinkTypes());
 
     asort($linkNames);
-    usort($linkTypes, function($a, $b) {
-      return $a['group'] === $b['group']
-        ? strcmp($a['displayName'], $b['displayName'])
-        : strcmp($a['group'], $b['group']);
-    });
-
-    return Craft::$app->getView()->renderTemplate('typedlinkfield/_settings', [
-      'field'     => $this,
-      'name'      => 'linkField',
-      'nameNs'    => $namespace,
-      'linkTypes' => $linkTypes,
-      'linkNames' => $linkNames,
-    ]);
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function getStaticHtml($value, ElementInterface $element): string {
-    return $this->render($value, $element, true);
+    return $linkNames;
   }
 
   /**
@@ -259,6 +159,13 @@ class LinkField extends Field
     return array_map(function(LinkType $linkType) {
       return $linkType->getSettings();
     }, $this->getAvailableLinkTypes());
+  }
+
+  /**
+   * @return bool
+   */
+  public function hasSingleLinkType() {
+    return count($this->getEnabledLinkTypeNames()) == 1;
   }
 
   /**
@@ -273,16 +180,16 @@ class LinkField extends Field
   }
 
   /**
-   * @param Link $value
-   * @param ElementInterface $element
-   * @return bool
+   * @param mixed $model
+   * @return string|null
    */
-  public function isValueEmpty($value, ElementInterface $element): bool {
-    if ($value instanceof Link) {
-      return $value->isEmpty();
+  public function resolveSelectedLinkTypeName($model) {
+    $linkTypes = $this->getEnabledLinkTypes();
+    if (count($linkTypes) === 1) {
+      return array_keys($linkTypes)[0];
     }
 
-    return true;
+    return $model instanceof Link ? $model->getType() : null;
   }
 
   /**
@@ -301,19 +208,6 @@ class LinkField extends Field
       ['enableTitle', 'boolean'],
       ['typeSettings', 'validateTypeSettings'],
     ]);
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function serializeValue($value, ElementInterface $element = null) {
-    if (!($value instanceof Link)) {
-      return null;
-    }
-
-    $result = $value->getAttributes();
-    $result['type'] = $value->getLinkType()->name;
-    return $result;
   }
 
   /**
@@ -349,42 +243,22 @@ class LinkField extends Field
   }
 
 
-  // Private methods
-  // ---------------
+  // Protected methods
+  // -----------------
 
   /**
-   * @param ElementInterface $element
-   * @return LinkRecord|null
+   * @inheritDoc
    */
-  private function createRecord(ElementInterface $element) {
-    $record = $this->findRecord($element);
-    if (is_null($record)) {
-      $record = new LinkRecord([
-        'elementId' => $element->id,
-        'siteId'    => $element->siteId,
-        'fieldId'   => $this->id,
-      ]);
-    }
-
-    return $record;
-  }
-
-  /**
-   * @param ElementInterface $element
-   * @return LinkRecord|null
-   */
-  private function findRecord(ElementInterface $element) {
-    return LinkRecord::findOne([
-      'elementId' => $element->id,
-      'siteId'    => $element->siteId,
-      'fieldId'   => $this->id,
-    ]);
+  protected function createModel(array $attributes = [], ElementInterface $element = null) {
+    return $this
+      ->resolveLinkType(isset($attributes['type']) ? $attributes['type'] : '')
+      ->createLink($this, $element, $attributes);
   }
 
   /**
    * @return LinkType|null
    */
-  private function getDefaultLinkType() {
+  protected function getDefaultLinkType() {
     $linkName = $this->defaultLinkName;
     if (empty($linkName)) {
       return null;
@@ -401,7 +275,7 @@ class LinkField extends Field
    * @param ElementInterface $element
    * @return Link
    */
-  private function getEditLink(Link $value, ElementInterface $element = null) {
+  protected function getEditLink(Link $value, ElementInterface $element = null) {
     $defaultLinkType = $this->getDefaultLinkType();
     if (
       $value->isEmpty() &&
@@ -416,52 +290,10 @@ class LinkField extends Field
   }
 
   /**
-   * @param Link $value
-   * @param ElementInterface|null $element
-   * @param bool $disabled
-   * @return string
-   * @throws Throwable
-   */
-  private function render(Link $value, ElementInterface $element = null, $disabled = false) {
-    $linkTypes  = $this->getEnabledLinkTypes();
-    $linkNames  = [];
-    $linkInputs = [];
-    $singleType = count($linkTypes) === 1 ? array_keys($linkTypes)[0] : null;
-    $value      = $this->getEditLink($value, $element);
-
-    foreach ($linkTypes as $linkName => $linkType) {
-      $linkNames[$linkName] = $linkType->getDisplayName();
-      $linkInputs[] = self::safeRender(
-        $linkType,
-        function(LinkType $linkType) use ($value, $disabled) {
-          return $linkType->getInputHtml($value, $disabled);
-        }
-      );
-    }
-
-    asort($linkNames);
-
-    return Craft::$app->getView()->renderTemplate(
-      'typedlinkfield/_input',
-      [
-        'disabled'    => $disabled,
-        'field'       => $this,
-        'hasSettings' => $this->hasSettings(),
-        'linkInputs'  => implode('', $linkInputs),
-        'linkNames'   => $linkNames,
-        'name'        => $this->handle,
-        'nameNs'      => Craft::$app->view->namespaceInputId($this->handle),
-        'singleType'  => $singleType,
-        'value'       => $value,
-      ]
-    );
-  }
-
-  /**
    * @param string $linkName
    * @return LinkType
    */
-  private function resolveLinkType($linkName) {
+  protected function resolveLinkType($linkName) {
     $allowedLinkTypes = $this->getEnabledLinkTypes();
     if (array_key_exists($linkName, $allowedLinkTypes)) {
       return $allowedLinkTypes[$linkName];
@@ -478,6 +310,18 @@ class LinkField extends Field
     return new LinkType();
   }
 
+  /**
+   * @inheritDoc
+   */
+  protected function toRecordAttributes(ForeignFieldModel $model, ElementInterface $element) {
+    if (!($model instanceof Link)) {
+      throw new \InvalidArgumentException('$model mus be an instance of Link');
+    }
+
+    return $model->getLinkType()
+      ->toRecordAttributes($model);
+  }
+
 
   // Static methods
   // --------------
@@ -486,32 +330,49 @@ class LinkField extends Field
    * @return string
    */
   static public function displayName(): string {
-    return Craft::t('typedlinkfield', 'Link field');
+    return self::t('Link field');
   }
 
   /**
    * @inheritDoc
    */
-  static public function hasContentColumn(): bool {
-    return false;
+  public static function inputTemplate(): string {
+    return 'typedlinkfield/_input';
   }
 
   /**
-   * @param LinkType $linkType
-   * @param callable $callback
-   * @return string
+   * @inheritDoc
    */
-  static private function safeRender(LinkType $linkType, callable $callback) {
-    try {
-      return $callback($linkType);
-    } catch (\Throwable $error) {
-      \Craft::error($error->getMessage());
-      return Html::tag('p', \Craft::t(
-        'typedlinkfield',
-        'Error: Could not render the template for the field `{name}`.',
-        [ 'name' => $linkType->getDisplayName() ]
-      ));
-    }
+  public static function modelClass(): string {
+    return Link::class;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function recordClass(): string {
+    return LinkRecord::class;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function recordModelAttributes(): array {
+    return [
+      'linkedId',
+      'linkedSiteId',
+      'linkedTitle',
+      'linkedUrl' ,
+      'payload',
+      'type',
+    ];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function settingsTemplate() {
+    return 'typedlinkfield/_settings';
   }
 
   /**
@@ -525,5 +386,12 @@ class LinkField extends Field
       self::TRANSLATION_METHOD_LANGUAGE,
       self::TRANSLATION_METHOD_CUSTOM,
     ];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function t(string $message): string {
+    return Craft::t('typedlinkfield', $message);
   }
 }

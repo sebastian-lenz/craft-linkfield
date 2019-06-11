@@ -60,7 +60,6 @@ class InputLinkType extends LinkType
       [
         'inputField' => $this->getInputField($value, $disabled),
         'linkType'   => $this,
-        'selected'   => $this->isSelected($value),
       ]
     );
   }
@@ -107,17 +106,15 @@ class InputLinkType extends LinkType
    * @return array
    */
   protected function getInputField(Link $value, bool $disabled) {
-    $field = $this->getFieldSettings(
-      $value,
-      'linkedUrl',
-      [
-        'class'    => $value->hasErrors('linkedUrl') ? 'error' : '',
-        'disabled' => $disabled,
-        'value'    => $this->isSelected($value) && $value instanceOf InputLink
-          ? $value->linkedUrl
-          : '',
-      ]
-    );
+    $field = [
+      'class'    => $value->hasErrors('linkedUrl') ? 'error' : '',
+      'disabled' => $disabled,
+      'id'       => 'linkedUrl',
+      'name'     => 'linkedUrl',
+      'value'    => $this->isSelected($value) && $value instanceOf InputLink
+        ? $value->linkedUrl
+        : '',
+    ];
 
     if (isset($this->inputType) && !$this->disableValidation) {
       $field['type'] = $this->inputType;

@@ -1,11 +1,11 @@
 {% import "_includes/forms" as forms %}
 
 {{ forms.checkboxSelectField({
-  label: 'Sites'|t('typedlinkfield'),
-  instructions: 'Select the available sites.'|t('typedlinkfield'),
-  id: "typeSettings-#{linkType.name}-sites",
-  name: "typeSettings[#{linkType.name}][sites]",
-  options: linkType.siteOptions,
-  values: linkType.sites ?? null,
+  label:         'Sites'|t('typedlinkfield'),
+  instructions:  'Select the available sites.'|t('typedlinkfield'),
+  id:            'sites',
+  name:          'sites',
+  options:       linkType.siteOptions,
+  values:        linkType.sites ?? null,
   showAllOption: true,
 })}}

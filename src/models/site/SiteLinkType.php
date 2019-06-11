@@ -42,7 +42,6 @@ class SiteLinkType extends LinkType
     return Craft::$app->view->renderTemplate(
       'typedlinkfield/_input-select',
       [
-        'selected'    => $this->isSelected($value),
         'linkType'    => $this,
         'selectField' => $this->getSelectField($value, $disabled),
       ]
@@ -143,15 +142,13 @@ class SiteLinkType extends LinkType
       ? $value->getSite()
       : null;
 
-    return $this->getFieldSettings(
-      $value,
-      'linkedSiteId',
-      [
-        'disabled' => $disabled,
-        'options'  => $this->getSiteOptions($this->sites),
-        'value'    => is_null($site) ? null : $site->id,
-      ]
-    );
+    return [
+      'disabled' => $disabled,
+      'id'       => 'linkedSiteId',
+      'name'     => 'linkedSiteId',
+      'options'  => $this->getSiteOptions($this->sites),
+      'value'    => is_null($site) ? null : $site->id,
+    ];
   }
 
   /**

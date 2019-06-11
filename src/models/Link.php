@@ -5,19 +5,20 @@ namespace lenz\linkfield\models;
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
-use craft\base\Model;
 use craft\helpers\Html;
 use craft\helpers\Template;
 use craft\models\Site;
 use Exception;
+use lenz\craft\utils\foreignField\ForeignFieldModel;
 use lenz\linkfield\fields\LinkField;
-use lenz\linkfield\Plugin;
 use Twig\Markup;
 
 /**
  * Class Link
+ * @method LinkField getField()
+ * @property LinkField $_field
  */
-class Link extends Model
+class Link extends ForeignFieldModel
 {
   /**
    * @var string|null
@@ -40,19 +41,9 @@ class Link extends Model
   public $title;
 
   /**
-   * @var LinkField|null
-   */
-  protected $_field;
-
-  /**
    * @var LinkType
    */
   protected $_linkType;
-
-  /**
-   * @var ElementInterface|null
-   */
-  protected $_owner;
 
 
   /**
@@ -68,12 +59,10 @@ class Link extends Model
     ElementInterface $owner = null,
     $config = []
   ) {
-    $this->_field    = $field;
     $this->_linkType = $linkType;
-    $this->_owner    = $owner;
-
     $attributes = $this->attributes();
-    parent::__construct(array_filter(
+
+    parent::__construct($field, $owner, array_filter(
       $config,
       function ($key) use ($attributes) {
         return in_array($key, $attributes);
@@ -238,24 +227,10 @@ class Link extends Model
   }
 
   /**
-   * @return null|LinkField
-   */
-  public function getField() {
-    return $this->_field;
-  }
-
-  /**
    * @return LinkType|null
    */
   public function getLinkType() {
     return $this->_linkType;
-  }
-
-  /**
-   * @return ElementInterface|null
-   */
-  public function getOwner() {
-    return $this->_owner;
   }
 
   /**

@@ -1,5 +1,3 @@
 {% import "_includes/forms" as forms %}
 
-<div class="linkfield--typeOption {{ linkType.name }}{{ selected ? '' : ' hidden' }}">
-  {{ forms.text(inputField) }}
-</div>
+{{ forms.text(inputField) }}

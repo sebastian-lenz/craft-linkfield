@@ -7,7 +7,6 @@ use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\listeners\ElementListener;
 use lenz\linkfield\models\Link;
 use lenz\linkfield\models\LinkType;
-use lenz\linkfield\records\LinkRecord;
 
 /**
  * Class ElementLinkType
@@ -39,27 +38,6 @@ class ElementLinkType extends LinkType
    */
   const MODEL_CLASS = ElementLink::class;
 
-
-  /**
-   * @inheritDoc
-   */
-  public function createRecord(Link $link, LinkRecord $record) {
-    parent::createRecord($link, $record);
-
-    if (
-      $link->getField()->enableElementCache &&
-      $link instanceof ElementLink
-    ) {
-      $element = $link->getElement();
-      if ($element && ElementListener::isElementPublished($element)) {
-        $record->linkedTitle = (string)$element;
-        $record->linkedUrl   = $element->getUrl();
-      } else {
-        $record->linkedTitle = null;
-        $record->linkedUrl   = null;
-      }
-    }
-  }
 
   /**
    * @return array
@@ -95,7 +73,6 @@ class ElementLinkType extends LinkType
         'elementField' => $this->getElementField($value),
         'linkType'     => $this,
         'queryField'   => $this->getQueryField($value),
-        'selected'     => $this->isSelected($value),
         'siteField'    => $this->getSiteField($value),
       ]
     );
@@ -134,6 +111,30 @@ class ElementLinkType extends LinkType
       'allowCrossSiteLink',
       'sources',
     ]);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function toRecordAttributes(Link $model) {
+    $attributes = parent::toRecordAttributes($model);
+
+    if (
+      $model->getField()->enableElementCache &&
+      $model instanceof ElementLink
+    ) {
+      $element = $model->getElement();
+
+      if ($element && ElementListener::isElementPublished($element)) {
+        $attributes['linkedTitle'] = (string)$element;
+        $attributes['linkedUrl']   = $element->getUrl();
+      } else {
+        $attributes['linkedTitle'] = null;
+        $attributes['linkedUrl']   = null;
+      }
+    }
+
+    return $attributes;
   }
 
   /**
@@ -196,19 +197,17 @@ class ElementLinkType extends LinkType
       $criteria['siteId'] = $linkedSiteId;
     }
 
-    return $this->getFieldSettings(
-      $value,
-      'linkedId',
-      [
-        'criteria'        => $criteria,
-        'elementType'     => $this->elementType,
-        'elements'        => $linkedElements,
-        'limit'           => 1,
-        'showSiteMenu'    => $this->allowCrossSiteLink,
-        'sources'         => $this->sources === '*' ? null : $this->sources,
-        'storageKey'      => "linkfield.{$value->getField()->handle}.{$this->name}",
-      ]
-    );
+    return [
+      'criteria'        => $criteria,
+      'elementType'     => $this->elementType,
+      'elements'        => $linkedElements,
+      'id'              => 'linkedId',
+      'limit'           => 1,
+      'name'            => 'linkedId',
+      'showSiteMenu'    => $this->allowCrossSiteLink,
+      'sources'         => $this->sources === '*' ? null : $this->sources,
+      'storageKey'      => "linkfield.{$value->getField()->handle}.{$this->name}",
+    ];
   }
 
   /**
@@ -220,14 +219,12 @@ class ElementLinkType extends LinkType
       return null;
     }
 
-    return $this->getFieldSettings(
-      $value,
-      'customQuery',
-      [
-        'placeholder' => \Craft::t('typedlinkfield', 'Query, starts with "#" or "?"'),
-        'value'       => empty($value->customQuery) ? '' : $value->customQuery,
-      ]
-    );
+    return [
+      'id'          => 'customQuery',
+      'name'        => 'customQuery',
+      'placeholder' => \Craft::t('typedlinkfield', 'Query, starts with "#" or "?"'),
+      'value'       => empty($value->customQuery) ? '' : $value->customQuery,
+    ];
   }
 
   /**
@@ -245,13 +242,11 @@ class ElementLinkType extends LinkType
       $siteId = $value->getOwnerSite()->id;
     }
 
-    return $this->getFieldSettings(
-      $value,
-      'linkedSiteId',
-      [
-        'value' => $siteId,
-      ]
-    );
+    return [
+      'id'    => 'linkedSiteId',
+      'name'  => 'linkedSiteId',
+      'value' => $siteId,
+    ];
   }
 
   /**

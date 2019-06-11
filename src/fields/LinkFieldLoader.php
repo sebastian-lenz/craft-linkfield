@@ -201,7 +201,7 @@ class LinkFieldLoader
       : 'json_build_object';
 
     $query->query->leftJoin(
-      LinkRecord::TABLE_NAME . ' ' . $tableName,
+      LinkRecord::tableName() . ' ' . $tableName,
       implode(' AND ', [
         "[[{$tableName}.elementId]] = [[elements.id]]",
         "[[{$tableName}.siteId]] = [[elements_sites.siteId]]",

@@ -2,21 +2,15 @@
 
 namespace lenz\linkfield\records;
 
-use craft\db\ActiveRecord;
-use craft\helpers\Json;
+use craft\db\Migration;
+use craft\db\Table;
 use craft\records\Element;
-use craft\records\Field;
 use craft\records\Site;
-use lenz\linkfield\models\Link;
+use lenz\craft\utils\foreignField\ForeignFieldRecord;
 use yii\db\ActiveQueryInterface;
 
 /**
  * Class LinkRecord
- *
- * @property int $id
- * @property int $elementId
- * @property int $siteId
- * @property int $fieldId
  * @property string $type
  * @property string $linkedUrl
  * @property int $linkedId
@@ -24,28 +18,8 @@ use yii\db\ActiveQueryInterface;
  * @property string $linkedTitle
  * @property string $payload
  */
-class LinkRecord extends ActiveRecord
+class LinkRecord extends ForeignFieldRecord
 {
-  /**
-   * @var string
-   */
-  const TABLE_NAME = '{{%lenz_linkfield}}';
-
-
-  /**
-   * @return ActiveQueryInterface
-   */
-  public function getElement(): ActiveQueryInterface {
-    return $this->hasOne(Element::class, ['id' => 'elementId']);
-  }
-
-  /**
-   * @return ActiveQueryInterface
-   */
-  public function getField(): ActiveQueryInterface {
-    return $this->hasOne(Field::class, ['id' => 'fieldId']);
-  }
-
   /**
    * @return ActiveQueryInterface
    */
@@ -60,17 +34,33 @@ class LinkRecord extends ActiveRecord
     return $this->hasOne(Site::class, ['id' => 'linkedSiteId']);
   }
 
+
+  // Static methods
+  // --------------
+
   /**
-   * @return ActiveQueryInterface
+   * @inheritdoc
    */
-  public function getSite(): ActiveQueryInterface {
-    return $this->hasOne(Site::class, ['id' => 'siteId']);
+  public static function createTable(Migration $migration, array $columns = []) {
+    $table = static::tableName();
+
+    parent::createTable($migration, $columns + [
+      'type'         => $migration->string(63),
+      'linkedUrl'    => $migration->text(),
+      'linkedId'     => $migration->integer(),
+      'linkedSiteId' => $migration->integer(),
+      'linkedTitle'  => $migration->string(255),
+      'payload'      => $migration->text(),
+    ]);
+
+    $migration->addForeignKey(null, $table, ['linkedId'], Table::ELEMENTS, ['id'], 'SET NULL', 'SET NULL');
+    $migration->addForeignKey(null, $table, ['linkedSiteId'], Table::SITES, ['id'], 'SET NULL', 'SET NULL');
   }
 
   /**
    * @inheritdoc
    */
   public static function tableName(): string {
-    return self::TABLE_NAME;
+    return '{{%lenz_linkfield}}';
   }
 }

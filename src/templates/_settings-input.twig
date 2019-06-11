@@ -1,15 +1,15 @@
 {% import "_includes/forms" as forms %}
 
 {{ forms.checkboxField({
-  label: 'Disable {elementName} input validation'|t('typedlinkfield', { 'elementName': linkType.displayName }),
-  id: "typeSettings-#{linkType.name}-disableValidation",
-  name: "typeSettings[#{linkType.name}][disableValidation]",
+  label:   'Disable {elementName} input validation'|t('typedlinkfield', { 'elementName': linkType.displayName }),
+  id:      'disableValidation',
+  name:    'disableValidation',
   checked: linkType.disableValidation,
 })}}
 
 {{ forms.checkboxField({
-  label: 'Allow use of aliases'|t('typedlinkfield'),
-  id: "typeSettings-#{linkType.name}-allowAliases",
-  name: "typeSettings[#{linkType.name}][allowAliases]",
+  label:   'Allow use of aliases'|t('typedlinkfield'),
+  id:      'allowAliases',
+  name:    'allowAliases',
   checked: linkType.allowAliases,
 })}}
