@@ -4,8 +4,8 @@ namespace lenz\linkfield\fields;
 
 use Craft;
 use craft\base\ElementInterface;
-use craft\elements\db\ElementQueryInterface;
 use Exception;
+use InvalidArgumentException;
 use lenz\craft\utils\foreignField\ForeignField;
 use lenz\craft\utils\foreignField\ForeignFieldModel;
 use lenz\linkfield\listeners\CacheListenerJob;
@@ -80,14 +80,6 @@ class LinkField extends ForeignField
 
     ElementListenerState::getInstance()->updateFields();
     CacheListenerJob::createForField($this);
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function modifyElementsQuery(ElementQueryInterface $query, $value) {
-    LinkFieldLoader::attachTo($this, $query, $value);
-    return null;
   }
 
   /**
@@ -315,7 +307,7 @@ class LinkField extends ForeignField
    */
   protected function toRecordAttributes(ForeignFieldModel $model, ElementInterface $element) {
     if (!($model instanceof Link)) {
-      throw new \InvalidArgumentException('$model mus be an instance of Link');
+      throw new InvalidArgumentException('$model mus be an instance of Link');
     }
 
     return $model->getLinkType()
@@ -345,6 +337,13 @@ class LinkField extends ForeignField
    */
   public static function modelClass(): string {
     return Link::class;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function queryExtensionClass(): string {
+    return LinkFieldQueryExtension::class;
   }
 
   /**

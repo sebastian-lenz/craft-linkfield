@@ -2,10 +2,11 @@
 
 namespace lenz\linkfield\models\element;
 
+use Craft;
 use craft\base\ElementInterface;
-use lenz\linkfield\fields\LinkFieldLoader;
 use lenz\linkfield\models\Link;
 use lenz\linkfield\models\Url;
+use Throwable;
 
 /**
  * Class ElementLink
@@ -41,14 +42,14 @@ class ElementLink extends Link
   public $linkedUrl;
 
   /**
+   * @var ElementLinkBatchLoader
+   */
+  private $_batchLoader;
+
+  /**
    * @var ElementInterface|null
    */
   private $_element;
-
-  /**
-   * @var LinkFieldLoader
-   */
-  private $_loader;
 
 
   /**
@@ -132,7 +133,7 @@ class ElementLink extends Link
         }
 
         $url = (string)$baseUrl;
-      } catch (\Throwable $error) {}
+      } catch (Throwable $error) {}
     }
 
     return $url;
@@ -165,10 +166,10 @@ class ElementLink extends Link
   }
 
   /**
-   * @param LinkFieldLoader $loader
+   * @param ElementLinkBatchLoader $batchLoader
    */
-  public function setLinkFieldLoader(LinkFieldLoader $loader) {
-    $this->_loader = $loader;
+  public function setBatchLoader(ElementLinkBatchLoader $batchLoader) {
+    $this->_batchLoader = $batchLoader;
   }
 
 
@@ -204,16 +205,16 @@ class ElementLink extends Link
     if (
       !$ignoreStatus &&
       !$this->isCrossSiteLink() &&
-      isset($this->_loader)
+      isset($this->_batchLoader)
     ) {
-      return $this->_loader->loadElement($elementType, $this->linkedId);
+      return $this->_batchLoader->loadElement($elementType, $this->linkedId);
     }
 
     $query = $elementType::find()
       ->id($this->linkedId)
       ->siteId($this->getSiteId());
 
-    if ($ignoreStatus || \Craft::$app->request->getIsCpRequest()) {
+    if ($ignoreStatus || Craft::$app->request->getIsCpRequest()) {
       $query->enabledForSite(false);
       $query->status(null);
     }
