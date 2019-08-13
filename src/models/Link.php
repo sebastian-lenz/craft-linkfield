@@ -340,11 +340,12 @@ class Link extends Model
   /**
    * Try to use provided custom text or field default.
    * Allows user to specify a fallback string if the custom text and default are not set.
+   * If the custom text isn't set we don't need to parse anything, so it's overrideable with custom fields.
    *
    * @param string $fallbackText
    * @return string
    */
-  public function getCustomText($fallbackText = "Learn More") {
+  public function getCustomText($fallbackText = null) {
     if ($this->getAllowCustomText() && !empty($this->customText)) {
       return $this->customText;
     }
