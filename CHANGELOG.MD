@@ -1,5 +1,16 @@
 # Release Notes for Typed Link Field
 
+## 2.0.0-beta.6
+- Add basic GraphQL support
+- Remove CraftQL support
+- Fix an error due to empty handles on field settings, see #74
+
+## 2.0.0-beta.5 - 2019-06-27
+- Use foreign field query extension instead of custom eager loading
+
+## 2.0.0-beta.4 - 2019-06-27
+- Update test cases, plugin must now be loaded as such, Craft no longer accepts a module
+
 ## 2.0.0-beta.3 - 2019-04-29
 - Fix an issue when another plugin tries to access a link field before the plugin has been loaded (see https://github.com/sebastian-lenz/craft-linkfield/issues/61)
 

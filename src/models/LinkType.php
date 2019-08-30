@@ -5,7 +5,6 @@ namespace lenz\linkfield\models;
 use craft\base\ElementInterface;
 use craft\helpers\ArrayHelper;
 use lenz\linkfield\fields\LinkField;
-use lenz\linkfield\records\LinkRecord;
 use yii\base\Model;
 use yii\behaviors\AttributeTypecastBehavior;
 use yii\helpers\Json;

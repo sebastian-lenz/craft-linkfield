@@ -10,6 +10,7 @@ use lenz\craft\utils\foreignField\ForeignField;
 use lenz\craft\utils\foreignField\ForeignFieldModel;
 use lenz\linkfield\listeners\CacheListenerJob;
 use lenz\linkfield\listeners\ElementListenerState;
+use lenz\linkfield\models\LinkGqlType;
 use lenz\linkfield\Plugin;
 use lenz\linkfield\models\Link;
 use lenz\linkfield\models\LinkType;
@@ -114,6 +115,13 @@ class LinkField extends ForeignField
 
     asort($linkNames);
     return $linkNames;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getContentGqlType() {
+    return LinkGqlType::getType();
   }
 
   /**
