@@ -3,7 +3,7 @@
 {% do view.registerAssetBundle('lenz\\linkfield\\assets\\admin\\LinkFieldAdminAsset') %}
 {% set displayGroup = '' %}
 
-<div class="linkFieldAdmin" id="{{ field.handle }}">
+<div class="linkFieldAdmin" id="adminUi">
   <div class="linkFieldAdmin--tabs">
     <div class="linkFieldAdmin--tabsRow selected" data-name="_general">
       <button class="linkFieldAdmin--tabsTab">{{ 'General settings'|t('typedlinkfield') }}</button>
@@ -57,5 +57,5 @@
 </div>
 
 {% js %}
-  new LinkFieldAdmin("{{ field.handle|namespaceInputId }}");
+  new LinkFieldAdmin("{{ 'adminUi'|namespaceInputId }}");
 {% endjs %}
