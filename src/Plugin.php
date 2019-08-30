@@ -56,12 +56,6 @@ class Plugin extends \craft\base\Plugin
     );
 
     Event::on(
-      LinkField::class,
-      'craftQlGetFieldSchema',
-      [listeners\CraftQLListener::class, 'onCraftQlGetFieldSchema']
-    );
-
-    Event::on(
       ClearCaches::class,
       ClearCaches::EVENT_REGISTER_CACHE_OPTIONS,
       [listeners\CacheListener::class, 'onRegisterCacheOptions']
