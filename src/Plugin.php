@@ -4,13 +4,16 @@ namespace lenz\linkfield;
 
 use Craft;
 use craft\events\RegisterComponentTypesEvent;
+use craft\events\RegisterGqlTypesEvent;
 use craft\services\Fields;
+use craft\services\Gql;
 use craft\services\Plugins;
 use craft\utilities\ClearCaches;
 use lenz\linkfield\events\LinkTypeEvent;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\listeners\ElementListener;
 use lenz\linkfield\listeners\ElementListenerState;
+use lenz\linkfield\models\LinkGqlType;
 use lenz\linkfield\models\LinkType;
 use Throwable;
 use yii\base\Event;
@@ -60,6 +63,12 @@ class Plugin extends \craft\base\Plugin
       ClearCaches::EVENT_REGISTER_CACHE_OPTIONS,
       [listeners\CacheListener::class, 'onRegisterCacheOptions']
     );
+
+    Event::on(
+      Gql::class,
+      Gql::EVENT_REGISTER_GQL_TYPES,
+      [$this, 'onRegisterGqlTypes']
+    );
   }
 
   /**
@@ -83,6 +92,13 @@ class Plugin extends \craft\base\Plugin
    */
   public function onRegisterFieldTypes(RegisterComponentTypesEvent $event) {
     $event->types[] = LinkField::class;
+  }
+
+  /**
+   * @param RegisterGqlTypesEvent $event
+   */
+  public function onRegisterGqlTypes(RegisterGqlTypesEvent $event) {
+    $event->types[] = LinkGqlType::class;
   }
 
 
