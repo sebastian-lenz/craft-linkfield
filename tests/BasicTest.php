@@ -139,7 +139,7 @@ class BasicTest extends AbstractLinkFieldTest
     $this->assertEquals($link->getTitle(), self::TEST_TITLE);
 
     $this->assertEquals(
-      '<a href="http://www.google.de" title="My &quot;Link Title&quot;" arial-label="My &quot;Aria Label&quot;">My "<strong>Link</strong> Caption"</a>',
+      '<a href="http://www.google.de" title="My &quot;Link Title&quot;" aria-label="My &quot;Aria Label&quot;">My "<strong>Link</strong> Caption"</a>',
       (string)$link->getLink()
     );
   }
