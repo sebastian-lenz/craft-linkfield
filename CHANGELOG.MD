@@ -1,5 +1,10 @@
 # Release Notes for Typed Link Field
 
+## 2.0.0-beta.7
+- Adjusted the default enabled states of link types, see https://github.com/sebastian-lenz/craft-linkfield/issues/76
+- Link::getCustomText now returns an empty text by default, see https://github.com/sebastian-lenz/craft-linkfield/pull/73
+- Fixed an GraphQL issue where Craft sometimes did not register the link type correctly
+
 ## 2.0.0-beta.6
 - Add basic GraphQL support
 - Remove CraftQL support
