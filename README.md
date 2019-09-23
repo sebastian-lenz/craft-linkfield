@@ -83,9 +83,9 @@ your module:
 
 ```php
 use craft\commerce\elements\Product;
-use typedlinkfield\Plugin as LinkPlugin;
-use typedlinkfield\events\LinkTypeEvent;
-use typedlinkfield\models\ElementLinkType;
+use lenz\linkfield\Plugin as LinkPlugin;
+use lenz\linkfield\events\LinkTypeEvent;
+use lenz\linkfield\models\element\ElementLinkType;
 use yii\base\Event;
 
 /**
@@ -107,6 +107,6 @@ class Module extends \yii\base\Module
 ```
 
 
-Each link type must have an unique name and a definition object implementing `typedlinkfield\modles\LinkTypeInterface`. 
+Each link type must have an unique name and a definition object extending `lenz\linkfield\models\LinkType`. 
 Take a look at the bundled link types `ElementLinkType` and `InputLinkType` to get an idea of how to write your own 
 link type definitions.

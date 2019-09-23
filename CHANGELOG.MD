@@ -1,5 +1,33 @@
 # Release Notes for Typed Link Field
 
+## 2.0.0-beta.6
+- Add basic GraphQL support
+- Remove CraftQL support
+- Fix an error due to empty handles on field settings, see #74
+
+## 2.0.0-beta.5 - 2019-06-27
+- Use foreign field query extension instead of custom eager loading
+
+## 2.0.0-beta.4 - 2019-06-27
+- Update test cases, plugin must now be loaded as such, Craft no longer accepts a module
+
+## 2.0.0-beta.3 - 2019-04-29
+- Fix an issue when another plugin tries to access a link field before the plugin has been loaded (see https://github.com/sebastian-lenz/craft-linkfield/issues/61)
+
+## 2.0.0-beta.2 - 2019-04-29
+- Merge hotfix from v1.0.19
+
+## 2.0.0-beta.1 - 2019-04-28
+- New: Store all links in a dedicated database table
+- New: Eagerloading of linked elements
+- New: Cache for linked element urls and titles
+- New: Internal links to different sites (see https://github.com/sebastian-lenz/craft-linkfield/issues/44)
+- Changed: The php namespace of the plugin has been changed from `typedlinkfield` to `lenz\linkfield`
+- Changed: Link types now use a common base class `lenz\linkfield\models\LinkType`
+- Changed: Link values now create different models based on the chosen link type 
+
+> {warning} This is a major update, please create a database backup before installing, please see https://github.com/sebastian-lenz/craft-linkfield/issues/61
+
 ## 1.0.19 - 2019-04-29
 Yesterdays release unfortunately contains a change to the url validator that causes trouble, we therefore issue a hotfix. 
 - Fix url validation not accepting long urls (see https://github.com/sebastian-lenz/craft-linkfield/issues/62)

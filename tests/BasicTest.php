@@ -1,6 +1,10 @@
 <?php
 
-use \typedlinkfield\models\Link;
+use craft\base\Field;
+use craft\base\FieldInterface;
+use craft\elements\Entry;
+use craft\models\EntryType;
+use lenz\linkfield\models\Link;
 
 /**
  * Class BasicTest
@@ -8,12 +12,12 @@ use \typedlinkfield\models\Link;
 class BasicTest extends AbstractLinkFieldTest
 {
   /**
-   * @var \craft\models\EntryType
+   * @var EntryType
    */
   private static $entryType;
 
   /**
-   * @var \craft\base\FieldInterface
+   * @var FieldInterface
    */
   private static $field;
 
@@ -34,8 +38,8 @@ class BasicTest extends AbstractLinkFieldTest
     $link = $this->createAndFetchEntry([
       'title'          => 'URL Link',
       'basicLinkField' => self::$field->normalizeValue([
-        'type'  => 'url',
-        'value' => self::TEST_URL,
+        'type'      => 'url',
+        'linkedUrl' => self::TEST_URL,
       ]),
     ]);
 
@@ -80,16 +84,16 @@ class BasicTest extends AbstractLinkFieldTest
     $otherEntry = $this->createEntry(self::$entryType, [
       'title'          => 'Linked Entry',
       'basicLinkField' => [
-        'type'  => 'url',
-        'value' => '',
+        'type'     => 'url',
+        'linkedId' => '',
       ]
     ]);
 
     $link = $this->createAndFetchEntry([
       'title'          => 'Entry Link',
       'basicLinkField' => self::$field->normalizeValue([
-        'type'  => 'entry',
-        'value' => $otherEntry->id,
+        'type'     => 'entry',
+        'linkedId' => $otherEntry->id,
       ]),
     ]);
 
@@ -99,7 +103,7 @@ class BasicTest extends AbstractLinkFieldTest
     $this->assertNull($link->getTitle());
 
     $loadedOtherEntry = $link->getElement();
-    $this->assertInstanceOf(\craft\elements\Entry::class, $loadedOtherEntry);
+    $this->assertInstanceOf(Entry::class, $loadedOtherEntry);
     $this->assertEquals($otherEntry->id, $loadedOtherEntry->id);
 
     $this->assertEquals(
@@ -126,7 +130,7 @@ class BasicTest extends AbstractLinkFieldTest
         'customText'  => self::TEST_CAPTION,
         'title'       => self::TEST_TITLE,
         'type'        => 'url',
-        'value'       => 'http://www.google.de',
+        'linkedUrl'   => 'http://www.google.de',
       ]),
     ]);
 
@@ -150,7 +154,7 @@ class BasicTest extends AbstractLinkFieldTest
 
     $loadedEntry = Craft::$app->getEntries()->getEntryById($entry->id);
     $this->assertNotEquals($entry, $loadedEntry);
-    $this->assertInstanceOf(\craft\elements\Entry::class, $loadedEntry);
+    $this->assertInstanceOf(Entry::class, $loadedEntry);
 
     /** @var Link $loadedLink */
     $loadedLink = $loadedEntry->basicLinkField;
@@ -172,7 +176,7 @@ class BasicTest extends AbstractLinkFieldTest
     $field = self::createLinkField([
       'name'              => 'Basic Link Field',
       'handle'            => 'basicLinkField',
-      'translationMethod' => \craft\base\Field::TRANSLATION_METHOD_NONE,
+      'translationMethod' => Field::TRANSLATION_METHOD_NONE,
       'settings'          => array(
         'allowTarget'     => true,
         'defaultText'     => self::TEST_DEFAULT_TEXT,

@@ -1,19 +1,27 @@
 {% import "_includes/forms" as forms %}
 
 {{ forms.checkboxSelectField({
-  label: '{elementName} sources'|t('typedlinkfield', { 'elementName': elementName }),
-  instructions: 'Select the available sources.'|t('typedlinkfield'),
-  id: 'typeSettings-'~linkTypeName~'-sources',
-  name: 'typeSettings['~linkTypeName~'][sources]',
-  options: sources,
-  values: settings.sources,
+  label:         '{elementName} sources'|t('typedlinkfield', { 'elementName': linkType.displayName }),
+  instructions:  'Select the available sources.'|t('typedlinkfield'),
+  id:            'sources',
+  name:          'sources',
+  options:       linkType.availableSources,
+  values:        linkType.sources,
   showAllOption: true,
 })}}
 
 {{ forms.checkboxField({
-  label: 'Allow users to enter custom queries that will be appended to the url'|t('typedlinkfield'),
-  name: 'allowCustomQuery',
-  id: 'typeSettings-'~linkTypeName~'-allowCustomQuery',
-  name: 'typeSettings['~linkTypeName~'][allowCustomQuery]',
-  checked: settings.allowCustomQuery
+  label:   'Allow users to enter custom queries that will be appended to the url'|t('typedlinkfield'),
+  name:    'allowCustomQuery',
+  id:      'allowCustomQuery',
+  name:    'allowCustomQuery',
+  checked: linkType.allowCustomQuery
+}) }}
+
+{{ forms.checkboxField({
+  label:   'Allow links to reference a different site'|t('typedlinkfield'),
+  name:    'allowCrossSiteLink',
+  id:      'allowCrossSiteLink',
+  name:    'allowCrossSiteLink',
+  checked: linkType.allowCrossSiteLink
 }) }}

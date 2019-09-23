@@ -1,27 +1,34 @@
 <?php
 
-namespace typedlinkfield;
+namespace lenz\linkfield;
 
+use Craft;
 use craft\events\RegisterComponentTypesEvent;
+use craft\events\RegisterGqlTypesEvent;
 use craft\services\Fields;
-use typedlinkfield\events\LinkTypeEvent;
-use typedlinkfield\fields\LinkField;
-use typedlinkfield\models\ElementLinkType;
-use typedlinkfield\models\InputLinkType;
-use typedlinkfield\models\SiteLinkType;
-use typedlinkfield\models\LinkTypeInterface;
+use craft\services\Gql;
+use craft\services\Plugins;
+use craft\utilities\ClearCaches;
+use lenz\linkfield\events\LinkTypeEvent;
+use lenz\linkfield\fields\LinkField;
+use lenz\linkfield\listeners\ElementListener;
+use lenz\linkfield\listeners\ElementListenerState;
+use lenz\linkfield\models\LinkGqlType;
+use lenz\linkfield\models\LinkType;
+use Throwable;
 use yii\base\Event;
 
 /**
  * Class Plugin
- * @package typedlinkfield
+ *
+ * @property ElementListener $elementListener
  */
 class Plugin extends \craft\base\Plugin
 {
   /**
-   * @var LinkTypeInterface[]
+   * @inheritDoc
    */
-  private $linkTypes;
+  public $schemaVersion = '2.0.0';
 
   /**
    * @event events\LinkTypeEvent
@@ -35,6 +42,10 @@ class Plugin extends \craft\base\Plugin
   public function init() {
     parent::init();
 
+    $this->setComponents([
+      'elementListener' => ElementListener::class,
+    ]);
+
     Event::on(
       Fields::class,
       Fields::EVENT_REGISTER_FIELD_TYPES,
@@ -42,105 +53,38 @@ class Plugin extends \craft\base\Plugin
     );
 
     Event::on(
-      LinkField::class,
-      'craftQlGetFieldSchema',
-      [utilities\CraftQLListener::class, 'onCraftQlGetFieldSchema']
+      Plugins::class,
+      Plugins::EVENT_AFTER_LOAD_PLUGINS,
+      [$this, 'onAfterLoadPlugins']
+    );
+
+    Event::on(
+      ClearCaches::class,
+      ClearCaches::EVENT_REGISTER_CACHE_OPTIONS,
+      [listeners\CacheListener::class, 'onRegisterCacheOptions']
+    );
+
+    Event::on(
+      Gql::class,
+      Gql::EVENT_REGISTER_GQL_TYPES,
+      [$this, 'onRegisterGqlTypes']
     );
   }
 
   /**
-   * @param string $name
-   * @param LinkTypeInterface $type
+   * @return void
    */
-  public function addLinkType(string $name, LinkTypeInterface $type) {
-    \Craft::$app->getDeprecator()->log(
-      'typedlinkfield\\Plugin::addLinkType()',
-      'typedlinkfield\\Plugin::addLinkType() is deprecated and will be removed. Use the event Plugin::EVENT_REGISTER_LINK_TYPES to add new link types.'
-    );
-
-    $this->getLinkTypes();
-    $this->linkTypes[$name] = $type;
-  }
-
-  /**
-   * @return LinkTypeInterface[]
-   */
-  public function getLinkTypes() {
-    if (!isset($this->linkTypes)) {
-      $event = new LinkTypeEvent();
-      $event->linkTypes = $this->createDefaultLinkTypes();
-      $this->trigger(self::EVENT_REGISTER_LINK_TYPES, $event);
-
-      $this->linkTypes = $event->linkTypes;
+  public function onAfterLoadPlugins() {
+    try {
+      if (
+        Craft::$app->isInstalled &&
+        ElementListenerState::getInstance()->isCacheEnabled()
+      ) {
+        $this->elementListener->processStatusChanges();
+      }
+    } catch (Throwable $error) {
+      Craft::error($error->getMessage());
     }
-
-    return $this->linkTypes;
-  }
-
-  /**
-   * @return LinkTypeInterface[]
-   */
-  private function createDefaultLinkTypes() {
-    $result = [
-      'url' => new InputLinkType([
-        'displayName'  => 'Url',
-        'displayGroup' => 'Input fields',
-        'inputType'    => 'url'
-      ]),
-      'custom' => new InputLinkType([
-        'displayName'  => 'Custom',
-        'displayGroup' => 'Input fields',
-        'inputType'    => 'text'
-      ]),
-      'email' => new InputLinkType([
-        'displayName'  => 'Mail',
-        'displayGroup' => 'Input fields',
-        'inputType'    => 'email'
-      ]),
-      'tel' => new InputLinkType([
-        'displayName'  => 'Telephone',
-        'displayGroup' => 'Input fields',
-        'inputType'    => 'tel'
-      ]),
-      'asset' => new ElementLinkType([
-        'displayGroup' => 'Craft CMS',
-        'elementType'  => \craft\elements\Asset::class,
-      ]),
-      'category' => new ElementLinkType([
-        'displayGroup' => 'Craft CMS',
-        'elementType'  => \craft\elements\Category::class
-      ]),
-      'entry' => new ElementLinkType([
-        'displayGroup' => 'Craft CMS',
-        'elementType'  => \craft\elements\Entry::class
-      ]),
-      'user' => new ElementLinkType([
-        'displayGroup' => 'Craft CMS',
-        'elementType'  => \craft\elements\User::class
-      ]),
-      'site' => new SiteLinkType([
-        'displayGroup' => 'Craft CMS',
-        'displayName'  => 'Site',
-      ]),
-    ];
-
-    // Add craft commerce elements
-    if (class_exists('craft\commerce\elements\Product')) {
-      $result['craftCommerce-product'] = new ElementLinkType([
-        'displayGroup' => 'Craft commerce',
-        'elementType'  => 'craft\commerce\elements\Product'
-      ]);
-    }
-
-    // Add solspace calendar elements
-    if (class_exists('Solspace\Calendar\Elements\Event')) {
-      $result['solspaceCalendar-event'] = new ElementLinkType([
-        'displayGroup' => 'Solspace calendar',
-        'elementType'  => 'Solspace\Calendar\Elements\Event'
-      ]);
-    }
-
-    return $result;
   }
 
   /**
@@ -148,5 +92,34 @@ class Plugin extends \craft\base\Plugin
    */
   public function onRegisterFieldTypes(RegisterComponentTypesEvent $event) {
     $event->types[] = LinkField::class;
+  }
+
+  /**
+   * @param RegisterGqlTypesEvent $event
+   */
+  public function onRegisterGqlTypes(RegisterGqlTypesEvent $event) {
+    $event->types[] = LinkGqlType::class;
+  }
+
+
+  // Static methods
+  // --------------
+
+  /**
+   * @param LinkField $field
+   * @return LinkType[]
+   */
+  public static function getLinkTypes(LinkField $field) {
+    $event = new LinkTypeEvent($field);
+    $plugin = self::getInstance();
+
+    if (is_null($plugin)) {
+      Craft::warning('Link field `getLinkTypes` called before the plugin has been loaded.');
+      Event::trigger(self::class, self::EVENT_REGISTER_LINK_TYPES, $event);
+    } else {
+      $plugin->trigger(self::EVENT_REGISTER_LINK_TYPES, $event);
+    }
+
+    return $event->linkTypes;
   }
 }

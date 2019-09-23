@@ -1,5 +1,3 @@
 {% import "_includes/forms" as forms %}
 
-<div class="linkfield--typeOption {{ linkTypeName }}{{ isSelected ? '' : ' hidden' }}">
-  {{ forms.select(selectFieldOptions) }}
-</div>
+{{ forms.select(selectField) }}

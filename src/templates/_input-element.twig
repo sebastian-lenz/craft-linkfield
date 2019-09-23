@@ -1,29 +1,30 @@
 {% import "_includes/forms" as forms %}
 
-<div class="linkfield--typeOption {{ linkTypeName }}{{ isSelected ? '' : ' hidden' }}">
-  {% if disabled %}
-    <div class="elementselect">
-      <div class="elements">
-        {% for element in selectFieldOptions.elements %}
-          {% include "_elements/element" with {
-            context: 'field',
-            size: 'small'
-          } %}
-        {% endfor %}
+{% if disabled %}
+  <div class="elementselect">
+    <div class="elements">
+      {% for element in elementField.elements %}
+        {% include "_elements/element" with {
+          context: 'field',
+          size: 'small'
+        } %}
+      {% endfor %}
+    </div>
+  </div>
+{% else %}
+  {% if siteField %}
+    {{ forms.hidden(siteField) }}
+  {% endif %}
+  {% if queryField %}
+    <div class="linkfield--elementRow">
+      <div class="linkfield--elementRowSelect">
+        {{ forms.elementSelect(elementField) }}
+      </div>
+      <div class="linkfield--elementRowQuery">
+        {{ forms.text(queryField) }}
       </div>
     </div>
   {% else %}
-    {% if queryFieldOptions %}
-      <div class="linkfield--elementRow">
-        <div class="linkfield--elementRowSelect">
-          {{ forms.elementSelect(selectFieldOptions) }}
-        </div>
-        <div class="linkfield--elementRowQuery">
-          {{ forms.text(queryFieldOptions) }}
-        </div>
-      </div>
-    {% else %}
-      {{ forms.elementSelect(selectFieldOptions) }}
-    {% endif %}
+    {{ forms.elementSelect(elementField) }}
   {% endif %}
-</div>
+{% endif %}

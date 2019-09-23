@@ -1,6 +1,6 @@
 <?php
 
-namespace typedlinkfield\utilities;
+namespace lenz\linkfield\models;
 
 /**
  * Class Url
