@@ -115,7 +115,7 @@ class Link extends ForeignFieldModel
    * @param string $fallbackText
    * @return string
    */
-  public function getCustomText($fallbackText = "Learn More") {
+  public function getCustomText($fallbackText = "") {
     if ($this->getAllowCustomText() && !empty($this->customText)) {
       return $this->customText;
     }
@@ -264,7 +264,7 @@ class Link extends ForeignFieldModel
 
     $ariaLabel = $this->getAriaLabel();
     if (!empty($ariaLabel)) {
-      $attributes['arial-label'] = $ariaLabel;
+      $attributes['aria-label'] = $ariaLabel;
     }
 
     $target = $this->getTarget();
