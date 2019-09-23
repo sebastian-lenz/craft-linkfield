@@ -4,25 +4,22 @@
 }
 
 .linkfield--field {
-  display: table;
-  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  margin: -5px;
 }
 
-.linkfield--type,
-.linkfield--typeOptions,
-.linkfield--target {
-  display: table-cell;
-  vertical-align: middle;
+.linkfield--field > * {
+  padding: 5px;
 }
 
 .linkfield--target {
-  padding-left: 10px;
   white-space: nowrap;
 }
 
 .linkfield--typeOptions {
-  width: 100%;
-  padding-left: 10px;
+  flex: 1;
 }
 
 .linkfield--typeOptions.single {
@@ -33,14 +30,18 @@
 .linkfield--elementRow {
   display: flex;
   flex-flow: row nowrap;
+  align-items: center;
 }
 
 .linkfield--elementRowSelect {
   flex: 1;
+  min-width: 300px;
 }
 
 .linkfield--elementRowQuery {
-  width: 200px;
+  flex: 1;
+  min-width: 100px;
+  max-width: 200px;
 }
 
 .linkfield--settings {
