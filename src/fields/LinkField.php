@@ -158,6 +158,23 @@ class LinkField extends ForeignField
   }
 
   /**
+   * @inheritDoc
+   */
+  protected function getHtml(ForeignFieldModel $value, ElementInterface $element = null, $disabled = false) {
+    if (
+      $value->isEditorEmpty() &&
+      $this->useEmptyType() &&
+      !is_null($element) &&
+      !$element->getIsUnsavedDraft() &&
+      !$value->getLinkType()->isEmptyType()
+    ) {
+      $value = LinkType::getEmptyType()->createLink($this, $element);
+    }
+
+    return parent::getHtml($value, $element, $disabled);
+  }
+
+  /**
    * @return array
    */
   public function getTypeSettings() {
@@ -255,21 +272,9 @@ class LinkField extends ForeignField
    * @inheritDoc
    */
   protected function createModel(array $attributes = [], ElementInterface $element = null) {
-    $model = $this
+    return $this
       ->resolveLinkType(isset($attributes['type']) ? $attributes['type'] : '')
       ->createLink($this, $element, $attributes);
-
-    if (
-      $model->isEmpty() &&
-      $this->useEmptyType() &&
-      !is_null($element) &&
-      !$element->getIsUnsavedDraft() &&
-      !$model->getLinkType()->isEmptyType()
-    ) {
-      $model = LinkType::getEmptyType()->createLink($this, $element);
-    }
-
-    return $model;
   }
 
   /**

@@ -356,6 +356,13 @@ class Link extends ForeignFieldModel
   }
 
   /**
+   * @return bool
+   */
+  public function isEditorEmpty(): bool {
+    return $this->isEmpty();
+  }
+
+  /**
    * @param ElementInterface|null $value
    */
   public function setOwner(ElementInterface $value = null) {

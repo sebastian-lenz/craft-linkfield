@@ -166,6 +166,13 @@ class ElementLink extends Link
   }
 
   /**
+   * @inheritDoc
+   */
+  public function isEditorEmpty(): bool {
+    return !$this->hasElement();
+  }
+
+  /**
    * @param ElementLinkBatchLoader $batchLoader
    */
   public function setBatchLoader(ElementLinkBatchLoader $batchLoader) {
