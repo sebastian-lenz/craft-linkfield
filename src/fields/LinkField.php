@@ -54,7 +54,7 @@ class LinkField extends ForeignField
   /**
    * @var bool
    */
-  public $enableAllLinkTypes = false;
+  public $enableAllLinkTypes = true;
 
   /**
    * @var bool

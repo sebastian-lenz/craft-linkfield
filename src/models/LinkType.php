@@ -22,7 +22,7 @@ class LinkType extends Model
   /**
    * @var bool
    */
-  public $enabled = true;
+  public $enabled = false;
 
   /**
    * @var string
