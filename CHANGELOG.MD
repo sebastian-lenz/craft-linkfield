@@ -1,26 +1,27 @@
 # Release Notes for Typed Link Field
 
 ## 2.0.0-beta.7
-- Adjusted the default enabled states of link types, see https://github.com/sebastian-lenz/craft-linkfield/issues/76
-- Link::getCustomText now returns an empty text by default, see https://github.com/sebastian-lenz/craft-linkfield/pull/73
-- Fixed an GraphQL issue where Craft sometimes did not register the link type correctly
+- New: Field now displays the option "No link" if empty, see https://github.com/sebastian-lenz/craft-linkfield/issues/63
+- Changed: Adjusted the default enabled states of link types, see https://github.com/sebastian-lenz/craft-linkfield/issues/76
+- Changed: `Link::getCustomText` now returns an empty text by default, see https://github.com/sebastian-lenz/craft-linkfield/pull/73
+- Fixed: GraphQL issue where Craft sometimes did not register the link type correctly
 
-## 2.0.0-beta.6
-- Add basic GraphQL support
-- Remove CraftQL support
-- Fix an error due to empty handles on field settings, see #74
+## 2.0.0-beta.6 - 2019-08-30
+- Added: Basic GraphQL support
+- Changed: Remove CraftQL support
+- Fixed: An error due to empty handles on field settings, see #74
 
 ## 2.0.0-beta.5 - 2019-06-27
-- Use foreign field query extension instead of custom eager loading
+- Changed: Use foreign field query extension instead of custom eager loading
 
 ## 2.0.0-beta.4 - 2019-06-27
-- Update test cases, plugin must now be loaded as such, Craft no longer accepts a module
+- Changed: Update test cases, plugin must now be loaded as such, Craft no longer accepts a module
 
 ## 2.0.0-beta.3 - 2019-04-29
-- Fix an issue when another plugin tries to access a link field before the plugin has been loaded (see https://github.com/sebastian-lenz/craft-linkfield/issues/61)
+- Fixed: An issue when another plugin tries to access a link field before the plugin has been loaded (see https://github.com/sebastian-lenz/craft-linkfield/issues/61)
 
 ## 2.0.0-beta.2 - 2019-04-29
-- Merge hotfix from v1.0.19
+- Fixed: Merge hotfix from v1.0.19
 
 ## 2.0.0-beta.1 - 2019-04-28
 - New: Store all links in a dedicated database table

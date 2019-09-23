@@ -15,6 +15,7 @@ use Twig\Markup;
 
 /**
  * Class Link
+ *
  * @method LinkField getField()
  * @property LinkField $_field
  */
@@ -48,6 +49,7 @@ class Link extends ForeignFieldModel
 
   /**
    * Link constructor.
+   *
    * @param LinkField $field
    * @param LinkType $linkType
    * @param ElementInterface $owner

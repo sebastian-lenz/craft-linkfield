@@ -4,6 +4,7 @@
 {% do view.registerAssetBundle('lenz\\linkfield\\assets\\field\\LinkFieldAsset') %}
 
 {% set type = field.resolveSelectedLinkTypeName(value) %}
+{% set isEmpty = type == '' or type == 'empty' %}
 
 {# Must be a macro as there is an issue with nested namespace nodes #}
 {% macro typeSettings(field, value, disabled) %}
@@ -21,7 +22,7 @@
     {% if field.enabledLinkTypes|length == 0 %}
       <p>{{ 'No link types available.'|t('typedlinkfield') }}</p>
     {% else %}
-      <div class="linkfield--field{% if field.hasSettings %} field{% endif %}">
+      <div class="linkfield--field">
         {% if field.hasSingleLinkType %}
           <input type="hidden" id="type" name="type" value="{{ type }}" />
         {% else %}
@@ -41,7 +42,7 @@
         </div>
 
         {% if field.allowTarget %}
-          <div class="linkfield--target">
+          <div class="linkfield--target{{ isEmpty ? ' hidden' }}">
             {{ forms.checkboxField({
               id:       'target',
               name:     'target',
@@ -55,7 +56,7 @@
       </div>
 
       {% if field.hasSettings %}
-        <div class="linkfield--settings{{ type == '' ? ' hidden' }}">
+        <div class="linkfield--settings{{ isEmpty ? ' hidden' }}">
           {% if field.allowCustomText %}
             {{ forms.textField({
               id:          'customText',

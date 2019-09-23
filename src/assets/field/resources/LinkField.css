@@ -3,10 +3,6 @@
   border: 1px solid rgba(0, 0, 20, 0.1);
 }
 
-.linkfield .field {
-  margin: 15px 0;
-}
-
 .linkfield--field {
   display: table;
   width: 100%;
@@ -45,4 +41,8 @@
 
 .linkfield--elementRowQuery {
   width: 200px;
+}
+
+.linkfield--settings {
+  margin-top: 15px;
 }

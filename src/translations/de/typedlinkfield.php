@@ -1,6 +1,7 @@
 <?php
 
 return [
+  '(No link)'                                                    => '(Kein Link)',
   '{elementName} sources'                                        => '{elementName}-Quellen',
   'Allow custom link text'                                       => 'Erlaube benutzerdefinierte Linktexte',
   'Allow links to open in new window'                            => 'Erlaube Links die in einem neuen Fenster öffnen',

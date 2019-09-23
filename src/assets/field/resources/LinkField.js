@@ -31,7 +31,7 @@
 
 			this.$optionsHolder = this.$field.find('.linkfield--typeOptions');
 			this.$options = this.$optionsHolder.find('.linkfield--typeOption');
-			this.$settingsHolder = this.$field.find('.linkfield--settings');
+			this.$settingsHolder = this.$field.find('.linkfield--settings,.linkfield--target');
 
       this.$field.find('input[type=hidden]').each(createSiteHelper);
 
@@ -40,7 +40,7 @@
 
 		onChangeType: function(e) {
 			this.type = this.$typeSelect.val();
-      this.$settingsHolder.toggleClass('hidden', this.type === '');
+      this.$settingsHolder.toggleClass('hidden', this.type === '' || this.type === 'empty');
 			this.$options.addClass('hidden');
 			this.$options.filter('.' + this.type).removeClass('hidden');
 		}

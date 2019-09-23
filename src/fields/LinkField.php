@@ -128,12 +128,17 @@ class LinkField extends ForeignField
    * @return LinkType[]
    */
   public function getEnabledLinkTypes() {
+    $linkTypes = $this->getAvailableLinkTypes();
+    if ($this->useEmptyType()) {
+      $linkTypes['empty'] = LinkType::getEmptyType();
+    }
+
     if ($this->enableAllLinkTypes) {
-      return $this->getAvailableLinkTypes();
+      return $linkTypes;
     }
 
     return array_filter(
-      $this->getAvailableLinkTypes(),
+      $linkTypes,
       function(LinkType $linkType) {
         return $linkType->enabled;
       }
@@ -250,9 +255,21 @@ class LinkField extends ForeignField
    * @inheritDoc
    */
   protected function createModel(array $attributes = [], ElementInterface $element = null) {
-    return $this
+    $model = $this
       ->resolveLinkType(isset($attributes['type']) ? $attributes['type'] : '')
       ->createLink($this, $element, $attributes);
+
+    if (
+      $model->isEmpty() &&
+      $this->useEmptyType() &&
+      !is_null($element) &&
+      !$element->getIsUnsavedDraft() &&
+      !$model->getLinkType()->isEmptyType()
+    ) {
+      $model = LinkType::getEmptyType()->createLink($this, $element);
+    }
+
+    return $model;
   }
 
   /**
@@ -320,6 +337,13 @@ class LinkField extends ForeignField
 
     return $model->getLinkType()
       ->toRecordAttributes($model);
+  }
+
+  /**
+   * @return bool
+   */
+  protected function useEmptyType() {
+    return !$this->required;
   }
 
 

@@ -108,7 +108,7 @@ class LinkType extends Model
    * @return string
    */
   public function getDisplayName(): string {
-    return 'Empty link';
+    return '(No link)';
   }
 
   /**
@@ -140,6 +140,13 @@ class LinkType extends Model
    */
   public function getSettingsHtml(LinkField $field): string {
     return '';
+  }
+
+  /**
+   * @return bool
+   */
+  public function isEmptyType() {
+    return $this === self::getEmptyType();
   }
 
   /**
@@ -219,5 +226,22 @@ class LinkType extends Model
    */
   protected function prepareLegacyData($data) {
     return null;
+  }
+
+
+  // Static methods
+  // --------------
+
+  /**
+   * @return LinkType
+   */
+  public static function getEmptyType() {
+    static $type;
+    if (!isset($type)) {
+      $type = new LinkType();
+      $type->enabled = true;
+    }
+
+    return $type;
   }
 }
