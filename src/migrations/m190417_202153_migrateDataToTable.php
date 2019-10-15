@@ -3,12 +3,15 @@
 namespace lenz\linkfield\migrations;
 
 use Craft;
+use craft\base\Field;
 use craft\db\Migration;
 use craft\db\Query;
 use craft\db\Table;
+use craft\fields\Matrix;
 use craft\helpers\Json;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\records\LinkRecord;
+use verbb\supertable\fields\SuperTableField;
 
 /**
  * m190417_202153_migrateDataToTable migration.
@@ -23,8 +26,8 @@ class m190417_202153_migrateDataToTable extends Migration
       (new Install())->safeUp();
     }
 
-    $this->updateFields();
-    $this->updateFieldInstances();
+    $this->updateAllSettings();
+    $this->updateAllFields();
   }
 
   /**
@@ -35,34 +38,92 @@ class m190417_202153_migrateDataToTable extends Migration
     return false;
   }
 
+
+  // Private methods
+  // ---------------
+
   /**
    * @return void
    */
-  private function updateFieldInstances() {
-    $fields = Craft::$app->getFields();
-    $fields->refreshFields();
-    $allFields = $fields->getAllFields(false);
+  private function updateAllFields() {
+    $service = Craft::$app->getFields();
+    $service->refreshFields();
 
-    foreach ($allFields as $field) {
-      if ($field instanceof LinkField) {
-        $this->updateFieldInstance($field);
+    foreach ($service->getAllFields() as $field) {
+      $this->updateField($field, Table::CONTENT);
+    }
+  }
+
+  /**
+   * @return void
+   */
+  private function updateAllSettings() {
+    $this->update(Table::FIELDS, [
+      'type' => 'lenz\linkfield\fields\LinkField',
+    ], [
+      'type' => 'typedlinkfield\fields\LinkField'
+    ]);
+
+    $rows = (new Query())
+      ->select(['id', 'settings'])
+      ->from(Table::FIELDS)
+      ->where(['type' => 'lenz\linkfield\fields\LinkField'])
+      ->all();
+
+    foreach ($rows as $row) {
+      $this->update(Table::FIELDS, [
+        'settings' => $this->updateSettings($row['settings'])
+      ], [
+        'id' => $row['id']
+      ]);
+    }
+  }
+
+  /**
+   * @param Field $field
+   * @param string $table
+   * @param string $fieldColumnPrefix
+   */
+  private function updateField(Field $field, string $table, string $fieldColumnPrefix = 'field_') {
+    if ($field instanceof LinkField) {
+      $this->updateLinkField($field, $table, $fieldColumnPrefix);
+    } elseif ($field instanceof Matrix) {
+      $this->updateMatrixField($field);
+    } elseif ($field instanceof SuperTableField) {
+      $this->updateSuperTable($field);
+    }
+  }
+
+  /**
+   * @param Matrix $matrixField
+   */
+  private function updateMatrixField(Matrix $matrixField) {
+    $blockTypes = Craft::$app->getMatrix()->getBlockTypesByFieldId($matrixField->id);
+
+    foreach ($blockTypes as $blockType) {
+      $fieldColumnPrefix = 'field_' . $blockType->handle . '_';
+
+      foreach ($blockType->getFields() as $field) {
+        $this->updateField($field, $matrixField->contentTable, $fieldColumnPrefix);
       }
     }
   }
 
   /**
    * @param LinkField $field
+   * @param string $table
+   * @param string $columnPrefix
    */
-  private function updateFieldInstance(LinkField $field) {
+  private function updateLinkField(LinkField $field, string $table, string $columnPrefix = 'field_') {
     $insertRows = [];
-    $columnName = 'field_' . $field->handle;
+    $columnName = $columnPrefix . $field->handle;
     $rows = (new Query())
       ->select([
         'elementId',
         'siteId',
         $columnName,
       ])
-      ->from(Table::CONTENT)
+      ->from($table)
       ->all();
 
     foreach ($rows as $row) {
@@ -92,41 +153,14 @@ class m190417_202153_migrateDataToTable extends Migration
       'elementId', 'siteId', 'fieldId', 'linkedId', 'linkedSiteId', 'type', 'linkedUrl', 'payload'
     ], $insertRows);
 
-    $this->dropColumn(Table::CONTENT, $columnName);
-  }
-
-  /**
-   * @return void
-   */
-  private function updateFields() {
-    $this->update(Table::FIELDS, [
-      'type' => 'lenz\linkfield\fields\LinkField',
-    ], [
-      'type' => 'typedlinkfield\fields\LinkField'
-    ]);
-
-    $rows = (new Query())
-      ->select(['id', 'settings'])
-      ->from(Table::FIELDS)
-      ->where(['type' => 'lenz\linkfield\fields\LinkField'])
-      ->all();
-
-    foreach ($rows as $row) {
-      $this->update(Table::FIELDS, [
-        'settings' => $this->updateFieldSettings($row['settings'])
-      ], [
-        'id' => $row['id']
-      ]);
-    }
-
-    Craft::$app->getFields()->refreshFields();
+    $this->dropColumn($table, $columnName);
   }
 
   /**
    * @param string $settings
    * @return string
    */
-  private function updateFieldSettings($settings) {
+  private function updateSettings($settings) {
     $settings = Json::decode($settings);
     if (!is_array($settings)) {
       $settings = array();
@@ -153,5 +187,14 @@ class m190417_202153_migrateDataToTable extends Migration
 
     unset($settings['allowedLinkNames']);
     return Json::encode($settings);
+  }
+
+  /**
+   * @param SuperTableField $superTableField
+   */
+  private function updateSuperTable(SuperTableField $superTableField) {
+    foreach ($superTableField->getBlockTypeFields() as $field) {
+      $this->updateField($field, $superTableField->contentTable);
+    }
   }
 }
