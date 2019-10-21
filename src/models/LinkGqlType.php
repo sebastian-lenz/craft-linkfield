@@ -4,7 +4,6 @@ namespace lenz\linkfield\models;
 
 use craft\gql\GqlEntityRegistry;
 use craft\gql\interfaces\Element;
-use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 
@@ -51,6 +50,10 @@ class LinkGqlType
       'element' => [
         'name' => 'element',
         'type' => Element::getType(),
+      ],
+      'target' => [
+        'name' => 'target',
+        'type' => Type::string(),
       ],
       'text' => [
         'name' => 'text',
