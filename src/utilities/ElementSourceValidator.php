@@ -3,6 +3,8 @@
 namespace typedlinkfield\utilities;
 
 use craft\base\ElementInterface;
+use Exception;
+use Throwable;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -24,12 +26,12 @@ class ElementSourceValidator
   /**
    * ElementSourceValidator constructor.
    * @param ElementInterface $elementType
-   * @throws \Exception
+   * @throws Exception
    */
   public function __construct($elementType) {
     $idPath = self::getElementIdPath($elementType);
     if (is_null($idPath)) {
-      throw new \Exception('Unsupported element type: ' . (string)$elementType);
+      throw new Exception('Unsupported element type: ' . (string)$elementType);
     }
 
     $availableSources = array();
@@ -113,7 +115,7 @@ class ElementSourceValidator
         self::$validators[(string)$elementType] = new ElementSourceValidator($elementType);
       }
       return self::$validators[(string)$elementType]->validate($sources);
-    } catch (\Throwable $e) { }
+    } catch (Throwable $e) { }
 
     return $sources;
   }

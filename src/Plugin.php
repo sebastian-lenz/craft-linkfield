@@ -2,6 +2,12 @@
 
 namespace typedlinkfield;
 
+use Craft;
+use craft\elements\Asset;
+use craft\elements\Category;
+use craft\elements\Entry;
+use craft\elements\User;
+use craft\errors\DeprecationException;
 use craft\events\RegisterComponentTypesEvent;
 use craft\services\Fields;
 use typedlinkfield\events\LinkTypeEvent;
@@ -51,9 +57,10 @@ class Plugin extends \craft\base\Plugin
   /**
    * @param string $name
    * @param LinkTypeInterface $type
+   * @throws DeprecationException
    */
   public function addLinkType(string $name, LinkTypeInterface $type) {
-    \Craft::$app->getDeprecator()->log(
+    Craft::$app->getDeprecator()->log(
       'typedlinkfield\\Plugin::addLinkType()',
       'typedlinkfield\\Plugin::addLinkType() is deprecated and will be removed. Use the event Plugin::EVENT_REGISTER_LINK_TYPES to add new link types.'
     );
@@ -104,19 +111,19 @@ class Plugin extends \craft\base\Plugin
       ]),
       'asset' => new ElementLinkType([
         'displayGroup' => 'Craft CMS',
-        'elementType'  => \craft\elements\Asset::class,
+        'elementType'  => Asset::class,
       ]),
       'category' => new ElementLinkType([
         'displayGroup' => 'Craft CMS',
-        'elementType'  => \craft\elements\Category::class
+        'elementType'  => Category::class
       ]),
       'entry' => new ElementLinkType([
         'displayGroup' => 'Craft CMS',
-        'elementType'  => \craft\elements\Entry::class
+        'elementType'  => Entry::class
       ]),
       'user' => new ElementLinkType([
         'displayGroup' => 'Craft CMS',
-        'elementType'  => \craft\elements\User::class
+        'elementType'  => User::class
       ]),
       'site' => new SiteLinkType([
         'displayGroup' => 'Craft CMS',

@@ -6,8 +6,8 @@ use Craft;
 use craft\base\ElementInterface;
 use craft\helpers\Html;
 use craft\models\Site;
+use Throwable;
 use typedlinkfield\fields\LinkField;
-use typedlinkfield\utilities\ElementSourceValidator;
 use yii\base\Model;
 
 /**
@@ -55,14 +55,14 @@ class SiteLinkType extends Model implements LinkTypeInterface
    * @return string
    */
   public function getDisplayName(): string {
-    return \Craft::t('typedlinkfield', $this->displayName);
+    return Craft::t('typedlinkfield', $this->displayName);
   }
 
   /**
    * @return string
    */
   public function getDisplayGroup(): string {
-    return \Craft::t('typedlinkfield', $this->displayGroup);
+    return Craft::t('typedlinkfield', $this->displayGroup);
   }
 
   /**
@@ -99,13 +99,13 @@ class SiteLinkType extends Model implements LinkTypeInterface
     ];
 
     try {
-      return \Craft::$app->view->renderTemplate('typedlinkfield/_input-select', [
+      return Craft::$app->view->renderTemplate('typedlinkfield/_input-select', [
         'isSelected'         => $isSelected,
         'linkTypeName'       => $linkTypeName,
         'selectFieldOptions' => $selectFieldOptions,
       ]);
-    } catch (\Throwable $exception) {
-      return Html::tag('p', \Craft::t(
+    } catch (Throwable $exception) {
+      return Html::tag('p', Craft::t(
         'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
         [
@@ -130,14 +130,14 @@ class SiteLinkType extends Model implements LinkTypeInterface
    */
   public function getSettingsHtml(string $linkTypeName, LinkField $field): string {
     try {
-      return \Craft::$app->view->renderTemplate('typedlinkfield/_settings-site', [
+      return Craft::$app->view->renderTemplate('typedlinkfield/_settings-site', [
         'settings'     => $field->getLinkTypeSettings($linkTypeName, $this),
         'elementName'  => $this->getDisplayName(),
         'linkTypeName' => $linkTypeName,
         'siteOptions'  => $this->getSiteOptions(),
       ]);
-    } catch (\Throwable $exception) {
-      return Html::tag('p', \Craft::t(
+    } catch (Throwable $exception) {
+      return Html::tag('p', Craft::t(
         'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
         [

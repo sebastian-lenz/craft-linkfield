@@ -2,10 +2,12 @@
 
 namespace typedlinkfield\fields;
 
+use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\helpers\Json;
-use typedlinkfield\models\ElementLinkType;
+use Exception;
+use Throwable;
 use typedlinkfield\Plugin;
 use typedlinkfield\models\Link;
 use typedlinkfield\models\LinkTypeInterface;
@@ -120,7 +122,7 @@ class LinkField extends Field
         if (is_array($decodedValue)) {
           $attr += $decodedValue;
         }
-      } catch (\Exception $e) {}
+      } catch (Exception $e) {}
 
     } else if (is_array($value) && isset($value['isCpFormData'])) {
       // If it is an array and the field `isCpFormData` is set, we are saving a cp form
@@ -200,7 +202,7 @@ class LinkField extends Field
    * @param Link $value
    * @param ElementInterface|null $element
    * @return string
-   * @throws \Throwable
+   * @throws Throwable
    */
   public function getInputHtml($value, ElementInterface $element = null): string {
     $linkTypes = $this->getAllowedLinkTypes();
@@ -228,13 +230,13 @@ class LinkField extends Field
 
     asort($linkNames);
 
-    return \Craft::$app->getView()->renderTemplate('typedlinkfield/_input', [
+    return Craft::$app->getView()->renderTemplate('typedlinkfield/_input', [
       'hasSettings' => $this->hasSettings(),
       'isStatic'    => $this->isStatic,
       'linkInputs'  => implode('', $linkInputs),
       'linkNames'   => $linkNames,
       'name'        => $this->handle,
-      'nameNs'      => \Craft::$app->view->namespaceInputId($this->handle),
+      'nameNs'      => Craft::$app->view->namespaceInputId($this->handle),
       'settings'    => $this->getSettings(),
       'singleType'  => $singleType,
       'value'       => $value,
@@ -259,7 +261,7 @@ class LinkField extends Field
 
   /**
    * @return string
-   * @throws \Throwable
+   * @throws Throwable
    */
   public function getSettingsHtml() {
     $settings = $this->getSettings();
@@ -300,10 +302,10 @@ class LinkField extends Field
         : strcmp($a['group'], $b['group']);
     });
 
-    return \Craft::$app->getView()->renderTemplate('typedlinkfield/_settings', [
+    return Craft::$app->getView()->renderTemplate('typedlinkfield/_settings', [
       'allTypesAllowed' => $allTypesAllowed,
       'name'            => 'linkField',
-      'nameNs'          => \Craft::$app->view->namespaceInputId('linkField'),
+      'nameNs'          => Craft::$app->view->namespaceInputId('linkField'),
       'linkTypes'       => $linkTypes,
       'linkNames'       => $linkNames,
       'settings'        => $settings,
@@ -379,6 +381,6 @@ class LinkField extends Field
    * @return string
    */
   static public function displayName(): string {
-    return \Craft::t('typedlinkfield', 'Link field');
+    return Craft::t('typedlinkfield', 'Link field');
   }
 }

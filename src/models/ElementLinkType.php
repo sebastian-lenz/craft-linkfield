@@ -2,8 +2,12 @@
 
 namespace typedlinkfield\models;
 
+use Craft;
 use craft\base\ElementInterface;
+use craft\errors\SiteNotFoundException;
 use craft\helpers\Html;
+use Exception;
+use Throwable;
 use typedlinkfield\fields\LinkField;
 use typedlinkfield\utilities\ElementSourceValidator;
 use typedlinkfield\utilities\Url;
@@ -63,7 +67,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
    * @return string
    */
   public function getDisplayGroup(): string {
-    return \Craft::t('typedlinkfield', $this->displayGroup);
+    return Craft::t('typedlinkfield', $this->displayGroup);
   }
 
   /**
@@ -79,7 +83,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
       'site' => $link->getOwnerSite(),
     ];
 
-    if ($ignoreStatus || \Craft::$app->request->getIsCpRequest()) {
+    if ($ignoreStatus || Craft::$app->request->getIsCpRequest()) {
       $query += [
         'enabledForSite' => null,
         'status' => null,
@@ -110,7 +114,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
 
     try {
       $criteria['siteId'] = $this->getTargetSiteId($element);
-    } catch (\Exception $e) {}
+    } catch (Exception $e) {}
 
     $selectFieldOptions = [
       'criteria'    => $criteria,
@@ -129,21 +133,21 @@ class ElementLinkType extends Model implements LinkTypeInterface
         'disabled'    => $field->isStatic(),
         'id'          => $field->handle . '-customQuery',
         'name'        => $field->handle . '[customQuery]',
-        'placeholder' => \Craft::t('typedlinkfield', 'Query, starts with "#" or "?"'),
+        'placeholder' => Craft::t('typedlinkfield', 'Query, starts with "#" or "?"'),
         'value'       => empty($value->customQuery) ? '' : $value->customQuery,
       ];
     }
 
     try {
-      return \Craft::$app->view->renderTemplate('typedlinkfield/_input-element', [
+      return Craft::$app->view->renderTemplate('typedlinkfield/_input-element', [
         'disabled'           => $field->isStatic(),
         'isSelected'         => $isSelected,
         'linkTypeName'       => $linkTypeName,
         'queryFieldOptions'  => $queryFieldOptions,
         'selectFieldOptions' => $selectFieldOptions,
       ]);
-    } catch (\Throwable $exception) {
-      return Html::tag('p', \Craft::t(
+    } catch (Throwable $exception) {
+      return Html::tag('p', Craft::t(
         'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
         [ 'name' => $this->getDisplayName() ]
@@ -154,16 +158,16 @@ class ElementLinkType extends Model implements LinkTypeInterface
   /**
    * @param ElementInterface|null $element
    * @return int
-   * @throws \craft\errors\SiteNotFoundException
+   * @throws SiteNotFoundException
    */
   protected function getTargetSiteId(ElementInterface $element = null): int {
-    if (\Craft::$app->getIsMultiSite()) {
+    if (Craft::$app->getIsMultiSite()) {
       if ($element !== null && property_exists($element, 'siteId')) {
         return $element->siteId;
       }
     }
 
-    return \Craft::$app->getSites()->getCurrentSite()->id;
+    return Craft::$app->getSites()->getCurrentSite()->id;
   }
 
   /**
@@ -181,14 +185,14 @@ class ElementLinkType extends Model implements LinkTypeInterface
    */
   public function getSettingsHtml(string $linkTypeName, LinkField $field): string {
     try {
-      return \Craft::$app->view->renderTemplate('typedlinkfield/_settings-element', [
+      return Craft::$app->view->renderTemplate('typedlinkfield/_settings-element', [
         'settings'     => $field->getLinkTypeSettings($linkTypeName, $this),
         'elementName'  => $this->getDisplayName(),
         'linkTypeName' => $linkTypeName,
         'sources'      => $this->getSources(),
       ]);
-    } catch (\Throwable $exception) {
-      return Html::tag('p', \Craft::t(
+    } catch (Throwable $exception) {
+      return Html::tag('p', Craft::t(
         'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
         [ 'name' => $this->getDisplayName() ]
@@ -266,7 +270,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
         }
 
         $url = (string)$baseUrl;
-      } catch (\Throwable $error) {}
+      } catch (Throwable $error) {}
     }
 
     return $url;

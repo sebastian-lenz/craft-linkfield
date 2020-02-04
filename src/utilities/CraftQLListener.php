@@ -7,6 +7,9 @@ use craft\elements\Asset;
 use craft\elements\Entry;
 use markhuot\CraftQL\Builders\Schema;
 use markhuot\CraftQL\Events\GetFieldSchema;
+use markhuot\CraftQL\Types\CategoryInterface;
+use markhuot\CraftQL\Types\EntryInterface;
+use markhuot\CraftQL\Types\VolumeInterface;
 use typedlinkfield\fields\LinkField;
 use typedlinkfield\models\ElementLinkType;
 use typedlinkfield\models\Link;
@@ -21,9 +24,9 @@ class CraftQLListener {
    * @var array
    */
   static $QL_TYPES = [
-    Category::class  => \markhuot\CraftQL\Types\CategoryInterface::class,
-    Asset::class     => \markhuot\CraftQL\Types\VolumeInterface::class,
-    Entry::class     => \markhuot\CraftQL\Types\EntryInterface::class,
+    Category::class  => CategoryInterface::class,
+    Asset::class     => VolumeInterface::class,
+    Entry::class     => EntryInterface::class,
   ];
 
 

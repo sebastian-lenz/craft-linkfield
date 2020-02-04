@@ -1,8 +1,21 @@
 <?php
 
+use craft\base\FieldInterface;
+use craft\console\Application;
+use craft\elements\Entry;
+use craft\errors\ElementNotFoundException;
+use craft\helpers\ArrayHelper;
+use craft\migrations\Install;
+use craft\models\EntryType;
+use craft\models\FieldLayoutTab;
+use craft\models\Section;
+use craft\models\Section_SiteSettings;
+use craft\models\Site;
+use craft\services\Config;
 use PHPUnit\Framework\TestCase;
 
 use typedlinkfield\fields\LinkField;
+use typedlinkfield\Plugin;
 
 /**
  * Class AbstractLinkFieldTest
@@ -10,14 +23,14 @@ use typedlinkfield\fields\LinkField;
 abstract class AbstractLinkFieldTest extends TestCase
 {
   /**
-   * @var \craft\console\Application
+   * @var Application
    */
   protected static $craft;
 
 
   /**
    * @inheritdoc
-   * @throws \Throwable
+   * @throws Throwable
    */
   public static function setUpBeforeClass() {
     parent::setUpBeforeClass();
@@ -31,7 +44,7 @@ abstract class AbstractLinkFieldTest extends TestCase
   }
   /**
    * @param array $options
-   * @return \craft\base\FieldInterface
+   * @return FieldInterface
    * @throws Throwable
    */
   protected static function createLinkField($options) {
@@ -47,15 +60,15 @@ abstract class AbstractLinkFieldTest extends TestCase
 
   /**
    * @param array $options
-   * @return \craft\models\Section
+   * @return Section
    * @throws Throwable
    */
   protected static function createSection($options) {
     $siteSettings = [];
-    $section = new \craft\models\Section($options);
+    $section = new Section($options);
 
     foreach (Craft::$app->getSites()->getAllSites() as $site) {
-      $siteSettings[$site->id] = new \craft\models\Section_SiteSettings([
+      $siteSettings[$site->id] = new Section_SiteSettings([
         'siteId'           => $site->id,
         'enabledByDefault' => true,
         'hasUrls'          => true,
@@ -70,21 +83,21 @@ abstract class AbstractLinkFieldTest extends TestCase
   }
 
   /**
-   * @param \craft\models\Section $section
-   * @param \craft\base\FieldInterface $field
-   * @return \craft\models\EntryType
+   * @param Section $section
+   * @param FieldInterface $field
+   * @return EntryType
    * @throws Throwable
    */
   protected static function createEntryType(
-    \craft\models\Section $section,
-    \craft\base\FieldInterface $field
+    Section $section,
+    FieldInterface $field
   ) {
     $entryTypes = $section->getEntryTypes();
     $entryType = $entryTypes[0];
 
     $fields = $entryType->getFieldLayout();
     $fields->setTabs([
-      new \craft\models\FieldLayoutTab([
+      new FieldLayoutTab([
         'name'      => 'Common',
         'fields'    => [ $field ],
         'sortOrder' => 0,
@@ -96,14 +109,14 @@ abstract class AbstractLinkFieldTest extends TestCase
   }
 
   /**
-   * @param \craft\models\EntryType $entryType
-   * @return \craft\elements\Entry
+   * @param EntryType $entryType
+   * @return Entry
    * @throws Throwable
-   * @throws \craft\errors\ElementNotFoundException
+   * @throws ElementNotFoundException
    * @throws \yii\base\Exception
    */
-  protected static function createEntry(\craft\models\EntryType $entryType, $options) {
-    $entry = new \craft\elements\Entry([
+  protected static function createEntry(EntryType $entryType, $options) {
+    $entry = new Entry([
         'typeId'    => $entryType->id,
         'sectionId' => $entryType->sectionId,
       ] + $options);
@@ -113,7 +126,7 @@ abstract class AbstractLinkFieldTest extends TestCase
   }
 
   /**
-   * @throws \Throwable
+   * @throws Throwable
    */
   private static function initDatabase() {
     $connection = new mysqli('localhost', getenv('TEST_DB_USER'), getenv('TEST_DB_PASS'));
@@ -131,7 +144,7 @@ abstract class AbstractLinkFieldTest extends TestCase
   }
 
   /**
-   * @throws \Throwable
+   * @throws Throwable
    */
   private static function initCraft() {
     define('YII_ENV', 'test');
@@ -188,7 +201,7 @@ abstract class AbstractLinkFieldTest extends TestCase
 
     // Load the config
     $appType = 'console';
-    $configService = new \craft\services\Config();
+    $configService = new Config();
     $configService->env = YII_ENV;
     $configService->configDir = $configPath;
     $configService->appDefaultsDir = implode(
@@ -196,7 +209,7 @@ abstract class AbstractLinkFieldTest extends TestCase
       [ $craftSrcPath, 'config', 'defaults' ]
     );
 
-    $config = \craft\helpers\ArrayHelper::merge(
+    $config = ArrayHelper::merge(
       [
         'vendorPath' => CRAFT_VENDOR_PATH,
         'env'        => YII_ENV,
@@ -204,7 +217,7 @@ abstract class AbstractLinkFieldTest extends TestCase
           'config' => $configService,
         ],
         'modules' => [
-          'typedlinkfield' => \typedlinkfield\Plugin::class,
+          'typedlinkfield' => Plugin::class,
         ],
         'bootstrap' => [
           'typedlinkfield'
@@ -225,7 +238,7 @@ abstract class AbstractLinkFieldTest extends TestCase
   }
 
   /**
-   * @throws \Throwable
+   * @throws Throwable
    */
   private static function installCraft() {
     $username = 'test';
@@ -235,7 +248,7 @@ abstract class AbstractLinkFieldTest extends TestCase
     $siteUrl = 'http://localhost';
     $language = 'en-US';
 
-    $site = new \craft\models\Site([
+    $site = new Site([
       'name' => $siteName,
       'handle' => 'default',
       'hasUrls' => true,
@@ -243,7 +256,7 @@ abstract class AbstractLinkFieldTest extends TestCase
       'language' => $language,
     ]);
 
-    $migration = new \craft\migrations\Install([
+    $migration = new Install([
       'username' => $username,
       'password' => $password,
       'email' => $email,

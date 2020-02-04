@@ -6,6 +6,7 @@ use Craft;
 use craft\base\ElementInterface;
 use craft\helpers\Html;
 use craft\validators\UrlValidator;
+use Throwable;
 use typedlinkfield\fields\LinkField;
 use yii\base\Model;
 use yii\validators\EmailValidator;
@@ -66,14 +67,14 @@ class InputLinkType extends Model implements LinkTypeInterface
    * @return string
    */
   public function getDisplayName(): string {
-    return \Craft::t('typedlinkfield', $this->displayName);
+    return Craft::t('typedlinkfield', $this->displayName);
   }
 
   /**
    * @return string
    */
   public function getDisplayGroup(): string {
-    return \Craft::t('typedlinkfield', $this->displayGroup);
+    return Craft::t('typedlinkfield', $this->displayGroup);
   }
 
   /**
@@ -107,17 +108,17 @@ class InputLinkType extends Model implements LinkTypeInterface
     }
 
     if (isset($this->placeholder)) {
-      $textFieldOptions['placeholder'] = \Craft::t('typedlinkfield', $this->placeholder);
+      $textFieldOptions['placeholder'] = Craft::t('typedlinkfield', $this->placeholder);
     }
 
     try {
-      return \Craft::$app->view->renderTemplate('typedlinkfield/_input-input', [
+      return Craft::$app->view->renderTemplate('typedlinkfield/_input-input', [
         'isSelected'       => $isSelected,
         'linkTypeName'     => $linkTypeName,
         'textFieldOptions' => $textFieldOptions,
       ]);
-    } catch (\Throwable $exception) {
-      return Html::tag('p', \Craft::t(
+    } catch (Throwable $exception) {
+      return Html::tag('p', Craft::t(
         'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
         [ 'name' => $this->getDisplayName() ]
@@ -162,13 +163,13 @@ class InputLinkType extends Model implements LinkTypeInterface
    */
   public function getSettingsHtml(string $linkTypeName, LinkField $field): string {
     try {
-      return \Craft::$app->view->renderTemplate('typedlinkfield/_settings-input', [
+      return Craft::$app->view->renderTemplate('typedlinkfield/_settings-input', [
         'settings'     => $field->getLinkTypeSettings($linkTypeName, $this),
         'elementName'  => $this->getDisplayName(),
         'linkTypeName' => $linkTypeName,
       ]);
-    } catch (\Throwable $exception) {
-      return Html::tag('p', \Craft::t(
+    } catch (Throwable $exception) {
+      return Html::tag('p', Craft::t(
         'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
         [ 'name' => $this->getDisplayName() ]
@@ -262,7 +263,7 @@ class InputLinkType extends Model implements LinkTypeInterface
       case('tel'):
         $regexp = '/^[0-9+\(\)#\.\s\/ext-]+$/';
         if (!filter_var($value, FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $regexp)))) {
-          return [\Craft::t('typedlinkfield', 'Please enter a valid phone number.'), []];
+          return [Craft::t('typedlinkfield', 'Please enter a valid phone number.'), []];
         }
         break;
 

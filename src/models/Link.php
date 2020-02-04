@@ -2,11 +2,15 @@
 
 namespace typedlinkfield\models;
 
+use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Model;
 use craft\helpers\Html;
 use craft\helpers\Template;
+use craft\models\Site;
+use Exception;
+use Twig\Markup;
 use typedlinkfield\fields\LinkField;
 use typedlinkfield\Plugin;
 
@@ -122,7 +126,7 @@ class Link extends Model
 
   /**
    * @param bool $ignoreStatus
-   * @return null|\craft\base\ElementInterface
+   * @return null|ElementInterface
    */
   public function getElement($ignoreStatus = false) {
     if (
@@ -181,7 +185,7 @@ class Link extends Model
    * ```
    *
    * @param array|string|null $attributesOrText
-   * @return null|\Twig_Markup
+   * @return null|Markup
    */
   public function getLink($attributesOrText = null) {
     $text = $this->getText();
@@ -212,7 +216,7 @@ class Link extends Model
    * Return the attributes of this link as a rendered html string.
    *
    * @param array|null $extraAttributes
-   * @return \Twig_Markup
+   * @return Markup
    */
   public function getLinkAttributes($extraAttributes = null) {
     $attributes = $this->getRawLinkAttributes($extraAttributes);
@@ -247,16 +251,16 @@ class Link extends Model
   }
 
   /**
-   * @return \craft\models\Site
+   * @return Site
    */
   public function getOwnerSite() {
     if ($this->owner instanceof Element) {
       try {
         return $this->owner->getSite();
-      } catch (\Exception $e) { }
+      } catch (Exception $e) { }
     }
 
-    return \Craft::$app->sites->currentSite;
+    return Craft::$app->sites->currentSite;
   }
 
   /**
@@ -327,7 +331,7 @@ class Link extends Model
       }
     }
 
-    return \Craft::t('site', $this->getDefaultText());
+    return Craft::t('site', $this->getDefaultText());
   }
 
   /**
