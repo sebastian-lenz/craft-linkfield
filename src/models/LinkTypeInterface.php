@@ -37,10 +37,10 @@ interface LinkTypeInterface
    * @param string $linkTypeName
    * @param LinkField $field
    * @param Link $value
-   * @param ElementInterface $element
+   * @param ElementInterface $element|null
    * @return string
    */
-  public function getInputHtml(string $linkTypeName, LinkField $field, Link $value, ElementInterface $element): string;
+  public function getInputHtml(string $linkTypeName, LinkField $field, Link $value, ElementInterface $element = null): string;
 
   /**
    * @param mixed $value

@@ -81,10 +81,10 @@ class SiteLinkType extends Model implements LinkTypeInterface
    * @param string $linkTypeName
    * @param LinkField $field
    * @param Link $value
-   * @param ElementInterface $element
+   * @param ElementInterface|null $element
    * @return string
    */
-  public function getInputHtml(string $linkTypeName, LinkField $field, Link $value, ElementInterface $element): string {
+  public function getInputHtml(string $linkTypeName, LinkField $field, Link $value, ElementInterface $element = null): string {
     $settings     = $field->getLinkTypeSettings($linkTypeName, $this);
     $siteIds      = $settings['sites'];
     $isSelected   = $value->type === $linkTypeName;

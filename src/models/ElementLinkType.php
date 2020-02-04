@@ -94,10 +94,10 @@ class ElementLinkType extends Model implements LinkTypeInterface
    * @param string $linkTypeName
    * @param LinkField $field
    * @param Link $value
-   * @param ElementInterface $element
+   * @param ElementInterface|null $element
    * @return string
    */
-  public function getInputHtml(string $linkTypeName, LinkField $field, Link $value, ElementInterface $element): string {
+  public function getInputHtml(string $linkTypeName, LinkField $field, Link $value, ElementInterface $element = null): string {
     $settings   = $field->getLinkTypeSettings($linkTypeName, $this);
     $sources    = $settings['sources'];
     $isSelected = $value->type === $linkTypeName;
@@ -158,7 +158,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
    */
   protected function getTargetSiteId(ElementInterface $element = null): int {
     if (\Craft::$app->getIsMultiSite()) {
-      if ($element !== null) {
+      if ($element !== null && property_exists($element, 'siteId')) {
         return $element->siteId;
       }
     }

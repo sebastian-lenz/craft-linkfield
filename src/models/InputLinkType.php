@@ -87,10 +87,10 @@ class InputLinkType extends Model implements LinkTypeInterface
    * @param string $linkTypeName
    * @param LinkField $field
    * @param Link $value
-   * @param ElementInterface $element
+   * @param ElementInterface|null $element
    * @return string
    */
-  public function getInputHtml(string $linkTypeName, LinkField $field, Link $value, ElementInterface $element): string {
+  public function getInputHtml(string $linkTypeName, LinkField $field, Link $value, ElementInterface $element = null): string {
     $settings   = $field->getLinkTypeSettings($linkTypeName, $this);
     $isSelected = $value->type === $linkTypeName;
     $value      = $isSelected ? $value->value : '';
