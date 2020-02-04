@@ -281,7 +281,7 @@ class Link extends Model
 
     $ariaLabel = $this->getAriaLabel();
     if (!empty($ariaLabel)) {
-      $attributes['arial-label'] = $ariaLabel;
+      $attributes['aria-label'] = $ariaLabel;
     }
 
     $target = $this->getTarget();
