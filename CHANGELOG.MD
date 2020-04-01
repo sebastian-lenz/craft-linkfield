@@ -30,12 +30,20 @@
 - New: Internal links to different sites (see https://github.com/sebastian-lenz/craft-linkfield/issues/44)
 - Changed: The php namespace of the plugin has been changed from `typedlinkfield` to `lenz\linkfield`
 - Changed: Link types now use a common base class `lenz\linkfield\models\LinkType`
-- Changed: Link values now create different models based on the chosen link type 
+- Changed: Link values now create different models based on the chosen link type
 
 > {warning} This is a major update, please create a database backup before installing, please see https://github.com/sebastian-lenz/craft-linkfield/issues/61
 
+## 1.0.21 - 2020-04-01
+
+- Add Dutch translations
+
+## 1.0.20 - 2020-02-07
+- Fix error triggered when no owner element is passed when rendering fields
+- Fix typo of attribute "aria-label"
+
 ## 1.0.19 - 2019-04-29
-Yesterdays release unfortunately contains a change to the url validator that causes trouble, we therefore issue a hotfix. 
+Yesterdays release unfortunately contains a change to the url validator that causes trouble, we therefore issue a hotfix.
 - Fix url validation not accepting long urls (see https://github.com/sebastian-lenz/craft-linkfield/issues/62)
 - Remove element source restriction on element link fields
 
@@ -58,7 +66,7 @@ Yesterdays release unfortunately contains a change to the url validator that cau
 
 ## 1.0.15 - 2018-10-23
 - Fix issues when loading models with unexpected model attributes.
-- Add method `getLinkAttributes` to model, return rendered link attributes. 
+- Add method `getLinkAttributes` to model, return rendered link attributes.
 
 ## 1.0.14 - 2018-09-25
 - Fix exception when trying to revert to revisions saved with 1.0.12 or before.
@@ -71,10 +79,10 @@ Yesterdays release unfortunately contains a change to the url validator that cau
 ## 1.0.12 - 2018-08-24
 - New `aria-label` and `title` fields. Can be turned on in field settings. Will render as attributes in `getLink()` and can be queried using `getAriaLabel()` and `getTitle()`.
 - New more compact field display
-- GraphQL: Add support for categories 
+- GraphQL: Add support for categories
 - GraphQL: New fields `link` and `text`
 - GraphQL: Deprecation: The fields `allowCustomText` and `allowTarget` are deprecated as there seems to be no use case for them.
- 
+
 ## 1.0.11 - 2018-07-30
 - New default link type `custom` without any validation, e.g. for relative links
 - New getCustomText() method on link model
