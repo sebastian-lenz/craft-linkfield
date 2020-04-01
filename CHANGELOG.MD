@@ -1,5 +1,9 @@
 # Release Notes for Typed Link Field
 
+## 1.0.21 - 2020-04-01
+
+- Add Dutch translations
+
 ## 1.0.20 - 2020-02-07
 - Fix error triggered when no owner element is passed when rendering fields
 - Fix typo of attribute "aria-label"
