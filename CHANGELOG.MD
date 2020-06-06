@@ -34,6 +34,11 @@
 
 > {warning} This is a major update, please create a database backup before installing, please see https://github.com/sebastian-lenz/craft-linkfield/issues/61
 
+## 1.0.22 - 2020-06-06
+
+- Fix display of long element titles
+- Update Norwegian translations
+
 ## 1.0.21 - 2020-04-01
 
 - Add Dutch translations
