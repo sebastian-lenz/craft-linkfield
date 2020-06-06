@@ -1,5 +1,10 @@
 # Release Notes for Typed Link Field
 
+## 1.0.22 - 2020-06-06
+
+- Fix display of long element titles
+- Update Norwegian translations
+
 ## 1.0.21 - 2020-04-01
 
 - Add Dutch translations
