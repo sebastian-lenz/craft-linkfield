@@ -97,7 +97,7 @@ class BasicTest extends AbstractLinkFieldTest
       ]),
     ]);
 
-    $this->assertEquals($link->getUrl(), 'http://localhost/phpunit?p=linked-entry');
+    $this->assertEquals($link->getUrl(), $otherEntry->getUrl());
     $this->assertEquals($link->getText(), 'Linked Entry');
     $this->assertNull($link->getAriaLabel());
     $this->assertNull($link->getTitle());
@@ -107,7 +107,7 @@ class BasicTest extends AbstractLinkFieldTest
     $this->assertEquals($otherEntry->id, $loadedOtherEntry->id);
 
     $this->assertEquals(
-      '<a href="http://localhost/phpunit?p=linked-entry">Linked Entry</a>',
+      '<a href="' . $otherEntry->getUrl() . '">'. $otherEntry->title .'</a>',
       (string)$link->getLink()
     );
 
