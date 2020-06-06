@@ -1,6 +1,9 @@
 # Release Notes for Typed Link Field
 
-## 2.0.0-beta.7
+## 2.0.0-beta.8 - 2020-06-06
+- Added: Norwegian and Spanish translations
+
+## 2.0.0-beta.7 - 2020-01-30
 - New: Field now displays the option "No link" if empty, see https://github.com/sebastian-lenz/craft-linkfield/issues/63
 - Changed: Adjusted the default enabled states of link types, see https://github.com/sebastian-lenz/craft-linkfield/issues/76
 - Changed: `Link::getCustomText` now returns an empty text by default, see https://github.com/sebastian-lenz/craft-linkfield/pull/73
