@@ -132,10 +132,22 @@ class m190417_202153_migrateDataToTable extends Migration
         continue;
       }
 
-      $type  = isset($payload['type']) ? $payload['type'] : null;
+      $type  = isset($payload['type'])  ? $payload['type']  : null;
       $value = isset($payload['value']) ? $payload['value'] : '';
       unset($payload['type']);
       unset($payload['value']);
+
+      if ($value && is_numeric($value)) {
+        $doesExist = (new Query())
+          ->select('id')
+          ->where(['id' => $value])
+          ->from('{{%elements}}')
+          ->exists();
+
+        if (!$doesExist) {
+          $value = null;
+        }
+      }
 
       $insertRows[] = [
         $row['elementId'],                          // elementId
