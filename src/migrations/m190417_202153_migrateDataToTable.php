@@ -182,6 +182,8 @@ class m190417_202153_migrateDataToTable extends Migration
       $settings['typeSettings'] = array();
     }
 
+    $settings['enableAllLinkTypes'] = false;
+
     if (isset($settings['allowedLinkNames'])) {
       $allowedLinkNames = $settings['allowedLinkNames'];
       if (!is_array($allowedLinkNames)) {
