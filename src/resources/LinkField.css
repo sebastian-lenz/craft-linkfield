@@ -48,6 +48,7 @@
 }
 
 .linkfield--elementRowSelect {
+  overflow: hidden;
   flex: 1;
 }
 

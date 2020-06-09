@@ -1,5 +1,10 @@
 # Release Notes for Typed Link Field
 
+## 1.0.23 - 2020-06-09
+
+- Fix custom query storage (see https://github.com/sebastian-lenz/craft-linkfield/issues/108)
+- Fix display of long element titles in combination with custom queries
+
 ## 1.0.22 - 2020-06-06
 
 - Fix display of long element titles
