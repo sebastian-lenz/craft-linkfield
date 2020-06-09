@@ -1,7 +1,8 @@
 # Release Notes for Typed Link Field
 
-## 2.0.0-beta.9
-- Fix: Skip links to missing elements when upgrading from version 1, see https://github.com/sebastian-lenz/craft-linkfield/issues/105
+## 2.0.0-beta.9 - 2020-06-09
+- Fix: Integrity constraint violation when migrating existing project to v2, see https://github.com/sebastian-lenz/craft-linkfield/issues/105
+- Fix: enableAllLinkTypes is always true when migrating existing project to v2, see https://github.com/sebastian-lenz/craft-linkfield/issues/106
 
 ## 2.0.0-beta.8 - 2020-06-06
 - Added: Norwegian and Spanish translations
