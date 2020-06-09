@@ -110,3 +110,12 @@ class Module extends \yii\base\Module
 Each link type must have an unique name and a definition object extending `lenz\linkfield\models\LinkType`. 
 Take a look at the bundled link types `ElementLinkType` and `InputLinkType` to get an idea of how to write your own 
 link type definitions.
+
+## Remarks
+
+### Upgrading from Fruit Link It
+
+If wish to migrate a field created using "Fruit Link It", please follow the
+discussion and directions here:
+
+https://github.com/sebastian-lenz/craft-linkfield/issues/51#issuecomment-538782716

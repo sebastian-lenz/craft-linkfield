@@ -1,6 +1,5 @@
 # Release Notes for Typed Link Field
 
-
 ## 2.0.0-beta.9
 - Fix: Skip links to missing elements when upgrading from version 1, see https://github.com/sebastian-lenz/craft-linkfield/issues/105
 
@@ -40,6 +39,11 @@
 - Changed: Link values now create different models based on the chosen link type
 
 > {warning} This is a major update, please create a database backup before installing, please see https://github.com/sebastian-lenz/craft-linkfield/issues/61
+
+## 1.0.23 - 2020-06-09
+
+- Fix custom query storage (see https://github.com/sebastian-lenz/craft-linkfield/issues/108)
+- Fix display of long element titles in combination with custom queries
 
 ## 1.0.22 - 2020-06-06
 
