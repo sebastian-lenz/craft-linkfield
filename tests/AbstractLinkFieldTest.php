@@ -15,7 +15,6 @@ use craft\services\Config;
 use PHPUnit\Framework\TestCase;
 
 use typedlinkfield\fields\LinkField;
-use typedlinkfield\Plugin;
 
 /**
  * Class AbstractLinkFieldTest
@@ -42,6 +41,7 @@ abstract class AbstractLinkFieldTest extends TestCase
     self::initCraft();
     self::installCraft();
   }
+
   /**
    * @param array $options
    * @return FieldInterface
@@ -50,9 +50,9 @@ abstract class AbstractLinkFieldTest extends TestCase
   protected static function createLinkField($options) {
     $fieldsService = Craft::$app->getFields();
     $field = $fieldsService->createField([
-        'type'    => LinkField::class,
-        'groupId' => 1,
-      ] + $options);
+      'type'    => LinkField::class,
+      'groupId' => 1,
+    ] + $options);
 
     $fieldsService->saveField($field);
     return $field;
@@ -117,9 +117,9 @@ abstract class AbstractLinkFieldTest extends TestCase
    */
   protected static function createEntry(EntryType $entryType, $options) {
     $entry = new Entry([
-        'typeId'    => $entryType->id,
-        'sectionId' => $entryType->sectionId,
-      ] + $options);
+      'typeId'    => $entryType->id,
+      'sectionId' => $entryType->sectionId,
+    ] + $options);
 
     Craft::$app->elements->saveElement($entry);
     return $entry;
@@ -216,12 +216,6 @@ abstract class AbstractLinkFieldTest extends TestCase
         'components' => [
           'config' => $configService,
         ],
-        'modules' => [
-          'typedlinkfield' => Plugin::class,
-        ],
-        'bootstrap' => [
-          'typedlinkfield'
-        ],
       ],
       require "{$craftSrcPath}/config/app.php",
       require "{$craftSrcPath}/config/app.{$appType}.php",
@@ -282,9 +276,17 @@ abstract class AbstractLinkFieldTest extends TestCase
     ob_end_clean();
 
     // Reset install info
+    $updatesReflection = new ReflectionClass(Craft::$app->updates);
+    $migrationProperty = $updatesReflection->getProperty('_isCraftDbMigrationNeeded');
+    $migrationProperty->setAccessible(true);
+    $migrationProperty->setValue(Craft::$app->updates, null);
+
     $appReflection = new ReflectionClass(Craft::$app);
     $infoProperty = $appReflection->getProperty('_info');
     $infoProperty->setAccessible(true);
     $infoProperty->setValue(Craft::$app, null);
+
+    // Install the plugin
+    self::$craft->getPlugins()->installPlugin('typedlinkfield');
   }
 }
