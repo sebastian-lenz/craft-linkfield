@@ -13,7 +13,6 @@ use yii\validators\EmailValidator;
 
 /**
  * Class InputLinkType
- * @package typedlinkfield\models
  */
 class InputLinkType extends Model implements LinkTypeInterface
 {
@@ -40,6 +39,7 @@ class InputLinkType extends Model implements LinkTypeInterface
 
   /**
    * ElementLinkType constructor.
+   *
    * @param string|array $displayName
    * @param array $options
    */
@@ -54,7 +54,7 @@ class InputLinkType extends Model implements LinkTypeInterface
   }
 
   /**
-   * @return array
+   * @inheritDoc
    */
   public function getDefaultSettings(): array {
     return [
@@ -64,14 +64,14 @@ class InputLinkType extends Model implements LinkTypeInterface
   }
 
   /**
-   * @return string
+   * @inheritDoc
    */
   public function getDisplayName(): string {
     return Craft::t('typedlinkfield', $this->displayName);
   }
 
   /**
-   * @return string
+   * @inheritDoc
    */
   public function getDisplayGroup(): string {
     return Craft::t('typedlinkfield', $this->displayGroup);
@@ -85,11 +85,7 @@ class InputLinkType extends Model implements LinkTypeInterface
   }
 
   /**
-   * @param string $linkTypeName
-   * @param LinkField $field
-   * @param Link $value
-   * @param ElementInterface|null $element
-   * @return string
+   * @inheritDoc
    */
   public function getInputHtml(string $linkTypeName, LinkField $field, Link $value, ElementInterface $element = null): string {
     $settings   = $field->getLinkTypeSettings($linkTypeName, $this);
@@ -127,14 +123,6 @@ class InputLinkType extends Model implements LinkTypeInterface
   }
 
   /**
-   * @param mixed $value
-   * @return mixed
-   */
-  public function getLinkValue($value) {
-    return is_string($value) ? $value : '';
-  }
-
-  /**
    * @param Link $link
    * @return null|string
    */
@@ -157,9 +145,7 @@ class InputLinkType extends Model implements LinkTypeInterface
   }
 
   /**
-   * @param string $linkTypeName
-   * @param LinkField $field
-   * @return string
+   * @inheritDoc
    */
   public function getSettingsHtml(string $linkTypeName, LinkField $field): string {
     try {
@@ -178,16 +164,14 @@ class InputLinkType extends Model implements LinkTypeInterface
   }
 
   /**
-   * @param Link $link
-   * @return null|string
+   * @inheritDoc
    */
   public function getText(Link $link) {
     return null;
   }
 
   /**
-   * @param Link $link
-   * @return null|string
+   * @inheritDoc
    */
   public function getUrl(Link $link) {
     $url = $this->getRawUrl($link);
@@ -213,8 +197,7 @@ class InputLinkType extends Model implements LinkTypeInterface
   }
 
   /**
-   * @param Link $link
-   * @return bool
+   * @inheritDoc
    */
   public function isEmpty(Link $link): bool {
     if (is_string($link->value)) {
@@ -225,6 +208,13 @@ class InputLinkType extends Model implements LinkTypeInterface
   }
 
   /**
+   * @inheritDoc
+   */
+  public function readLinkValue($formData) {
+    return is_string($formData) ? $formData : '';
+  }
+
+  /**
    * @inheritdoc
    */
   public function validateSettings(array $settings): array {
@@ -232,9 +222,7 @@ class InputLinkType extends Model implements LinkTypeInterface
   }
 
   /**
-   * @param LinkField $field
-   * @param Link $link
-   * @return array|null
+   * @inheritDoc
    */
   public function validateValue(LinkField $field, Link $link) {
     $value = $this->getRawUrl($link);

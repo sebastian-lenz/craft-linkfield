@@ -128,12 +128,12 @@ class LinkField extends Field
       // If it is an array and the field `isCpFormData` is set, we are saving a cp form
       $attr += [
         'ariaLabel'   => $this->enableAriaLabel && isset($value['ariaLabel']) ? $value['ariaLabel'] : null,
-        'customQuery' => isset($value['customQuery']) ? $value['customQuery'] : null,
+        'customQuery' => $this->readCustomQuery($value),
         'customText'  => $this->allowCustomText && isset($value['customText']) ? $value['customText'] : null,
         'target'      => $this->allowTarget && isset($value['target']) ? $value['target'] : null,
         'title'       => $this->enableTitle && isset($value['title']) ? $value['title'] : null,
         'type'        => isset($value['type']) ? $value['type'] : null,
-        'value'       => $this->getLinkValue($value)
+        'value'       => $this->readLinkValue($value)
       ];
 
     } else if (is_array($value)) {
@@ -354,6 +354,10 @@ class LinkField extends Field
     return true;
   }
 
+
+  // Private methods
+  // ---------------
+
   /**
    * @param string $type
    * @return bool
@@ -364,21 +368,44 @@ class LinkField extends Field
   }
 
   /**
-   * @param array $data
+   * @param array $formData
    * @return mixed
    */
-  private function getLinkValue(array $data) {
-    $linkTypes = Plugin::getInstance()->getLinkTypes();
-    $type = $data['type'];
-    if (!array_key_exists($type, $linkTypes)) {
+  private function readCustomQuery(array $formData) {
+    $type = $formData['type'];
+    if (!array_key_exists($type, $formData)) {
       return null;
     }
 
-    return $linkTypes[$type]->getLinkValue($data[$type]);
+    $typeData = $formData[$type];
+    return is_array($typeData) && array_key_exists('customQuery', $typeData)
+      ? $typeData['customQuery']
+      : null;
   }
 
   /**
-   * @return string
+   * @param array $formData
+   * @return mixed
+   */
+  private function readLinkValue(array $formData) {
+    $linkTypes = Plugin::getInstance()->getLinkTypes();
+    $type = $formData['type'];
+    if (
+      !array_key_exists($type, $linkTypes) ||
+      !array_key_exists($type, $formData)
+    ) {
+      return null;
+    }
+
+    return $linkTypes[$type]->readLinkValue($formData[$type]);
+  }
+
+
+  // Static methods
+  // --------------
+
+  /**
+   * @inheritDoc
    */
   static public function displayName(): string {
     return Craft::t('typedlinkfield', 'Link field');

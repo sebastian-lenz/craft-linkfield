@@ -43,12 +43,6 @@ interface LinkTypeInterface
   public function getInputHtml(string $linkTypeName, LinkField $field, Link $value, ElementInterface $element = null): string;
 
   /**
-   * @param mixed $value
-   * @return mixed
-   */
-  public function getLinkValue($value);
-
-  /**
    * @param string $linkTypeName
    * @param LinkField $field
    * @return string
@@ -79,6 +73,12 @@ interface LinkTypeInterface
    * @return bool
    */
   public function isEmpty(Link $link): bool;
+
+  /**
+   * @param mixed $formData
+   * @return mixed
+   */
+  public function readLinkValue($formData);
 
   /**
    * @param array $settings
