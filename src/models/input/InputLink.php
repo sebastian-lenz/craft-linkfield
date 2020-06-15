@@ -71,43 +71,79 @@ class InputLink extends Link
 
   /**
    * @param string $attribute
-   * @return array|null
+   * @return void
    */
   public function validateUrl($attribute) {
     $linkType = $this->getLinkType();
     if ($this->isEmpty() || $linkType->disableValidation) {
-      return null;
+      return;
     }
-
-    $url = $this->linkedUrl;
-    $enableIDN = (
-      Craft::$app->getI18n()->getIsIntlLoaded() &&
-      defined('INTL_IDNA_VARIANT_UTS46')
-    );
 
     switch ($linkType->inputType) {
       case 'email':
-        (new EmailValidator(['enableIDN' => $enableIDN]))->validate($url, $error);
-        if (!is_null($error)) {
-          $this->addError($attribute, $error);
-        }
-        break;
-
+        return $this->validateEmailUrl($attribute);
       case 'tel':
-        $regexp = '/^[0-9+\(\)#\.\s\/ext-]+$/';
-        if (!filter_var($url, FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $regexp)))) {
-          $this->addError($attribute, Craft::t('typedlinkfield', 'Please enter a valid phone number.'));
-        }
-        break;
-
+        return $this->validateTelUrl($attribute);
       case 'url':
-        (new UrlValidator(['enableIDN' => $enableIDN]))->validate($url, $error);
-        if (!is_null($error)) {
-          $this->addError($attribute, $error);
-        }
-        break;
+        return $this->validateGenericUrl($attribute);
     }
+  }
 
-    return null;
+  // Protected methods
+  // -----------------
+
+  /**
+   * @return bool
+   */
+  protected function getEnableIDN() {
+    return (
+      Craft::$app->getI18n()->getIsIntlLoaded() &&
+      defined('INTL_IDNA_VARIANT_UTS46')
+    );
+  }
+
+  /**
+   * @param string $attribute
+   */
+  protected function validateGenericUrl($attribute) {
+    $error = null;
+    $validator = new UrlValidator([
+      'enableIDN' => $this->getEnableIDN(),
+    ]);
+
+    $validator->validate($this->$attribute, $error);
+    if (!is_null($error)) {
+      $this->addError($attribute, $error);
+    }
+  }
+
+  /**
+   * @param $attribute
+   */
+  protected function validateEmailUrl($attribute) {
+    $error = null;
+    $validator = new EmailValidator([
+      'enableIDN' => $this->getEnableIDN(),
+    ]);
+
+    $validator->validate($this->$attribute, $error);
+    if (!is_null($error)) {
+      $this->addError($attribute, $error);
+    }
+  }
+
+  /**
+   * @param $attribute
+   */
+  protected function validateTelUrl($attribute) {
+    $isValid = filter_var($this->$attribute, FILTER_VALIDATE_REGEXP, [
+      'options' => [
+        'regexp' => '/^[0-9+\(\)#\.\s\/ext-]+$/',
+      ]
+    ]);
+
+    if (!$isValid) {
+      $this->addError($attribute, Craft::t('typedlinkfield', 'Please enter a valid phone number.'));
+    }
   }
 }
