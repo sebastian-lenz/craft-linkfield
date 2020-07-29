@@ -2,9 +2,12 @@
 
 namespace lenz\linkfield\models;
 
+use Craft;
 use craft\base\ElementInterface;
 use craft\helpers\ArrayHelper;
 use lenz\linkfield\fields\LinkField;
+use Throwable;
+use Yii;
 use yii\base\Model;
 use yii\behaviors\AttributeTypecastBehavior;
 use yii\helpers\Json;
@@ -98,7 +101,7 @@ class LinkType extends Model
    */
   public function getTranslatedDisplayGroup(): string {
     if (!isset($this->_translatedDisplayGroup)) {
-      $this->_translatedDisplayGroup = \Craft::t('typedlinkfield', $this->displayGroup);
+      $this->_translatedDisplayGroup = Craft::t('typedlinkfield', $this->displayGroup);
     }
 
     return $this->_translatedDisplayGroup;
@@ -115,7 +118,8 @@ class LinkType extends Model
    * @param Link $value
    * @param bool $disabled
    * @return string
-   * @throws \Throwable
+   * @throws Throwable
+   * @noinspection PhpUnusedParameterInspection
    */
   public function getInputHtml(Link $value, bool $disabled): string {
     return '';
@@ -136,7 +140,8 @@ class LinkType extends Model
   /**
    * @param LinkField $field
    * @return string
-   * @throws \Throwable
+   * @throws Throwable
+   * @noinspection PhpUnusedParameterInspection
    */
   public function getSettingsHtml(LinkField $field): string {
     return '';
@@ -170,7 +175,7 @@ class LinkType extends Model
    * @param array $settings
    */
   public function setSettings(array $settings) {
-    \Yii::configure($this, $settings);
+    Yii::configure($this, $settings);
   }
 
   /**
@@ -223,6 +228,7 @@ class LinkType extends Model
   /**
    * @param mixed $data
    * @return array|null
+   * @noinspection PhpUnusedParameterInspection
    */
   protected function prepareLegacyData($data) {
     return null;
