@@ -39,6 +39,10 @@
   min-width: 300px;
 }
 
+.linkfield--elementRowSelect > .elementselect {
+  padding-bottom: 4px;
+}
+
 .linkfield--elementRowQuery {
   flex: 1;
   min-width: 100px;
