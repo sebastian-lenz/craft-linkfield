@@ -175,7 +175,18 @@ class LinkType extends Model
    * @param array $settings
    */
   public function setSettings(array $settings) {
-    Yii::configure($this, $settings);
+    foreach ($settings as $name => $value) {
+      try {
+        $this->$name = $value;
+      } catch (Throwable $error) {
+        Craft::error(sprintf(
+          'Error while trying to set config value "%s" on link field type "%s": %s',
+          $name,
+          $this->getDisplayName(),
+          (string)$error
+        ), __METHOD__);
+      }
+    }
   }
 
   /**
