@@ -222,8 +222,7 @@ class ElementLink extends Link
       ->siteId($this->getSiteId());
 
     if ($ignoreStatus || Craft::$app->request->getIsCpRequest()) {
-      $query->enabledForSite(false);
-      $query->status(null);
+      $query->anyStatus();
     }
 
     return $query->one();
