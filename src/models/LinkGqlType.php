@@ -51,8 +51,8 @@ class LinkGqlType
         'name' => 'customText',
         'type' => Type::string(),
       ],
-      'element' => [
-        'name' => 'element',
+      'linkElement' => [
+        'name' => 'linkElement',
         'type' => ElementInterface::getType(),
         'resolve' => ElementResolver::class . '::resolve',
       ],
