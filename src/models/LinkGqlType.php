@@ -3,7 +3,8 @@
 namespace lenz\linkfield\models;
 
 use craft\gql\GqlEntityRegistry;
-use craft\gql\interfaces\Element;
+use craft\gql\interfaces\Element as ElementInterface;
+use craft\gql\resolvers\Element as ElementResolver;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 
@@ -52,7 +53,8 @@ class LinkGqlType
       ],
       'element' => [
         'name' => 'element',
-        'type' => Type::listOf(Element::getType()),
+        'type' => ElementInterface::getType(),
+        'resolve' => ElementResolver::class . '::resolve',
       ],
       'target' => [
         'name' => 'target',
