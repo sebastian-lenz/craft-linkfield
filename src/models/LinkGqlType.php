@@ -15,14 +15,16 @@ class LinkGqlType
   /**
    * @return string
    */
-  static public function getName(): string {
+  static public function getName(): string
+  {
     return 'linkField_Link';
   }
 
   /**
    * @return Type
    */
-  static public function getType() {
+  static public function getType()
+  {
     if ($type = GqlEntityRegistry::getEntity(self::class)) {
       return $type;
     }
@@ -35,9 +37,10 @@ class LinkGqlType
   }
 
   /**
-   * @rejturn array
+   * @return array
    */
-  public static function getFieldDefinitions(): array {
+  public static function getFieldDefinitions(): array
+  {
     return [
       'ariaLabel' => [
         'name' => 'ariaLabel',
@@ -49,7 +52,7 @@ class LinkGqlType
       ],
       'element' => [
         'name' => 'element',
-        'type' => Element::getType(),
+        'type' => Type::listOf(Element::getType()),
       ],
       'target' => [
         'name' => 'target',
