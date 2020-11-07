@@ -51,7 +51,7 @@ class ElementLinkBatchLoader
 
   /**
    * @param string $type
-   * @param int $id
+   * @param string|int $id
    * @return ElementInterface|null
    */
   public function loadElement(string $type, $id) {
@@ -83,8 +83,7 @@ class ElementLinkBatchLoader
 
     $query = $type::find()->id($this->_elementIds[$type]);
     if (Craft::$app->request->getIsCpRequest()) {
-      $query->enabledForSite(false);
-      $query->status(null);
+      $query->anyStatus();
     }
 
     $elements = [];
