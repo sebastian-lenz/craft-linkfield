@@ -41,6 +41,22 @@ class ElementLinkType extends LinkType
 
 
   /**
+   * @inheritDoc
+   */
+  public function createLink(LinkField $field, ElementInterface $owner = null, $value = []): Link {
+    $link = parent::createLink($field, $owner, $value);
+
+    // If the link is created from post data, we mus update cached element data
+    // immediately as the validation might fail otherwise
+    // @see https://github.com/sebastian-lenz/craft-linkfield/issues/126
+    if (isset($value['cpForm']) && $field->enableElementCache) {
+      $link->setAttributes($this->getCachedElementAttributes($link));
+    }
+
+    return $link;
+  }
+
+  /**
    * @return array
    */
   public function getAvailableSources() {
@@ -124,15 +140,7 @@ class ElementLinkType extends LinkType
       $model->getField()->enableElementCache &&
       $model instanceof ElementLink
     ) {
-      $element = $model->getElement();
-
-      if ($element && ElementListener::isElementPublished($element)) {
-        $attributes['linkedTitle'] = (string)$element;
-        $attributes['linkedUrl']   = $element->getUrl();
-      } else {
-        $attributes['linkedTitle'] = null;
-        $attributes['linkedUrl']   = null;
-      }
+      $attributes += $this->getCachedElementAttributes($model);
     }
 
     return $attributes;
@@ -175,6 +183,26 @@ class ElementLinkType extends LinkType
 
   // Protected methods
   // -----------------
+
+  /**
+   * @param Link $model
+   * @return array
+   */
+  protected function getCachedElementAttributes(Link $model) {
+    $element = $model->getElement();
+
+    if ($element && ElementListener::isElementPublished($element)) {
+      return [
+        'linkedTitle' => (string)$element,
+        'linkedUrl' => $element->getUrl(),
+      ];
+    }
+
+    return [
+      'linkedTitle' => null,
+      'linkedUrl' => null,
+    ];
+  }
 
   /**
    * @param Link $value

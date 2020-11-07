@@ -372,6 +372,15 @@ class Link extends ForeignFieldModel
   }
 
   /**
+   * @inheritDoc
+   */
+  public function rules() {
+    return array_merge(parent::rules(), [
+      [['ariaLabel', 'customText', 'target', 'title'], 'string'],
+    ]);
+  }
+
+  /**
    * @return string
    */
   public function __toString() {

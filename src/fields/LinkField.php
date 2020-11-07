@@ -159,6 +159,7 @@ class LinkField extends ForeignField
 
   /**
    * @inheritDoc
+   * @throws Exception
    */
   protected function getHtml(ForeignFieldModel $value, ElementInterface $element = null, $disabled = false) {
     if (
@@ -265,6 +266,21 @@ class LinkField extends ForeignField
     }
   }
 
+  /**
+   * This is primary used to evaluate required fields within the control panel,
+   * we consider a field as non empty if the user has entered either a url or
+   * has selected an entry.
+   *
+   * This does not guarantee that the field actually returns a valid url (e.g.
+   * the linked element might not have a url), but for the cp user these cases
+   * would not be comprehensible.
+   *
+   * @inheritDoc
+   */
+  public function isValueEmpty($value, ElementInterface $element): bool {
+    return (!($value instanceof Link) || $value->isEditorEmpty());
+  }
+
 
   // Protected methods
   // -----------------
@@ -297,6 +313,7 @@ class LinkField extends ForeignField
    * @param Link $value
    * @param ElementInterface $element
    * @return Link
+   * @throws Exception
    */
   protected function getEditLink(Link $value, ElementInterface $element = null) {
     $defaultLinkType = $this->getDefaultLinkType();

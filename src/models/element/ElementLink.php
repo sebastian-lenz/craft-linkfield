@@ -158,18 +158,24 @@ class ElementLink extends Link
    * @inheritDoc
    */
   public function isEmpty(): bool {
-    if ($this->_field->enableElementCache) {
-      return is_null($this->linkedUrl);
-    }
-
-    return !$this->hasElement();
+    return empty($this->getElementUrl());
   }
 
   /**
    * @inheritDoc
    */
   public function isEditorEmpty(): bool {
-    return !$this->hasElement();
+    return !$this->hasElement(true);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function rules() {
+    return array_merge(parent::rules(), [
+      [['customQuery', 'linkedTitle', 'linkedUrl'], 'string'],
+      [['linkedId', 'linkedSiteId'], 'integer']
+    ]);
   }
 
   /**
