@@ -40,7 +40,7 @@ class InputLink extends Link
 
     $url = $this->linkedUrl;
     if ($this->getLinkType()->allowAliases) {
-      $url = Craft::getAlias($url);
+      $url = (string)Craft::parseEnv($url);
     }
 
     switch ($this->getLinkType()->inputType) {
