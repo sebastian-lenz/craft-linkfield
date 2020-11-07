@@ -10,55 +10,87 @@ class Url
   /**
    * @var array
    */
-  private $parts;
+  private $_parts;
+
+  /**
+   * @var array
+   */
+  const GLUES = [
+    ['scheme',   '',  '://'],
+    ['auth',     '',  '@'],
+    ['host',     '',  ''],
+    ['port',     ':', ''],
+    ['path',     '',  ''],
+    ['query',    '?', ''],
+    ['fragment', '#', ''],
+  ];
 
 
   /**
    * Url constructor.
    * @param string $url
    */
-  public function __construct($url) {
-    $this->parts = parse_url($url);
+  public function __construct(string $url) {
+    $this->_parts = parse_url($url);
   }
 
   /**
    * @return string
    */
   public function __toString() {
-    $parts    = $this->parts;
-    $scheme   = isset($parts['scheme']) ? $parts['scheme'] . '://' : '';
-    $host     = isset($parts['host']) ? $parts['host'] : '';
-    $port     = isset($parts['port']) ? ':' . $parts['port'] : '';
-    $user     = isset($parts['user']) ? $parts['user'] : '';
-    $pass     = isset($parts['pass']) ? ':' . $parts['pass']  : '';
-    $pass     = ($user || $pass) ? "$pass@" : '';
-    $path     = isset($parts['path']) ? $parts['path'] : '';
-    $query    = isset($parts['query']) ? '?' . $parts['query'] : '';
-    $fragment = isset($parts['fragment']) ? '#' . $parts['fragment'] : '';
+    $result = [];
+    $parts = $this->_parts + [
+      'auth' => $this->getAuthentication(),
+    ];
 
-    return "$scheme$user$pass$host$port$path$query$fragment";
+    foreach (self::GLUES as list($key, $prefix, $suffix)) {
+      $value = isset($parts[$key]) ? $parts[$key] : '';
+      if (!empty($value)) {
+        array_push($result, $prefix, $value, $suffix);
+      }
+    }
+
+    if (isset($parts['host']) && !isset($parts['scheme'])) {
+      array_unshift($result, '//');
+    }
+
+    return implode('', $result);
+  }
+
+  /**
+   * @return string
+   */
+  public function getAuthentication() {
+    $parts = $this->_parts;
+
+    return implode(':', array_filter([
+      isset($parts['user']) ? $parts['user'] : '',
+      isset($parts['pass']) ? $parts['pass'] : '',
+    ]));
   }
 
   /**
    * @return string|null
    */
   public function getFragment() {
-    return isset($this->parts['fragment']) ? (string)$this->parts['fragment'] : null;
+    return isset($this->_parts['fragment']) ? (string)$this->_parts['fragment'] : null;
   }
 
   /**
    * @return array
    */
   public function getQuery() {
-    if (!isset($this->parts['query'])) {
+    if (!isset($this->_parts['query'])) {
       return array();
     }
 
     $result = array();
-    foreach (explode('&', $this->parts['query']) as $param) {
+    foreach (explode('&', $this->_parts['query']) as $param) {
       $parts = explode('=', $param, 2);
-      if (count($parts) !== 2) continue;
-      
+      if (count($parts) !== 2) {
+        continue;
+      }
+
       list($key, $value) = $parts;
       $result[$key] = urldecode($value);
     }
@@ -69,11 +101,11 @@ class Url
   /**
    * @param string|null $fragment
    */
-  public function setFragment($fragment) {
+  public function setFragment(string $fragment = null) {
     if (empty($fragment)) {
-      unset($this->parts['fragment']);
+      unset($this->_parts['fragment']);
     } else {
-      $this->parts['fragment'] = $fragment;
+      $this->_parts['fragment'] = $fragment;
     }
   }
 
@@ -82,14 +114,14 @@ class Url
    */
   public function setQuery(array $query) {
     if (count($query) === 0) {
-      unset($this->parts['query']);
+      unset($this->_parts['query']);
     } else {
       $parts = array();
       foreach ($query as $key => $value) {
         $parts[] = $key . '=' . urlencode($value);
       }
 
-      $this->parts['query'] = implode('&', $parts);
+      $this->_parts['query'] = implode('&', $parts);
     }
   }
 }
