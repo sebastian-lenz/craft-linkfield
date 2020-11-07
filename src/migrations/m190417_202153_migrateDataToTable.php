@@ -3,7 +3,7 @@
 namespace lenz\linkfield\migrations;
 
 use Craft;
-use craft\base\Field;
+use craft\base\FieldInterface;
 use craft\db\Migration;
 use craft\db\Query;
 use craft\db\Table;
@@ -15,6 +15,7 @@ use verbb\supertable\fields\SuperTableField;
 
 /**
  * m190417_202153_migrateDataToTable migration.
+ * @noinspection PhpUnused
  */
 class m190417_202153_migrateDataToTable extends Migration
 {
@@ -80,13 +81,12 @@ class m190417_202153_migrateDataToTable extends Migration
   }
 
   /**
-   * @param Field $field
+   * @param FieldInterface $field
    * @param string $table
-   * @param string $fieldColumnPrefix
    */
-  private function updateField(Field $field, string $table, string $fieldColumnPrefix = 'field_') {
+  private function updateField(FieldInterface $field, string $table) {
     if ($field instanceof LinkField) {
-      $this->updateLinkField($field, $table, $fieldColumnPrefix);
+      $this->updateLinkField($field, $table);
     } elseif ($field instanceof Matrix) {
       $this->updateMatrixField($field);
     } elseif ($field instanceof SuperTableField) {
@@ -98,13 +98,14 @@ class m190417_202153_migrateDataToTable extends Migration
    * @param Matrix $matrixField
    */
   private function updateMatrixField(Matrix $matrixField) {
-    $blockTypes = Craft::$app->getMatrix()->getBlockTypesByFieldId($matrixField->id);
+    $table = $matrixField->contentTable;
+    $blockTypes = Craft::$app
+      ->getMatrix()
+      ->getBlockTypesByFieldId($matrixField->id);
 
     foreach ($blockTypes as $blockType) {
-      $fieldColumnPrefix = 'field_' . $blockType->handle . '_';
-
       foreach ($blockType->getFields() as $field) {
-        $this->updateField($field, $matrixField->contentTable, $fieldColumnPrefix);
+        $this->updateField($field, $table);
       }
     }
   }
@@ -112,11 +113,10 @@ class m190417_202153_migrateDataToTable extends Migration
   /**
    * @param LinkField $field
    * @param string $table
-   * @param string $columnPrefix
    */
-  private function updateLinkField(LinkField $field, string $table, string $columnPrefix = 'field_') {
+  private function updateLinkField(LinkField $field, string $table) {
     $insertRows = [];
-    $columnName = $columnPrefix . $field->handle;
+    $columnName = ($field->columnPrefix ?: 'field_') . $field->handle;
     $rows = (new Query())
       ->select([
         'elementId',
@@ -172,7 +172,7 @@ class m190417_202153_migrateDataToTable extends Migration
    * @param string $settings
    * @return string
    */
-  private function updateSettings($settings) {
+  private function updateSettings(string $settings) {
     $settings = Json::decode($settings);
     if (!is_array($settings)) {
       $settings = array();
