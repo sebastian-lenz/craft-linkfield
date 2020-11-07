@@ -12,10 +12,8 @@ use craft\models\Section;
 use craft\models\Section_SiteSettings;
 use craft\models\Site;
 use craft\services\Config;
-use PHPUnit\Framework\TestCase;
-
 use lenz\linkfield\fields\LinkField;
-use lenz\linkfield\Plugin;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class AbstractLinkFieldTest

@@ -11,6 +11,7 @@ use yii\db\ActiveQueryInterface;
 
 /**
  * Class LinkRecord
+ *
  * @property string $type
  * @property string $linkedUrl
  * @property int $linkedId

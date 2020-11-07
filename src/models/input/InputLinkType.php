@@ -6,7 +6,6 @@ use Craft;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\models\Link;
 use lenz\linkfield\models\LinkType;
-use lenz\linkfield\records\LinkRecord;
 
 /**
  * Class InputLinkType

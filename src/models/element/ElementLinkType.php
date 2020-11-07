@@ -2,6 +2,7 @@
 
 namespace lenz\linkfield\models\element;
 
+use Craft;
 use craft\base\ElementInterface;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\listeners\ElementListener;
@@ -66,7 +67,7 @@ class ElementLinkType extends LinkType
    * @inheritDoc
    */
   public function getInputHtml(Link $value, bool $disabled): string {
-    return \Craft::$app->view->renderTemplate(
+    return Craft::$app->view->renderTemplate(
       'typedlinkfield/_input-element',
       [
         'disabled'     => $disabled,
@@ -82,7 +83,7 @@ class ElementLinkType extends LinkType
    * @inheritDoc
    */
   public function getSettingsHtml(LinkField $field): string {
-    return \Craft::$app->view->renderTemplate(
+    return Craft::$app->view->renderTemplate(
       'typedlinkfield/_settings-element',
       [
         'linkType' => $this,
@@ -147,7 +148,7 @@ class ElementLinkType extends LinkType
   }
 
   /**
-   * @inheritdoc
+   * @return void
    */
   public function validateSources() {
     $availableSources = $this->getAvailableSources();
@@ -219,11 +220,16 @@ class ElementLinkType extends LinkType
       return null;
     }
 
+    $queryValue = '';
+    if ($value instanceof ElementLink && !empty($value->customQuery)) {
+      $queryValue = $value->customQuery;
+    }
+
     return [
-      'id'          => 'customQuery',
-      'name'        => 'customQuery',
-      'placeholder' => \Craft::t('typedlinkfield', 'Query, starts with "#" or "?"'),
-      'value'       => empty($value->customQuery) ? '' : $value->customQuery,
+      'id'    => 'customQuery',
+      'name'  => 'customQuery',
+      'value' => $queryValue,
+      'placeholder' => Craft::t('typedlinkfield', 'Query, starts with "#" or "?"'),
     ];
   }
 

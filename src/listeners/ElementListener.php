@@ -5,6 +5,7 @@ namespace lenz\linkfield\listeners;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\elements\Entry;
+use Exception;
 use lenz\linkfield\records\LinkRecord;
 use yii\base\Event;
 
@@ -23,7 +24,7 @@ class ElementListener
 
   /**
    * @param Event $event
-   * @throws \Exception
+   * @throws Exception
    */
   public function onElementChanged(Event $event) {
     $element = $event->sender;
@@ -34,7 +35,7 @@ class ElementListener
   }
 
   /**
-   * @throws \Exception
+   * @throws Exception
    */
   public function processStatusChanges() {
     $state = ElementListenerState::getInstance();
@@ -55,7 +56,7 @@ class ElementListener
   /**
    * @param ElementInterface $element
    * @return array
-   * @throws \Exception
+   * @throws Exception
    */
   static function getElementConditions(ElementInterface $element) {
     return [
@@ -90,7 +91,7 @@ class ElementListener
 
   /**
    * @param ElementInterface $element
-   * @throws \Exception
+   * @throws Exception
    */
   static function updateElement(ElementInterface $element) {
     $conditions = self::getElementConditions($element);

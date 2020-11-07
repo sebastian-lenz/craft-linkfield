@@ -2,8 +2,10 @@
 
 namespace lenz\linkfield\listeners;
 
+use Craft;
 use craft\base\ElementInterface;
 use craft\queue\BaseJob;
+use Exception;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\models\element\ElementLinkType;
 use lenz\linkfield\records\LinkRecord;
@@ -21,6 +23,7 @@ class CacheListenerJob extends BaseJob
 
   /**
    * @inheritdoc
+   * @throws Exception
    */
   public function execute($queue) {
     $state = ElementListenerState::getInstance();
@@ -83,7 +86,7 @@ class CacheListenerJob extends BaseJob
    * @inheritdoc
    */
   protected function defaultDescription(): string {
-    return \Craft::t('app', 'Cache {field} element links', [
+    return Craft::t('app', 'Cache {field} element links', [
       'field' => $this->getFieldName(),
     ]);
   }
@@ -97,6 +100,7 @@ class CacheListenerJob extends BaseJob
     $links  = LinkRecord::find()->where($conditions)->all();
     $result = [];
 
+    /** @var LinkRecord $link */
     foreach ($links as $link) {
       $linkType = array_key_exists($link->type, $linkTypes)
         ? $linkTypes[$link->type]
@@ -136,7 +140,7 @@ class CacheListenerJob extends BaseJob
    * @return LinkField|null
    */
   protected function getField() {
-    $field = \Craft::$app->getFields()->getFieldById($this->fieldId);
+    $field = Craft::$app->getFields()->getFieldById($this->fieldId);
     return $field instanceof LinkField
       ? $field
       : null;
@@ -160,8 +164,8 @@ class CacheListenerJob extends BaseJob
    * @param LinkField $field
    */
   static function createForField(LinkField $field) {
-    \Craft::$app->getQueue()->push(new CacheListenerJob([
-      'description' => \Craft::t('app', 'Cache {field} element links', [
+    Craft::$app->getQueue()->push(new CacheListenerJob([
+      'description' => Craft::t('app', 'Cache {field} element links', [
         'field' => $field->name,
       ]),
       'fieldId' => $field->id,

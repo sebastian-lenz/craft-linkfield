@@ -204,6 +204,7 @@ class LinkField extends ForeignField
   /**
    * @param mixed $model
    * @return string|null
+   * @noinspection PhpUnused (Used in field template)
    */
   public function resolveSelectedLinkTypeName($model) {
     $linkTypes = $this->getEnabledLinkTypes();
@@ -315,7 +316,7 @@ class LinkField extends ForeignField
    * @param string $linkName
    * @return LinkType
    */
-  protected function resolveLinkType($linkName) {
+  protected function resolveLinkType(string $linkName) {
     $allowedLinkTypes = $this->getEnabledLinkTypes();
     if (array_key_exists($linkName, $allowedLinkTypes)) {
       return $allowedLinkTypes[$linkName];

@@ -2,12 +2,16 @@
 
 namespace lenz\linkfield\listeners;
 
+use Craft;
 use craft\base\ElementInterface;
 use craft\db\Query;
 use craft\elements\Entry;
 use craft\helpers\Db;
+use DateTime;
+use Exception;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\models\element\ElementLinkType;
+use Throwable;
 
 /**
  * Class ElementListenerState
@@ -37,7 +41,7 @@ class ElementListenerState
 
   /**
    * ElementListener constructor.
-   * @throws \Exception
+   * @throws Exception
    */
   public function __construct() {
     $this->reset();
@@ -95,11 +99,11 @@ class ElementListenerState
   }
 
   /**
-   * @throws \Exception
+   * @throws Exception
    */
   public function flush() {
     $timeMin = Db::prepareDateForDb($this->lastChangeDate);
-    $timeMax = Db::prepareDateForDb(new \DateTime());
+    $timeMax = Db::prepareDateForDb(new DateTime());
     $query = new Query();
     $rows = $query
       ->from('{{%entries}} entries')
@@ -120,7 +124,7 @@ class ElementListenerState
       ])
       ->all();
 
-    foreach (\Craft::$app->getSites()->getAllSites() as $site) {
+    foreach (Craft::$app->getSites()->getAllSites() as $site) {
       foreach ($rows as $row) {
         /** @var ElementInterface $elementType */
         $elementType = $row['type'];
@@ -141,7 +145,7 @@ class ElementListenerState
   }
 
   /**
-   * @throws \Exception
+   * @throws Exception
    */
   public function reset() {
     $this->fields = $this->loadElementFields();
@@ -151,7 +155,7 @@ class ElementListenerState
   }
 
   /**
-   * @throws \Exception
+   * @throws Exception
    */
   public function updateChangeDate() {
     $this->nextEntryChangeDate = $this->loadNextEntryChangeDate();
@@ -174,7 +178,7 @@ class ElementListenerState
    * @param array $specs
    * @return array
    */
-  protected function getElementLinkConditions($specs) {
+  protected function getElementLinkConditions(array $specs) {
     $conditions = ['or'];
     foreach ($specs as $fieldId => $fieldInfo) {
       $conditions[] = [
@@ -191,7 +195,7 @@ class ElementListenerState
    */
   protected function loadElementFields() {
     $result = array();
-    $allFields = \Craft::$app->getFields()->getAllFields(false);
+    $allFields = Craft::$app->getFields()->getAllFields(false);
 
     foreach ($allFields as $field) {
       if (!($field instanceof LinkField)) {
@@ -218,10 +222,10 @@ class ElementListenerState
 
   /**
    * @return int|null
-   * @throws \Exception
+   * @throws Exception
    */
   protected function loadNextEntryChangeDate() {
-    $now = Db::prepareDateForDb(new \DateTime());
+    $now = Db::prepareDateForDb(new DateTime());
     $nextPost = Entry::find()
       ->status(null)
       ->postDate("> {$now}")
@@ -258,9 +262,9 @@ class ElementListenerState
    */
   protected function save() {
     try {
-      \Craft::$app->getCache()->set(self::class, $this);
-    } catch (\Throwable $error) {
-      \Craft::error($error->getMessage());
+      Craft::$app->getCache()->set(self::class, $this);
+    } catch (Throwable $error) {
+      Craft::error($error->getMessage());
     }
   }
 
@@ -270,11 +274,11 @@ class ElementListenerState
 
   /**
    * @return ElementListenerState
-   * @throws \Exception
+   * @throws Exception
    */
   public static function getInstance() {
     if (!isset(self::$_instance)) {
-      $instance = \Craft::$app->getCache()->get(self::class);
+      $instance = Craft::$app->getCache()->get(self::class);
       if (!($instance instanceof ElementListenerState)) {
         $instance = new ElementListenerState();
       }
@@ -286,7 +290,7 @@ class ElementListenerState
   }
 
   /**
-   * @throws \Exception
+   * @throws Exception
    */
   public static function refresh() {
     self::$_instance = new ElementListenerState();

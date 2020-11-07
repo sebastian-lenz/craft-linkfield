@@ -3,7 +3,6 @@
 namespace lenz\linkfield\migrations;
 
 use craft\db\Migration;
-use craft\db\Table;
 use lenz\linkfield\records\LinkRecord;
 
 /**

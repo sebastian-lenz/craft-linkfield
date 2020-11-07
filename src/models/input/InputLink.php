@@ -72,8 +72,9 @@ class InputLink extends Link
   /**
    * @param string $attribute
    * @return void
+   * @noinspection PhpUnused (Use in model rules)
    */
-  public function validateUrl($attribute) {
+  public function validateUrl(string $attribute) {
     $linkType = $this->getLinkType();
     if ($this->isEmpty() || $linkType->disableValidation) {
       return;
@@ -105,7 +106,7 @@ class InputLink extends Link
   /**
    * @param string $attribute
    */
-  protected function validateGenericUrl($attribute) {
+  protected function validateGenericUrl(string $attribute) {
     $error = null;
     $validator = new UrlValidator([
       'enableIDN' => $this->getEnableIDN(),

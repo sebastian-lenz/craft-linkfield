@@ -138,6 +138,7 @@ class Link extends ForeignFieldModel
   /**
    * @param bool $ignoreStatus
    * @return null|ElementInterface
+   * @noinspection PhpUnusedParameterInspection (is API method)
    */
   public function getElement($ignoreStatus = false) {
     return null;
@@ -343,6 +344,7 @@ class Link extends ForeignFieldModel
   /**
    * @param bool $ignoreStatus
    * @return bool
+   * @noinspection PhpUnusedParameterInspection
    */
   public function hasElement($ignoreStatus = false) {
     return false;

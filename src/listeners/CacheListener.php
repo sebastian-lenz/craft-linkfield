@@ -2,9 +2,10 @@
 
 namespace lenz\linkfield\listeners;
 
+use Craft;
 use craft\events\RegisterCacheOptionsEvent;
+use Exception;
 use lenz\linkfield\fields\LinkField;
-use lenz\linkfield\records\LinkRecord;
 
 /**
  * Class CacheListener
@@ -24,10 +25,10 @@ class CacheListener
 
   /**
    * @return void
-   * @throws \Exception
+   * @throws Exception
    */
   static function onClearCache() {
-    $allFields = \Craft::$app->getFields()->getAllFields(false);
+    $allFields = Craft::$app->getFields()->getAllFields(false);
     $state = ElementListenerState::getInstance();
 
     ElementListenerState::getInstance()->reset();

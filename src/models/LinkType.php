@@ -5,9 +5,9 @@ namespace lenz\linkfield\models;
 use Craft;
 use craft\base\ElementInterface;
 use craft\helpers\ArrayHelper;
+use Exception;
 use lenz\linkfield\fields\LinkField;
 use Throwable;
-use Yii;
 use yii\base\Model;
 use yii\behaviors\AttributeTypecastBehavior;
 use yii\helpers\Json;
@@ -60,6 +60,7 @@ class LinkType extends Model
    * @param ElementInterface|null $owner
    * @param array $value
    * @return Link
+   * @throws Exception
    */
   public function createLink(LinkField $field, ElementInterface $owner = null, $value = []): Link {
     // If the value includes a payload, merge it
