@@ -47,6 +47,7 @@
 
 ## 1.0.24 - 2020-11-07
 
+- Fix detection of supported third party plugins
 - Fix site links not resolving environment variables correctly
 
 ## 1.0.23 - 2020-06-09
