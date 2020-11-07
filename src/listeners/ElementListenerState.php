@@ -195,19 +195,19 @@ class ElementListenerState
    */
   protected function loadElementFields() {
     $result = array();
-    $allFields = Craft::$app->getFields()->getAllFields(false);
+    $allFields = Craft::$app
+      ->getFields()
+      ->getAllFields(false);
 
     foreach ($allFields as $field) {
       if (!($field instanceof LinkField)) {
         continue;
       }
 
-      $elementLinkNames = array();
-      foreach ($field->getEnabledLinkTypes() as $linkName => $linkType) {
-        if ($linkType instanceof ElementLinkType) {
-          $elementLinkNames[] = $linkName;
-        }
-      }
+      $elementLinkNames = $field
+        ->getEnabledLinkTypes()
+        ->getAllByClass(ElementLinkType::class)
+        ->getNames();
 
       if (count($elementLinkNames) > 0) {
         $result[$field->id] = [

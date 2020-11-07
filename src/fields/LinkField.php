@@ -11,7 +11,7 @@ use lenz\craft\utils\foreignField\ForeignFieldModel;
 use lenz\linkfield\listeners\CacheListenerJob;
 use lenz\linkfield\listeners\ElementListenerState;
 use lenz\linkfield\models\LinkGqlType;
-use lenz\linkfield\Plugin;
+use lenz\linkfield\models\LinkTypeCollection;
 use lenz\linkfield\models\Link;
 use lenz\linkfield\models\LinkType;
 use lenz\linkfield\records\LinkRecord;
@@ -67,7 +67,7 @@ class LinkField extends ForeignField
   public $enableTitle = false;
 
   /**
-   * @var LinkType[]
+   * @var LinkTypeCollection
    */
   private $_linkTypes;
 
@@ -84,37 +84,14 @@ class LinkField extends ForeignField
   }
 
   /**
-   * @return LinkType[]
+   * @return LinkTypeCollection
    */
   public function getAvailableLinkTypes() {
     if (!isset($this->_linkTypes)) {
-      $linkTypes = Plugin::getLinkTypes($this);
-      foreach ($linkTypes as $name => $linkType) {
-        $linkType->name = $name;
-      }
-
-      uasort($linkTypes, function(LinkType $a, LinkType $b) {
-        return $a->getTranslatedDisplayGroup() === $b->getTranslatedDisplayGroup()
-          ? strcmp($a->getDisplayName(), $b->getDisplayName())
-          : strcmp($a->getTranslatedDisplayGroup(), $b->getTranslatedDisplayGroup());
-      });
-
-      $this->_linkTypes = $linkTypes;
+      $this->_linkTypes = LinkTypeCollection::createForField($this);
     }
 
     return $this->_linkTypes;
-  }
-
-  /**
-   * @return string[]
-   */
-  public function getAvailableLinkTypeNames() {
-    $linkNames = array_map(function(LinkType $type) {
-      return $type->getDisplayName();
-    }, $this->getAvailableLinkTypes());
-
-    asort($linkNames);
-    return $linkNames;
   }
 
   /**
@@ -125,36 +102,18 @@ class LinkField extends ForeignField
   }
 
   /**
-   * @return LinkType[]
+   * @return LinkTypeCollection
    */
   public function getEnabledLinkTypes() {
-    $linkTypes = $this->getAvailableLinkTypes();
+    $result = $this->enableAllLinkTypes
+      ? $this->getAvailableLinkTypes()->clone()
+      : $this->getAvailableLinkTypes()->getEnabledTypes();
+
     if ($this->useEmptyType()) {
-      $linkTypes['empty'] = LinkType::getEmptyType();
+      $result->enableEmptyType();
     }
 
-    if ($this->enableAllLinkTypes) {
-      return $linkTypes;
-    }
-
-    return array_filter(
-      $linkTypes,
-      function(LinkType $linkType) {
-        return $linkType->enabled;
-      }
-    );
-  }
-
-  /**
-   * @return string[]
-   */
-  public function getEnabledLinkTypeNames() {
-    $linkNames = array_map(function(LinkType $type) {
-      return $type->getDisplayName();
-    }, $this->getEnabledLinkTypes());
-
-    asort($linkNames);
-    return $linkNames;
+    return $result;
   }
 
   /**
@@ -179,16 +138,14 @@ class LinkField extends ForeignField
    * @return array
    */
   public function getTypeSettings() {
-    return array_map(function(LinkType $linkType) {
-      return $linkType->getSettings();
-    }, $this->getAvailableLinkTypes());
+    return $this->getAvailableLinkTypes()->getSettings();
   }
 
   /**
    * @return bool
    */
   public function hasSingleLinkType() {
-    return count($this->getEnabledLinkTypeNames()) == 1;
+    return count($this->getEnabledLinkTypes()) == 1;
   }
 
   /**
@@ -208,12 +165,11 @@ class LinkField extends ForeignField
    * @noinspection PhpUnused (Used in field template)
    */
   public function resolveSelectedLinkTypeName($model) {
-    $linkTypes = $this->getEnabledLinkTypes();
-    if (count($linkTypes) === 1) {
-      return array_keys($linkTypes)[0];
-    }
+    $linkType = $this
+      ->getEnabledLinkTypes()
+      ->getByName($model->getType(), '*');
 
-    return $model instanceof Link ? $model->getType() : null;
+    return is_null($linkType) ? null : $linkType->name;
   }
 
   /**
@@ -238,20 +194,14 @@ class LinkField extends ForeignField
    * @inheritDoc
    */
   public function settingsAttributes(): array {
-    $attributes = parent::settingsAttributes();
-    $attributes[] = 'typeSettings';
-    return $attributes;
+    return array_merge(parent::settingsAttributes(), ['typeSettings']);
   }
 
   /**
    * @param array $value
    */
   public function setTypeSettings(array $value) {
-    foreach ($this->getAvailableLinkTypes() as $linkName => $linkType) {
-      if (array_key_exists($linkName, $value)) {
-        $linkType->setSettings($value[$linkName]);
-      }
-    }
+    $this->getAvailableLinkTypes()->setSettings($value);
   }
 
   /**
@@ -260,7 +210,7 @@ class LinkField extends ForeignField
   public function validateTypeSettings() {
     foreach ($this->getAvailableLinkTypes() as $name => $linkType) {
       if (!$linkType->validate()) {
-        $this->addError('linkTypes', 'Invalid link type settings for link type `' . $name . '`.');
+        $this->addError('typeSettings', 'Invalid link type settings for link type `' . $name . '`.');
         return;
       }
     }
@@ -287,6 +237,7 @@ class LinkField extends ForeignField
 
   /**
    * @inheritDoc
+   * @throws Exception
    */
   protected function createModel(array $attributes = [], ElementInterface $element = null) {
     return $this
@@ -298,15 +249,9 @@ class LinkField extends ForeignField
    * @return LinkType|null
    */
   protected function getDefaultLinkType() {
-    $linkName = $this->defaultLinkName;
-    if (empty($linkName)) {
-      return null;
-    }
-
-    $allowedLinkTypes = $this->getEnabledLinkTypes();
-    return array_key_exists($linkName, $allowedLinkTypes)
-      ? $allowedLinkTypes[$linkName]
-      : null;
+    return $this
+      ->getEnabledLinkTypes()
+      ->getByName($this->defaultLinkName);
   }
 
   /**
@@ -334,20 +279,13 @@ class LinkField extends ForeignField
    * @return LinkType
    */
   protected function resolveLinkType(string $linkName) {
-    $allowedLinkTypes = $this->getEnabledLinkTypes();
-    if (array_key_exists($linkName, $allowedLinkTypes)) {
-      return $allowedLinkTypes[$linkName];
-    }
+    $result = $this
+      ->getEnabledLinkTypes()
+      ->getByName($linkName, $this->defaultLinkName, '*');
 
-    if (array_key_exists($this->defaultLinkName, $allowedLinkTypes)) {
-      return $allowedLinkTypes[$this->defaultLinkName];
-    }
-
-    if (count($allowedLinkTypes) > 0) {
-      return reset($allowedLinkTypes);
-    }
-
-    return new LinkType();
+    return is_null($result)
+      ? new LinkType()
+      : $result;
   }
 
   /**
@@ -358,7 +296,8 @@ class LinkField extends ForeignField
       throw new InvalidArgumentException('$model mus be an instance of Link');
     }
 
-    return $model->getLinkType()
+    return $model
+      ->getLinkType()
       ->toRecordAttributes($model);
   }
 

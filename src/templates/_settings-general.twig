@@ -5,7 +5,7 @@
   instructions: 'Select the preselected link type.'|t('typedlinkfield'),
   id:           'defaultLinkName',
   name:         'defaultLinkName',
-  options:      field.availableLinkTypeNames,
+  options:      field.availableLinkTypes.displayNames,
   value:        field.defaultLinkName,
 }) }}
 
@@ -22,38 +22,38 @@
   checked: field.allowCustomText
 }) }}
 
-&nbsp;
+<fieldset>
+  {{ forms.checkboxField({
+    label:   'Allow links to open in new window'|t('typedlinkfield'),
+    name:    'allowTarget',
+    checked: field.allowTarget
+  }) }}
 
-{{ forms.checkboxField({
-  label:   'Allow links to open in new window'|t('typedlinkfield'),
-  name:    'allowTarget',
-  checked: field.allowTarget
-}) }}
+  {{ forms.checkboxField({
+    label:   'Set link relation to "noopener noreferrer" when opening links in a new window'|t('typedlinkfield'),
+    name:    'autoNoReferrer',
+    checked: field.autoNoReferrer
+  }) }}
+</fieldset>
 
-{{ forms.checkboxField({
-  label:   'Set link relation to "noopener noreferrer" when opening links in a new window'|t('typedlinkfield'),
-  name:    'autoNoReferrer',
-  checked: field.autoNoReferrer
-}) }}
+<fieldset>
+  {{ forms.checkboxField({
+    label:   'Enable aria label support'|t('typedlinkfield'),
+    name:    'enableAriaLabel',
+    checked: field.enableAriaLabel
+  }) }}
 
-&nbsp;
+  {{ forms.checkboxField({
+    label:   'Enable title support'|t('typedlinkfield'),
+    name:    'enableTitle',
+    checked: field.enableTitle
+  }) }}
+</fieldset>
 
-{{ forms.checkboxField({
-  label:   'Enable aria label support'|t('typedlinkfield'),
-  name:    'enableAriaLabel',
-  checked: field.enableAriaLabel
-}) }}
-
-{{ forms.checkboxField({
-  label:   'Enable title support'|t('typedlinkfield'),
-  name:    'enableTitle',
-  checked: field.enableTitle
-}) }}
-
-&nbsp;
-
-{{ forms.checkboxField({
-  label:   'Enable element url and title cache'|t('typedlinkfield'),
-  name:    'enableElementCache',
-  checked: field.enableElementCache
-}) }}
+<fieldset>
+  {{ forms.checkboxField({
+    label:   'Enable element url and title cache'|t('typedlinkfield'),
+    name:    'enableElementCache',
+    checked: field.enableElementCache
+  }) }}
+</fieldset>

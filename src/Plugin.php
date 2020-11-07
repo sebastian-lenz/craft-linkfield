@@ -9,12 +9,10 @@ use craft\services\Fields;
 use craft\services\Gql;
 use craft\services\Plugins;
 use craft\utilities\ClearCaches;
-use lenz\linkfield\events\LinkTypeEvent;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\listeners\ElementListener;
 use lenz\linkfield\listeners\ElementListenerState;
 use lenz\linkfield\models\LinkGqlType;
-use lenz\linkfield\models\LinkType;
 use Throwable;
 use yii\base\Event;
 
@@ -99,27 +97,5 @@ class Plugin extends \craft\base\Plugin
    */
   public function onRegisterGqlTypes(RegisterGqlTypesEvent $event) {
     $event->types[] = LinkGqlType::class;
-  }
-
-
-  // Static methods
-  // --------------
-
-  /**
-   * @param LinkField $field
-   * @return LinkType[]
-   */
-  public static function getLinkTypes(LinkField $field) {
-    $event = new LinkTypeEvent($field);
-    $plugin = self::getInstance();
-
-    if (is_null($plugin)) {
-      Craft::warning('Link field `getLinkTypes` called before the plugin has been loaded.');
-      Event::trigger(self::class, self::EVENT_REGISTER_LINK_TYPES, $event);
-    } else {
-      $plugin->trigger(self::EVENT_REGISTER_LINK_TYPES, $event);
-    }
-
-    return $event->linkTypes;
   }
 }

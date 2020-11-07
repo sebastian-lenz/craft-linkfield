@@ -8,6 +8,8 @@ use craft\queue\BaseJob;
 use Exception;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\models\element\ElementLinkType;
+use lenz\linkfield\models\LinkType;
+use lenz\linkfield\models\LinkTypeCollection;
 use lenz\linkfield\records\LinkRecord;
 
 /**
@@ -93,19 +95,16 @@ class CacheListenerJob extends BaseJob
 
   /**
    * @param array $conditions
-   * @param array $linkTypes
+   * @param LinkTypeCollection $linkTypes
    * @return array|null
    */
-  protected function getElementMap(array $conditions, array $linkTypes) {
+  protected function getElementMap(array $conditions, LinkTypeCollection $linkTypes) {
     $links  = LinkRecord::find()->where($conditions)->all();
     $result = [];
 
     /** @var LinkRecord $link */
     foreach ($links as $link) {
-      $linkType = array_key_exists($link->type, $linkTypes)
-        ? $linkTypes[$link->type]
-        : null;
-
+      $linkType = $linkTypes->getByName($link->type);
       if (!($linkType instanceof ElementLinkType)) {
         continue;
       }
