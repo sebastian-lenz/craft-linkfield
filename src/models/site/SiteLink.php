@@ -55,9 +55,10 @@ class SiteLink extends Link
    */
   public function getUrl() {
     $site = $this->getSite();
+
     return is_null($site)
       ? null
-      : Craft::getAlias($site->baseUrl);
+      : $site->getBaseUrl();
   }
 
   /**
