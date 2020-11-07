@@ -2,6 +2,7 @@
 
 namespace lenz\linkfield\events;
 
+use Craft;
 use craft\elements\Asset;
 use craft\elements\Category;
 use craft\elements\Entry;
@@ -82,7 +83,10 @@ class LinkTypeEvent extends Event
     ];
 
     // Add craft commerce elements
-    if (class_exists('craft\commerce\elements\Product')) {
+    if (
+      Craft::$app->getPlugins()->isPluginEnabled('commerce') &&
+      class_exists('craft\commerce\elements\Product')
+    ) {
       $linkTypes['craftCommerce-product'] = new ElementLinkType([
         'displayGroup' => 'Craft commerce',
         'elementType'  => 'craft\commerce\elements\Product'
@@ -90,7 +94,10 @@ class LinkTypeEvent extends Event
     }
 
     // Add solspace calendar elements
-    if (class_exists('Solspace\Calendar\Elements\Event')) {
+    if (
+      Craft::$app->getPlugins()->isPluginEnabled('calendar') &&
+      class_exists('Solspace\Calendar\Elements\Event')
+    ) {
       $linkTypes['solspaceCalendar-event'] = new ElementLinkType([
         'displayGroup' => 'Solspace calendar',
         'elementType'  => 'Solspace\Calendar\Elements\Event'

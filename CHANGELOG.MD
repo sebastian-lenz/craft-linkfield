@@ -2,6 +2,7 @@
 
 ## 2.0.0-beta.10
 
+- Fix: Correctly check the enabled state of supported third party plugins, see https://github.com/sebastian-lenz/craft-linkfield/issues/117
 - Fix: Site links not resolving environment variables correctly, see https://github.com/sebastian-lenz/craft-linkfield/issues/128
 
 ## 2.0.0-beta.9 - 2020-06-09
