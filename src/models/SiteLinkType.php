@@ -186,7 +186,7 @@ class SiteLinkType extends Model implements LinkTypeInterface
       return null;
     }
 
-    return Craft::getAlias($site->baseUrl);
+    return $site->getBaseUrl();
   }
 
   /**
