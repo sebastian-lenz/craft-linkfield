@@ -41,6 +41,10 @@
 
 > {warning} This is a major update, please create a database backup before installing, please see https://github.com/sebastian-lenz/craft-linkfield/issues/61
 
+## 1.0.24 - 2020-11-07
+
+- Fix site links not resolving environment variables correctly
+
 ## 1.0.23 - 2020-06-09
 
 - Fix custom query storage (see https://github.com/sebastian-lenz/craft-linkfield/issues/108)
