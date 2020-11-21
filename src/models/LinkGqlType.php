@@ -35,7 +35,7 @@ class LinkGqlType
   }
 
   /**
-   * @rejturn array
+   * @return array
    */
   public static function getFieldDefinitions(): array {
     return [
