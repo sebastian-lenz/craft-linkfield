@@ -2,6 +2,8 @@
 
 ## 2.0.0-beta.10
 
+- New: The return type now correctly returns the link model class. This enables code completion support
+- New: The field input display has been improved for narrow forms
 - Fix: Correctly check the enabled state of supported third party plugins, see https://github.com/sebastian-lenz/craft-linkfield/issues/117
 - Fix: Site links not resolving environment variables correctly, see https://github.com/sebastian-lenz/craft-linkfield/issues/128
 
