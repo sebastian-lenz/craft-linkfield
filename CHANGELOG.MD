@@ -1,6 +1,6 @@
 # Release Notes for Typed Link Field
 
-## 1.0.24 - 2020-11-07
+## 1.0.24 - 2020-21-07
 
 - Fix detection of supported third party plugins
 - Fix site links not resolving environment variables correctly
