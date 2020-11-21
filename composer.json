@@ -14,7 +14,7 @@
   },
   "autoload": {
     "psr-4": {
-      "typedlinkfield": "legacy/",
+      "typedlinkfield\\": "legacy/",
       "lenz\\linkfield\\": "src/"
     }
   },
