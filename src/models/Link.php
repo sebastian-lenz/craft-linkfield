@@ -375,9 +375,22 @@ class Link extends ForeignFieldModel
    * @inheritDoc
    */
   public function rules() {
-    return array_merge(parent::rules(), [
-      [['ariaLabel', 'customText', 'target', 'title'], 'string'],
-    ]);
+    $rules = [
+      [['ariaLabel', 'target', 'title'], 'string'],
+    ];
+
+    if ($this->_field->customTextRequired && !$this->isEmpty()) {
+      $rules[] = ['customText', 'required'];
+    }
+
+    $maxLength = $this->_field->customTextMaxLength;
+    if ($maxLength > 0) {
+      $rules[] = ['customText', 'string', 'max' => $maxLength];
+    } else {
+      $rules[] = ['customText', 'string'];
+    }
+
+    return array_merge(parent::rules(), $rules);
   }
 
   /**

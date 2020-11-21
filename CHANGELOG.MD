@@ -4,6 +4,7 @@
 
 - New: The return type now correctly returns the link model class. This enables code completion support
 - New: The field input display has been improved for narrow forms
+- New: The custom text can now be required and a maximum text length can be specified
 - Fix: Correctly check the enabled state of supported third party plugins, see https://github.com/sebastian-lenz/craft-linkfield/issues/117
 - Fix: Site links not resolving environment variables correctly, see https://github.com/sebastian-lenz/craft-linkfield/issues/128
 

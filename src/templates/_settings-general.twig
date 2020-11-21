@@ -1,59 +1,109 @@
 {% import '_includes/forms' as forms %}
 
 {{ forms.selectField({
-  label:        'Default link type'|t('typedlinkfield'),
+  label: 'Default link type'|t('typedlinkfield'),
   instructions: 'Select the preselected link type.'|t('typedlinkfield'),
-  id:           'defaultLinkName',
-  name:         'defaultLinkName',
-  options:      field.availableLinkTypes.displayNames,
-  value:        field.defaultLinkName,
+  id: 'defaultLinkName',
+  name: 'defaultLinkName',
+  options: field.availableLinkTypes.displayNames,
+  value: field.defaultLinkName,
 }) }}
 
 {{ forms.textField({
-  label:        'Default link text'|t('typedlinkfield'),
+  label: 'Default link text'|t('typedlinkfield'),
   instructions: 'Set the default value of the link text.'|t('typedlinkfield'),
-  name:         'defaultText',
-  value:        field.defaultText
+  name: 'defaultText',
+  value: field.defaultText
 }) }}
 
-{{ forms.checkboxField({
-  label:   'Allow custom link text'|t('typedlinkfield'),
-  name:    'allowCustomText',
-  checked: field.allowCustomText
+<hr/>
+
+<div class="field">
+  <div class="heading"><label>{{ 'Custom link text'|t('typedlinkfield') }}</label></div>
+  <div class="instructions">{{ 'Show an additional text input that can be used to enter the visible link text.'|t('typedlinkfield') }}</div>
+  <div class="input">
+    <fieldset>
+      {{ forms.checkboxField({
+        label: 'Allow custom link text'|t('typedlinkfield'),
+        name: 'allowCustomText',
+        checked: field.allowCustomText
+      }) }}
+      {{ forms.checkboxField({
+        label: 'Custom link text is required'|t('typedlinkfield'),
+        name: 'customTextRequired',
+        checked: field.customTextRequired
+      }) }}
+    </fieldset>
+  </div>
+</div>
+
+{{ forms.textField({
+  errors: field.getErrors('customTextMaxLength'),
+  instructions: 'Set the maximum allowed length of custom texts. Enter "0" to remove the length limit.'|t('typedlinkfield'),
+  label: 'Maximum length'|t('typedlinkfield'),
+  name: 'customTextMaxLength',
+  min: 0,
+  type: 'number',
+  unit: 'characters'|t('typedlinkfield'),
+  value: field.customTextMaxLength,
 }) }}
 
-<fieldset>
-  {{ forms.checkboxField({
-    label:   'Allow links to open in new window'|t('typedlinkfield'),
-    name:    'allowTarget',
-    checked: field.allowTarget
-  }) }}
+<hr/>
 
-  {{ forms.checkboxField({
-    label:   'Set link relation to "noopener noreferrer" when opening links in a new window'|t('typedlinkfield'),
-    name:    'autoNoReferrer',
-    checked: field.autoNoReferrer
-  }) }}
-</fieldset>
+<div class="field">
+  <div class="heading"><label>{{ 'Link target'|t('typedlinkfield') }}</label></div>
+  <div class="instructions">{{ 'Control whether users can mark links to be opened in a new window.'|t('typedlinkfield') }}</div>
+  <div class="input">
+    <fieldset>
+      {{ forms.checkboxField({
+        label: 'Allow links to open in new window'|t('typedlinkfield'),
+        name: 'allowTarget',
+        checked: field.allowTarget
+      }) }}
 
-<fieldset>
-  {{ forms.checkboxField({
-    label:   'Enable aria label support'|t('typedlinkfield'),
-    name:    'enableAriaLabel',
-    checked: field.enableAriaLabel
-  }) }}
+      {{ forms.checkboxField({
+        label: 'Set link relation to "noopener noreferrer" when opening links in a new window'|t('typedlinkfield'),
+        name: 'autoNoReferrer',
+        checked: field.autoNoReferrer
+      }) }}
+    </fieldset>
+  </div>
+</div>
 
-  {{ forms.checkboxField({
-    label:   'Enable title support'|t('typedlinkfield'),
-    name:    'enableTitle',
-    checked: field.enableTitle
-  }) }}
-</fieldset>
+<hr/>
 
-<fieldset>
-  {{ forms.checkboxField({
-    label:   'Enable element url and title cache'|t('typedlinkfield'),
-    name:    'enableElementCache',
-    checked: field.enableElementCache
-  }) }}
-</fieldset>
+<div class="field">
+  <div class="heading"><label>{{ 'Aria fields'|t('typedlinkfield') }}</label></div>
+  <div class="instructions">{{ 'Control the visibility of aria fields.'|t('typedlinkfield') }}</div>
+  <div class="input">
+    <fieldset>
+      {{ forms.checkboxField({
+        label: 'Enable aria label support'|t('typedlinkfield'),
+        name: 'enableAriaLabel',
+        checked: field.enableAriaLabel
+      }) }}
+
+      {{ forms.checkboxField({
+        label: 'Enable title support'|t('typedlinkfield'),
+        name: 'enableTitle',
+        checked: field.enableTitle
+      }) }}
+    </fieldset>
+  </div>
+</div>
+
+<hr/>
+
+<div class="field">
+  <div class="heading"><label>{{ 'Element cache'|t('typedlinkfield') }}</label></div>
+  <div class="instructions">{{ 'Enable the element cache which stores titles and urls of linked elements within the link table. The field observes element changes and updates the cached values accordingly. The link cache can be regenerated using the caches utility within the control panel.'|t('typedlinkfield') }}</div>
+  <div class="input">
+    <fieldset>
+      {{ forms.checkboxField({
+        label: 'Enable element url and title cache'|t('typedlinkfield'),
+        name: 'enableElementCache',
+        checked: field.enableElementCache
+      }) }}
+    </fieldset>
+  </div>
+</div>

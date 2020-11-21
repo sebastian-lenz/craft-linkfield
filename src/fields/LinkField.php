@@ -37,6 +37,16 @@ class LinkField extends ForeignField
   public $autoNoReferrer = false;
 
   /**
+   * @var int
+   */
+  public $customTextMaxLength = 0;
+
+  /**
+   * @var bool
+   */
+  public $customTextRequired = false;
+
+  /**
    * @var string
    */
   public $defaultLinkName = '';
@@ -189,6 +199,8 @@ class LinkField extends ForeignField
       ['allowCustomText', 'boolean'],
       ['allowTarget', 'boolean'],
       ['autoNoReferrer', 'boolean'],
+      ['customTextMaxLength', 'integer', 'min' => 0],
+      ['customTextRequired', 'boolean'],
       ['defaultLinkName', 'string'],
       ['defaultText', 'string'],
       ['enableAriaLabel', 'boolean'],

@@ -60,31 +60,36 @@
         <div class="linkfield--settings{{ isEmpty ? ' hidden' }}">
           {% if field.allowCustomText %}
             {{ forms.textField({
-              id:          'customText',
-              name:        'customText',
-              label:       'Custom link text'|t('typedlinkfield'),
               disabled:    disabled,
-              placeholder: field.defaultText == '' ? 'Custom link text'|t('typedlinkfield') : field.defaultText|t('site'),
+              errors:      value.getErrors('customText'),
+              id:          'customText',
+              label:       'Custom link text'|t('typedlinkfield'),
+              name:        'customText',
+              maxlength:   field.customTextMaxLength > 0 ? field.customTextMaxLength : false,
+              placeholder: field.defaultText == '' ? '' : field.defaultText|t('site'),
+              required:    field.customTextRequired,
               value:       value.customText is defined and value.customText ? value.customText : '',
             }) }}
           {% endif %}
 
           {% if field.enableAriaLabel %}
             {{ forms.textField({
-              id:       'ariaLabel',
-              name:     'ariaLabel',
-              label:    'Aria label'|t('typedlinkfield'),
               disabled: disabled,
+              errors:   value.getErrors('ariaLabel'),
+              id:       'ariaLabel',
+              label:    'Aria label'|t('typedlinkfield'),
+              name:     'ariaLabel',
               value:    value.ariaLabel is defined ? value.ariaLabel : "",
             }) }}
           {% endif %}
 
           {% if field.enableTitle %}
             {{ forms.textField({
-              id:       'title',
-              name:     'title',
-              label:    'Title'|t('typedlinkfield'),
               disabled: disabled,
+              errors:   value.getErrors('title'),
+              id:       'title',
+              label:    'Title'|t('typedlinkfield'),
+              name:     'title',
               value:    value.title is defined ? value.title : "",
             }) }}
           {% endif %}
