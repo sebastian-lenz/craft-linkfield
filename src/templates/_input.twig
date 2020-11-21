@@ -3,15 +3,15 @@
 
 {% do view.registerAssetBundle('lenz\\linkfield\\assets\\field\\LinkFieldAsset') %}
 
-{% set type = field.resolveSelectedLinkTypeName(value) %}
+{% set selectedTypeName = field.resolveSelectedLinkTypeName(value) %}
 {% set linkTypes = field.enabledLinkTypes %}
-{% set isEmpty = type == '' or type == 'empty' %}
+{% set isEmpty = selectedTypeName == '' or selectedTypeName == 'empty' %}
 
 {# Must be a macro as there is an issue with nested namespace nodes #}
-{% macro typeSettings(linkTypes, value, disabled) %}
+{% macro typeSettings(linkTypes, selectedTypeName, value, disabled) %}
   {% for linkType in linkTypes %}
     {% namespace 'cpForm['~linkType.name~']' %}
-      <div class="linkfield--typeOption {{ linkType.name }}{{ linkType.isSelected(value) ? '' : ' hidden' }}">
+      <div class="linkfield--typeOption {{ linkType.name }}{{ linkType.name == selectedTypeName ? '' : ' hidden' }}">
         {{ linkType.inputHtml(value, disabled)|raw }}
       </div>
     {% endnamespace %}
@@ -25,7 +25,7 @@
     {% else %}
       <div class="linkfield--field">
         {% if field.hasSingleLinkType %}
-          <input type="hidden" id="type" name="type" value="{{ type }}" />
+          <input type="hidden" id="type" name="type" value="{{ selectedTypeName }}" />
         {% else %}
           <div class="linkfield--type">
             {{ forms.select({
@@ -33,13 +33,13 @@
               name:     'type',
               disabled: disabled,
               options:  field.enabledLinkTypes.displayNames,
-              value:    type
+              value:    selectedTypeName
             }) }}
           </div>
         {% endif %}
 
         <div class="linkfield--typeOptions{% if field.hasSingleLinkType %} single{% endif %}">
-          {{ self.typeSettings(linkTypes, value, disabled) }}
+          {{ self.typeSettings(linkTypes, selectedTypeName, value, disabled) }}
         </div>
 
         {% if field.allowTarget %}
