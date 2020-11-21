@@ -1,51 +1,59 @@
 {% import '_includes/forms' as forms %}
 
 {{ forms.selectField({
-  label: 'Default link type'|t('typedlinkfield'),
+  label:        'Default link type'|t('typedlinkfield'),
   instructions: 'Select the preselected link type.'|t('typedlinkfield'),
-  id: 'defaultLinkName',
-  name: 'defaultLinkName',
-  options: linkNames,
-  value: settings.defaultLinkName,
+  id:           'defaultLinkName',
+  name:         'defaultLinkName',
+  options:      field.availableLinkTypes.displayNames,
+  value:        field.defaultLinkName,
 }) }}
 
 {{ forms.textField({
-  label: 'Default link text'|t('typedlinkfield'),
+  label:        'Default link text'|t('typedlinkfield'),
   instructions: 'Set the default value of the link text.'|t('typedlinkfield'),
-  name: 'defaultText',
-  value: settings.defaultText
+  name:         'defaultText',
+  value:        field.defaultText
 }) }}
 
 {{ forms.checkboxField({
-  label: 'Allow custom link text'|t('typedlinkfield'),
-  name: 'allowCustomText',
-  checked: settings.allowCustomText
+  label:   'Allow custom link text'|t('typedlinkfield'),
+  name:    'allowCustomText',
+  checked: field.allowCustomText
 }) }}
 
-&nbsp;
+<fieldset>
+  {{ forms.checkboxField({
+    label:   'Allow links to open in new window'|t('typedlinkfield'),
+    name:    'allowTarget',
+    checked: field.allowTarget
+  }) }}
 
-{{ forms.checkboxField({
-  label: 'Allow links to open in new window'|t('typedlinkfield'),
-  name: 'allowTarget',
-  checked: settings.allowTarget
-}) }}
+  {{ forms.checkboxField({
+    label:   'Set link relation to "noopener noreferrer" when opening links in a new window'|t('typedlinkfield'),
+    name:    'autoNoReferrer',
+    checked: field.autoNoReferrer
+  }) }}
+</fieldset>
 
-{{ forms.checkboxField({
-  label: 'Set link relation to "noopener noreferrer" when opening links in a new window'|t('typedlinkfield'),
-  name: 'autoNoReferrer',
-  checked: settings.autoNoReferrer
-}) }}
+<fieldset>
+  {{ forms.checkboxField({
+    label:   'Enable aria label support'|t('typedlinkfield'),
+    name:    'enableAriaLabel',
+    checked: field.enableAriaLabel
+  }) }}
 
-&nbsp;
+  {{ forms.checkboxField({
+    label:   'Enable title support'|t('typedlinkfield'),
+    name:    'enableTitle',
+    checked: field.enableTitle
+  }) }}
+</fieldset>
 
-{{ forms.checkboxField({
-  label: 'Enable aria label support'|t('typedlinkfield'),
-  name: 'enableAriaLabel',
-  checked: settings.enableAriaLabel
-}) }}
-
-{{ forms.checkboxField({
-  label: 'Enable title support'|t('typedlinkfield'),
-  name: 'enableTitle',
-  checked: settings.enableTitle
-}) }}
+<fieldset>
+  {{ forms.checkboxField({
+    label:   'Enable element url and title cache'|t('typedlinkfield'),
+    name:    'enableElementCache',
+    checked: field.enableElementCache
+  }) }}
+</fieldset>

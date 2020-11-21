@@ -1,9 +1,9 @@
 {% import '_includes/forms' as forms %}
 
-{% do view.registerAssetBundle('typedlinkfield\\utilities\\CpAdminAssetBundle') %}
-{% set group = '' %}
+{% do view.registerAssetBundle('lenz\\linkfield\\assets\\admin\\LinkFieldAdminAsset') %}
+{% set displayGroup = '' %}
 
-<div class="linkFieldAdmin" id="{{ name }}">
+<div class="linkFieldAdmin" id="adminUi">
   <div class="linkFieldAdmin--tabs">
     <div class="linkFieldAdmin--tabsRow selected" data-name="_general">
       <button class="linkFieldAdmin--tabsTab">{{ 'General settings'|t('typedlinkfield') }}</button>
@@ -12,27 +12,27 @@
     <div class="linkFieldAdmin--tabsRow all">
       <div class="linkFieldAdmin--tabsLightswitch">
         {{- forms.lightswitch({
-          name: 'allowedLinkNames[]',
-          on: allTypesAllowed,
-          value: '*',
+          name: 'enableAllLinkTypes',
+          on:   field.enableAllLinkTypes,
         }) -}}
       </div>
       {{ 'Enable all'|t('typedlinkfield') }}
     </div>
 
-    {%- for linkType in linkTypes -%}
-      {%- if linkType.group != group -%}
-        {%- set group = linkType.group -%}
-        <div class="linkFieldAdmin--tabsGroup">{{ group }}</div>
+    {%- for linkType in field.availableLinkTypes.sort -%}
+      {%- if linkType.translatedDisplayGroup != displayGroup -%}
+        {%- set displayGroup = linkType.translatedDisplayGroup -%}
+        <div class="linkFieldAdmin--tabsGroup">{{ displayGroup }}</div>
       {%- endif -%}
 
       <div class="linkFieldAdmin--tabsRow" data-name="{{ linkType.name }}">
-        <div class="linkFieldAdmin--tabsLightswitch{% if allTypesAllowed %} hidden{% endif %}">
-          {{- forms.lightswitch({
-            name: 'allowedLinkNames[]',
-            on: linkType.enabled,
-            value: linkType.name,
-          }) -}}
+        <div class="linkFieldAdmin--tabsLightswitch{% if field.enableAllLinkTypes %} hidden{% endif %}">
+          {% namespace 'typeSettings['~linkType.name~']' %}
+            {{- forms.lightswitch({
+              name: 'enabled',
+              on:   linkType.enabled,
+            }) -}}
+          {% endnamespace %}
         </div>
 
         <button class="linkFieldAdmin--tabsTab">
@@ -46,14 +46,16 @@
       {% include 'typedlinkfield/_settings-general' %}
     </div>
 
-    {%- for linkType in linkTypes -%}
+    {%- for linkType in field.availableLinkTypes -%}
       <div class="linkFieldAdmin--bodyContent" data-name="{{ linkType.name }}">
-        {{- linkType.settings|raw -}}
+        {% namespace 'typeSettings['~linkType.name~']' %}
+          {{- linkType.settingsHtml(field)|raw -}}
+        {% endnamespace %}
       </div>
     {%- endfor -%}
   </div>
 </div>
 
 {% js %}
-  new LinkFieldAdmin("{{ nameNs }}");
+  new LinkFieldAdmin("{{ 'adminUi'|namespaceInputId }}");
 {% endjs %}

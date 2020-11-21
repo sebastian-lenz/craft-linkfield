@@ -3,55 +3,52 @@
   border: 1px solid rgba(0, 0, 20, 0.1);
 }
 
-.linkfield .field {
-  margin: 15px 0;
-}
-
 .linkfield--field {
   display: flex;
-  flex-flow: row nowrap;
-  width: 100%;
+  flex-flow: row wrap;
   align-items: center;
-}
-.linkfield--type,
-.linkfield--target {
-  flex: 0 0 auto;
+  margin: -5px;
 }
 
-.linkfield--typeOptions {
-  overflow: hidden;
-  padding: 2px 0;
-  flex: 1;
+.linkfield--field > * {
+  padding: 5px;
 }
 
 .linkfield--target {
-  padding-left: 10px;
   white-space: nowrap;
 }
 
 .linkfield--typeOptions {
-  width: 100%;
-  padding-left: 10px;
+  flex: 1;
 }
 
 .linkfield--typeOptions.single {
   padding-left: 0;
 }
 
-.linkfield--typeOption > .elementselect > .btn {
-  margin-top: 5px !important;
-}
 
 .linkfield--elementRow {
   display: flex;
   flex-flow: row nowrap;
+  align-items: center;
 }
 
 .linkfield--elementRowSelect {
   overflow: hidden;
   flex: 1;
+  min-width: 300px;
+}
+
+.linkfield--elementRowSelect > .elementselect {
+  padding-bottom: 4px;
 }
 
 .linkfield--elementRowQuery {
-  width: 200px;
+  flex: 1;
+  min-width: 100px;
+  max-width: 200px;
+}
+
+.linkfield--settings {
+  margin-top: 15px;
 }

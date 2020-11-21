@@ -12,9 +12,8 @@ use craft\models\Section;
 use craft\models\Section_SiteSettings;
 use craft\models\Site;
 use craft\services\Config;
+use lenz\linkfield\fields\LinkField;
 use PHPUnit\Framework\TestCase;
-
-use typedlinkfield\fields\LinkField;
 
 /**
  * Class AbstractLinkFieldTest
@@ -276,11 +275,6 @@ abstract class AbstractLinkFieldTest extends TestCase
     ob_end_clean();
 
     // Reset install info
-    $updatesReflection = new ReflectionClass(Craft::$app->updates);
-    $migrationProperty = $updatesReflection->getProperty('_isCraftDbMigrationNeeded');
-    $migrationProperty->setAccessible(true);
-    $migrationProperty->setValue(Craft::$app->updates, null);
-
     $appReflection = new ReflectionClass(Craft::$app);
     $infoProperty = $appReflection->getProperty('_info');
     $infoProperty->setAccessible(true);

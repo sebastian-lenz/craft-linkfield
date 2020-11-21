@@ -4,7 +4,7 @@ use craft\base\Field;
 use craft\base\FieldInterface;
 use craft\elements\Entry;
 use craft\models\EntryType;
-use \typedlinkfield\models\Link;
+use lenz\linkfield\models\Link;
 
 /**
  * Class BasicTest
@@ -38,8 +38,8 @@ class BasicTest extends AbstractLinkFieldTest
     $link = $this->createAndFetchEntry([
       'title'          => 'URL Link',
       'basicLinkField' => self::$field->normalizeValue([
-        'type'  => 'url',
-        'value' => self::TEST_URL,
+        'type'      => 'url',
+        'linkedUrl' => self::TEST_URL,
       ]),
     ]);
 
@@ -84,21 +84,21 @@ class BasicTest extends AbstractLinkFieldTest
     $otherEntry = $this->createEntry(self::$entryType, [
       'title'          => 'Linked Entry',
       'basicLinkField' => [
-        'type'  => 'url',
-        'value' => '',
+        'type'     => 'url',
+        'linkedId' => '',
       ]
     ]);
 
     $link = $this->createAndFetchEntry([
       'title'          => 'Entry Link',
       'basicLinkField' => self::$field->normalizeValue([
-        'type'  => 'entry',
-        'value' => $otherEntry->id,
+        'type'     => 'entry',
+        'linkedId' => $otherEntry->id,
       ]),
     ]);
 
     $this->assertEquals($link->getUrl(), $otherEntry->getUrl());
-    $this->assertEquals($link->getText(), $otherEntry->title);
+    $this->assertEquals($link->getText(), 'Linked Entry');
     $this->assertNull($link->getAriaLabel());
     $this->assertNull($link->getTitle());
 
@@ -107,7 +107,7 @@ class BasicTest extends AbstractLinkFieldTest
     $this->assertEquals($otherEntry->id, $loadedOtherEntry->id);
 
     $this->assertEquals(
-      '<a href="' . $otherEntry->getUrl() . '">' . $otherEntry->title . '</a>',
+      '<a href="' . $otherEntry->getUrl() . '">'. $otherEntry->title .'</a>',
       (string)$link->getLink()
     );
 
@@ -130,7 +130,7 @@ class BasicTest extends AbstractLinkFieldTest
         'customText'  => self::TEST_CAPTION,
         'title'       => self::TEST_TITLE,
         'type'        => 'url',
-        'value'       => 'http://www.google.de',
+        'linkedUrl'   => 'http://www.google.de',
       ]),
     ]);
 
