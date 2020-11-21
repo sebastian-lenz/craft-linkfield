@@ -71,6 +71,11 @@ class LinkField extends ForeignField
    */
   private $_linkTypes;
 
+  /**
+   * @var array|null
+   */
+  private $_linkTypeSettings = null;
+
 
   /**
    * @param bool $isNew
@@ -89,6 +94,10 @@ class LinkField extends ForeignField
   public function getAvailableLinkTypes() {
     if (!isset($this->_linkTypes)) {
       $this->_linkTypes = LinkTypeCollection::createForField($this);
+
+      if (!is_null($this->_linkTypeSettings)) {
+        $this->_linkTypes->setSettings($this->_linkTypeSettings);
+      }
     }
 
     return $this->_linkTypes;
@@ -201,7 +210,7 @@ class LinkField extends ForeignField
    * @param array $value
    */
   public function setTypeSettings(array $value) {
-    $this->getAvailableLinkTypes()->setSettings($value);
+    $this->_linkTypeSettings = $value;
   }
 
   /**

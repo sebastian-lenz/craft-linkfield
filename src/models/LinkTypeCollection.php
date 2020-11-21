@@ -156,6 +156,14 @@ class LinkTypeCollection implements Countable, \IteratorAggregate
     }
   }
 
+  /**
+   * @return $this
+   */
+  public function sort() {
+    self::sortLinkTypes($this->_types);
+    return $this;
+  }
+
 
   // Static methods
   // --------------
@@ -180,7 +188,6 @@ class LinkTypeCollection implements Countable, \IteratorAggregate
       $type->name = $name;
     }
 
-    self::sortLinkTypes($types);
     return new LinkTypeCollection($types);
   }
 

@@ -19,7 +19,7 @@
       {{ 'Enable all'|t('typedlinkfield') }}
     </div>
 
-    {%- for linkType in field.availableLinkTypes -%}
+    {%- for linkType in field.availableLinkTypes.sort -%}
       {%- if linkType.translatedDisplayGroup != displayGroup -%}
         {%- set displayGroup = linkType.translatedDisplayGroup -%}
         <div class="linkFieldAdmin--tabsGroup">{{ displayGroup }}</div>
