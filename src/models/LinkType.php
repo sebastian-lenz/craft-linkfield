@@ -30,7 +30,7 @@ class LinkType extends Model
   /**
    * @var string
    */
-  public $name;
+  public $name = '';
 
   /**
    * @var string

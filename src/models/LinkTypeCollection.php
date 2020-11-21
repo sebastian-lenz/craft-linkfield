@@ -71,9 +71,11 @@ class LinkTypeCollection implements Countable, \IteratorAggregate
     foreach ($names as $name) {
       if ($name == '*') {
         return $this->getFirstType();
+      } elseif (empty($name)) {
+        $name = 'empty';
       }
 
-      if (!empty($name) && array_key_exists($name, $this->_types)) {
+      if (array_key_exists($name, $this->_types)) {
         return $this->_types[$name];
       }
     }
