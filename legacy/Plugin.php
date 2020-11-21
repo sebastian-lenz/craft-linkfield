@@ -9,6 +9,7 @@ use yii\base\Event;
 
 /**
  * Class Plugin
+ * @deprecated
  */
 class Plugin extends \craft\base\Plugin
 {

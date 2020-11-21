@@ -13,8 +13,8 @@
     "verbb/super-table": "^2.3"
   },
   "autoload": {
-    "classmap": ["legacy/"],
     "psr-4": {
+      "typedlinkfield": "legacy/",
       "lenz\\linkfield\\": "src/"
     }
   },
