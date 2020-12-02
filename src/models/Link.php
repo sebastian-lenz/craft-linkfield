@@ -171,6 +171,13 @@ class Link extends ForeignFieldModel
   }
 
   /**
+   * @return string|null
+   */
+  public function getIntrinsicUrl() {
+    return null;
+  }
+
+  /**
    * Renders a complete link tag.
    *
    * You can either pass the desired content of the link as a string, e.g.
@@ -255,17 +262,17 @@ class Link extends ForeignFieldModel
    * `title` and `arial-label`) of this link.
    * Returns NULL if this link has no target url.
    *
-   * @param null|array $extraAttributes
+   * @param array|null $extraAttributes
    * @return array|null
    */
-  public function getRawLinkAttributes($extraAttributes = null) {
-    $url = $this->getUrl();
+  public function getRawLinkAttributes(array $extraAttributes = null) {
+    $href = ArrayHelper::getValue($extraAttributes, 'href');
+    $url = $this->getUrl(is_array($href) ? $href : null);
     if (is_null($url)) {
       return null;
     }
 
-    $attributes = [ 'href' => $url ];
-
+    $attributes = ['href' => is_string($href) ? $href : $url];
     $ariaLabel = $this->getAriaLabel();
     if (!empty($ariaLabel)) {
       $attributes['aria-label'] = $ariaLabel;
@@ -286,7 +293,8 @@ class Link extends ForeignFieldModel
     }
 
     if (is_array($extraAttributes)) {
-      $attributes = $extraAttributes + $attributes;
+      unset($extraAttributes['href']);
+      $attributes = array_merge($attributes, $extraAttributes);
     }
 
     return $attributes;
@@ -336,10 +344,16 @@ class Link extends ForeignFieldModel
   }
 
   /**
-   * @return null|string
+   * @param array|null $options
+   * @return string|null
    */
-  public function getUrl() {
-    return null;
+  public function getUrl(array $options = null) {
+    $url = $this->getIntrinsicUrl();
+    if (!is_null($url) && !is_null($options) && count($options)) {
+      $url = Url::modify($url, $options);
+    }
+
+    return $url;
   }
 
   /**

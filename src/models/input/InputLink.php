@@ -33,7 +33,7 @@ class InputLink extends Link
   /**
    * @inheritDoc
    */
-  public function getUrl() {
+  public function getIntrinsicUrl() {
     if ($this->isEmpty()) {
       return null;
     }

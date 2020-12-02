@@ -97,18 +97,9 @@ class ElementLink extends Link
   }
 
   /**
-   * @return int
-   */
-  public function getSiteId() {
-    return !$this->_linkType->allowCrossSiteLink || is_null($this->linkedSiteId)
-      ? $this->getOwnerSite()->id
-      : $this->linkedSiteId;
-  }
-
-  /**
    * @inheritDoc
    */
-  public function getUrl() {
+  public function getIntrinsicUrl() {
     $url = $this->getElementUrl();
     $customQuery = is_string($this->customQuery)
       ? trim($this->customQuery)
@@ -137,6 +128,15 @@ class ElementLink extends Link
     }
 
     return $url;
+  }
+
+  /**
+   * @return int
+   */
+  public function getSiteId() {
+    return !$this->_linkType->allowCrossSiteLink || is_null($this->linkedSiteId)
+      ? $this->getOwnerSite()->id
+      : $this->linkedSiteId;
   }
 
   /**

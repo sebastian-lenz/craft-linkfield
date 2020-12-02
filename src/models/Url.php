@@ -2,126 +2,36 @@
 
 namespace lenz\linkfield\models;
 
+use craft\helpers\ArrayHelper;
+use lenz\craft\utils\models\Url as BaseUrl;
+
 /**
  * Class Url
  */
-class Url
+class Url extends BaseUrl
 {
   /**
-   * @var array
-   */
-  private $_parts;
-
-  /**
-   * @var array
-   */
-  const GLUES = [
-    ['scheme',   '',  '://'],
-    ['auth',     '',  '@'],
-    ['host',     '',  ''],
-    ['port',     ':', ''],
-    ['path',     '',  ''],
-    ['query',    '?', ''],
-    ['fragment', '#', ''],
-  ];
-
-
-  /**
-   * Url constructor.
-   * @param string $url
-   */
-  public function __construct(string $url) {
-    $this->_parts = parse_url($url);
-  }
-
-  /**
+   * @param string $value
+   * @param array $options
    * @return string
    */
-  public function __toString() {
-    $result = [];
-    $parts = $this->_parts + [
-      'auth' => $this->getAuthentication(),
-    ];
+  public static function modify(string $value, array $options) {
+    $url = new Url($value);
 
-    foreach (self::GLUES as list($key, $prefix, $suffix)) {
-      $value = isset($parts[$key]) ? $parts[$key] : '';
-      if (!empty($value)) {
-        array_push($result, $prefix, $value, $suffix);
+    foreach ($url->attributes() as $attribute) {
+      $option = ArrayHelper::getValue($options, $attribute);
+
+      if (is_string($option)) {
+        $url->$attribute = $option;
+      } elseif (is_array($option) && $attribute == 'query') {
+        if (ArrayHelper::getValue($options, 'queryMode') != 'replace') {
+          $option = array_merge($url->getQuery(), $option);
+        }
+
+        $url->setQuery($option);
       }
     }
 
-    if (isset($parts['host']) && !isset($parts['scheme'])) {
-      array_unshift($result, '//');
-    }
-
-    return implode('', $result);
-  }
-
-  /**
-   * @return string
-   */
-  public function getAuthentication() {
-    $parts = $this->_parts;
-
-    return implode(':', array_filter([
-      isset($parts['user']) ? $parts['user'] : '',
-      isset($parts['pass']) ? $parts['pass'] : '',
-    ]));
-  }
-
-  /**
-   * @return string|null
-   */
-  public function getFragment() {
-    return isset($this->_parts['fragment']) ? (string)$this->_parts['fragment'] : null;
-  }
-
-  /**
-   * @return array
-   */
-  public function getQuery() {
-    if (!isset($this->_parts['query'])) {
-      return array();
-    }
-
-    $result = array();
-    foreach (explode('&', $this->_parts['query']) as $param) {
-      $parts = explode('=', $param, 2);
-      if (count($parts) !== 2) {
-        continue;
-      }
-
-      list($key, $value) = $parts;
-      $result[$key] = urldecode($value);
-    }
-
-    return $result;
-  }
-
-  /**
-   * @param string|null $fragment
-   */
-  public function setFragment(string $fragment = null) {
-    if (empty($fragment)) {
-      unset($this->_parts['fragment']);
-    } else {
-      $this->_parts['fragment'] = $fragment;
-    }
-  }
-
-  /**
-   * @param array $query
-   */
-  public function setQuery(array $query) {
-    if (count($query) === 0) {
-      unset($this->_parts['query']);
-    } else {
-      $parts = array();
-      foreach ($query as $key => $value) {
-        $parts[] = $key . '=' . urlencode($value);
-      }
-
-      $this->_parts['query'] = implode('&', $parts);
-    }
+    return (string)$url;
   }
 }

@@ -34,9 +34,15 @@ class SiteLink extends Link
    */
   public function getIntrinsicText() {
     $site = $this->getSite();
-    return is_null($site)
-      ? null
-      : (string)$site;
+    return is_null($site) ? null : (string)$site;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getIntrinsicUrl() {
+    $site = $this->getSite();
+    return is_null($site) ? null : $site->getBaseUrl();
   }
 
   /**
@@ -47,18 +53,9 @@ class SiteLink extends Link
       return null;
     }
 
-    return Craft::$app->getSites()->getSiteById($this->linkedSiteId);
-  }
-
-  /**
-   * @return null|string
-   */
-  public function getUrl() {
-    $site = $this->getSite();
-
-    return is_null($site)
-      ? null
-      : $site->getBaseUrl();
+    return Craft::$app
+      ->getSites()
+      ->getSiteById($this->linkedSiteId);
   }
 
   /**
