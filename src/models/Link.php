@@ -5,6 +5,7 @@ namespace lenz\linkfield\models;
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Html;
 use craft\helpers\Template;
 use craft\models\Site;
@@ -399,5 +400,29 @@ class Link extends ForeignFieldModel
   public function __toString() {
     $url = $this->getUrl();
     return is_null($url) ? '' : $url;
+  }
+
+
+  // Protected methods
+  // -----------------
+
+  /**
+   * @inheritDoc
+   */
+  protected function getSerializedData() : array {
+    return array_merge(parent::getSerializedData(), [
+      '_linkType' => $this->_linkType->name,
+    ]);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  protected function setSerializedData(array $data) {
+    parent::setSerializedData($data);
+
+    $this->_linkType = $this->_field->getEnabledLinkTypes()->getByName(
+      ArrayHelper::getValue($data, '_linkType')
+    );
   }
 }
