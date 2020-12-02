@@ -1,6 +1,6 @@
 # Release Notes for Typed Link Field
 
-## 2.0.0-beta.10 - 2020-12-02
+## 2.0.0-beta.11 - 2020-12-02
 
 - New: Urls can now be modified by passing the desired options to `Link::getUrl()` or with the key `href` when using `Link::getLink()`, see https://github.com/sebastian-lenz/craft-linkfield/issues/120#issuecomment-737531635
 - New: The return type now correctly returns the link model class. This enables code completion support
@@ -8,6 +8,12 @@
 - New: The custom text can now be required and a maximum text length can be specified
 - Fix: Correctly check the enabled state of supported third party plugins, see https://github.com/sebastian-lenz/craft-linkfield/issues/117
 - Fix: Site links not resolving environment variables correctly, see https://github.com/sebastian-lenz/craft-linkfield/issues/128
+
+## 2.0.0-beta.10 - 2020-08-12
+- Update: Make the link type setting apply logic less error prone
+- Fix: Fix selected state of the link type dropdown for Craft 3.5, see https://github.com/sebastian-lenz/craft-linkfield/issues/113
+- Fix: Remove deprecated call to `ElementQuery::enabledForSite`, see https://github.com/sebastian-lenz/craft-linkfield/issues/114
+- Fix: Element select button is being cut off
 
 ## 2.0.0-beta.9 - 2020-06-09
 - Fix: Integrity constraint violation when migrating existing project to v2, see https://github.com/sebastian-lenz/craft-linkfield/issues/105
