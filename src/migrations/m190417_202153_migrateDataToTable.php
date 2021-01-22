@@ -84,9 +84,9 @@ class m190417_202153_migrateDataToTable extends Migration
    * @param FieldInterface $field
    * @param string $table
    */
-  private function updateField(FieldInterface $field, string $table) {
+  private function updateField(FieldInterface $field, string $table, string $handlePrefix = '') {
     if ($field instanceof LinkField) {
-      $this->updateLinkField($field, $table);
+      $this->updateLinkField($field, $table, $handlePrefix);
     } elseif ($field instanceof Matrix) {
       $this->updateMatrixField($field);
     } elseif ($field instanceof SuperTableField) {
@@ -105,7 +105,7 @@ class m190417_202153_migrateDataToTable extends Migration
 
     foreach ($blockTypes as $blockType) {
       foreach ($blockType->getFields() as $field) {
-        $this->updateField($field, $table);
+        $this->updateField($field, $table, $blockType->handle.'_');
       }
     }
   }
@@ -114,9 +114,9 @@ class m190417_202153_migrateDataToTable extends Migration
    * @param LinkField $field
    * @param string $table
    */
-  private function updateLinkField(LinkField $field, string $table) {
+  private function updateLinkField(LinkField $field, string $table, string $handlePrefix = '') {
     $insertRows = [];
-    $columnName = ($field->columnPrefix ?: 'field_') . $field->handle;
+    $columnName = ($field->columnPrefix ?: 'field_') . $handlePrefix . $field->handle;
     $rows = (new Query())
       ->select([
         'elementId',
