@@ -1,5 +1,9 @@
 # Release Notes for Typed Link Field
 
+## 2.0.0-beta.12
+
+- Fix: Migration of matrix fields failed due to missing prefix, see https://github.com/sebastian-lenz/craft-linkfield/pull/134
+
 ## 2.0.0-beta.11 - 2020-12-02
 
 - New: Urls can now be modified by passing the desired options to `Link::getUrl()` or with the key `href` when using `Link::getLink()`, see https://github.com/sebastian-lenz/craft-linkfield/issues/120#issuecomment-737531635
