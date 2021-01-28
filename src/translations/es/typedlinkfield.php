@@ -32,5 +32,5 @@ return [
   'Set the default value of the link text.'                      => 'Establecer ',
   'Telephone'                                                    => 'Teléfono',
   'Title'                                                        => 'Título',
-  'Url'                                                          => 'Vínculo',
+  'URL'                                                          => 'Vínculo',
 ];

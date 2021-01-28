@@ -26,5 +26,5 @@ return [
   'Set the default value of the link text.'                      => 'Angi standardverdien for lenketeksten.',
   'Telephone'                                                    => 'Telefon',
   'Title'                                                        => 'Tittel',
-  'Url'                                                          => 'Url',
+  'URL'                                                          => 'URL',
 ];

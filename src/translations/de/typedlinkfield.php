@@ -45,5 +45,5 @@ return [
   'Show an additional text input that can be used to enter the visible link text.' => 'Zeigt ein zusätzliches Textfeld an, mit der der sichtbare Linktext eingeben werden kann.',
   'Telephone'                                                    => 'Telefon',
   'Title'                                                        => 'Titel',
-  'Url'                                                          => 'Url',
+  'URL'                                                          => 'URL',
 ];

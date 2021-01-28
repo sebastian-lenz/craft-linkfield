@@ -32,5 +32,5 @@ return [
   'Set the default value of the link text.'                      => 'Zet de standaard link tekst.',
   'Telephone'                                                    => 'Telefoon',
   'Title'                                                        => 'Titel',
-  'Url'                                                          => 'Url',
+  'URL'                                                          => 'URL',
 ];

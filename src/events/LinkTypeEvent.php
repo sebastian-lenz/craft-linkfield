@@ -41,7 +41,7 @@ class LinkTypeEvent extends Event
 
     $linkTypes = [
       'url' => new InputLinkType([
-        'displayName'  => 'Url',
+        'displayName'  => 'URL',
         'displayGroup' => 'Input fields',
         'inputType'    => 'url'
       ]),
