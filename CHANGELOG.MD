@@ -1,6 +1,6 @@
 # Release Notes for Typed Link Field
 
-## 2.0.0-beta.12
+## 2.0.0-beta.12 - 2021-01-28
 
 - Fix: Migration of matrix fields failed due to missing prefix, see https://github.com/sebastian-lenz/craft-linkfield/pull/134
 
