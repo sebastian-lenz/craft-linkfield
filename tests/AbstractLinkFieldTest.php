@@ -31,7 +31,7 @@ abstract class AbstractLinkFieldTest extends TestCase
    * @inheritdoc
    * @throws Throwable
    */
-  public static function setUpBeforeClass() {
+  public static function setUpBeforeClass(): void {
     parent::setUpBeforeClass();
     if (isset(self::$craft)) {
       return;

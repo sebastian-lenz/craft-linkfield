@@ -1,6 +1,7 @@
 language: php
 php:
 - 7.1
+- 8.0
 services:
 - mysql
 env:
