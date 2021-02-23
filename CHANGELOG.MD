@@ -1,6 +1,6 @@
 # Release Notes for Typed Link Field
 
-## 1.0.25
+## 1.0.25 - 2021-02-23
 - New: Add support for PHP 8.0
 
 ## 1.0.24 - 2020-21-07
