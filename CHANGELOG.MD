@@ -62,23 +62,22 @@
 
 > {warning} This is a major update, please create a database backup before installing, please see https://github.com/sebastian-lenz/craft-linkfield/issues/61
 
-## 1.0.24 - 2020-21-07
+## 1.0.25 - 2021-02-23
+- New: Add support for PHP 8.0
 
+## 1.0.24 - 2020-21-07
 - Fix detection of supported third party plugins
 - Fix site links not resolving environment variables correctly
 
 ## 1.0.23 - 2020-06-09
-
 - Fix custom query storage (see https://github.com/sebastian-lenz/craft-linkfield/issues/108)
 - Fix display of long element titles in combination with custom queries
 
 ## 1.0.22 - 2020-06-06
-
 - Fix display of long element titles
 - Update Norwegian translations
 
 ## 1.0.21 - 2020-04-01
-
 - Add Dutch translations
 
 ## 1.0.20 - 2020-02-07
