@@ -167,7 +167,7 @@ class BasicTest extends AbstractLinkFieldTest
    * @inheritdoc
    * @throws Throwable
    */
-  public static function setUpBeforeClass() {
+  public static function setUpBeforeClass(): void {
     parent::setUpBeforeClass();
     if (isset(self::$field)) {
       return;

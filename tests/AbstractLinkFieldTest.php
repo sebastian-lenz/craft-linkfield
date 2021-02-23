@@ -30,7 +30,7 @@ abstract class AbstractLinkFieldTest extends TestCase
    * @inheritdoc
    * @throws Throwable
    */
-  public static function setUpBeforeClass() {
+  public static function setUpBeforeClass(): void {
     parent::setUpBeforeClass();
     if (isset(self::$craft)) {
       return;
@@ -128,15 +128,21 @@ abstract class AbstractLinkFieldTest extends TestCase
    * @throws Throwable
    */
   private static function initDatabase() {
-    $connection = new mysqli('localhost', getenv('TEST_DB_USER'), getenv('TEST_DB_PASS'));
-    $dbName = $connection->escape_string(getenv('TEST_DB_NAME'));
+    $connection = new mysqli(
+      getenv('TEST_DB_HOST'),
+      getenv('TEST_DB_USER'),
+      getenv('TEST_DB_PASS'),
+      null,
+      getenv('TEST_DB_PORT')
+    );
 
+    $dbName = $connection->escape_string(getenv('TEST_DB_NAME'));
     if (!$connection->query("DROP SCHEMA IF EXISTS $dbName")) {
-      throw new Exception('Could not drop database.');
+      throw new Exception('Could not drop database: ' . $connection->error);
     }
 
     if (!$connection->query("CREATE SCHEMA IF NOT EXISTS $dbName")) {
-      throw new Exception('Could not create database.');
+      throw new Exception('Could not create database: ' . $connection->error);
     }
 
     $connection->close();
