@@ -63,7 +63,7 @@ class ElementLinkType extends LinkType
     $elementType = $this->elementType;
     $options = array();
 
-    foreach ($elementType::sources() as $source) {
+    foreach ($elementType::sources('settings') as $source) {
       if (array_key_exists('key', $source) && $source['key'] !== '*') {
         $options[$source['key']] = $source['label'];
       }
