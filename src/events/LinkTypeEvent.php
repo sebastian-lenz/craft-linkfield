@@ -3,11 +3,11 @@
 namespace lenz\linkfield\events;
 
 use Craft;
-use craft\elements\Asset;
 use craft\elements\Category;
 use craft\elements\Entry;
 use craft\elements\User;
 use lenz\linkfield\fields\LinkField;
+use lenz\linkfield\models\asset\AssetLinkType;
 use lenz\linkfield\models\element\ElementLinkType;
 use lenz\linkfield\models\input\InputLinkType;
 use lenz\linkfield\models\LinkType;
@@ -60,9 +60,8 @@ class LinkTypeEvent extends Event
         'displayGroup' => 'Input fields',
         'inputType'    => 'tel'
       ]),
-      'asset' => new ElementLinkType([
+      'asset' => new AssetLinkType([
         'displayGroup' => 'Craft CMS',
-        'elementType'  => Asset::class,
       ]),
       'category' => new ElementLinkType([
         'displayGroup' => 'Craft CMS',

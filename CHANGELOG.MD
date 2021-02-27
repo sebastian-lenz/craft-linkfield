@@ -2,6 +2,7 @@
 
 ## 2.0.0-beta.13
 - New: Add support for PHP 8.0
+- New: Asset sources are now stored using their volume ids, see https://github.com/sebastian-lenz/craft-linkfield/issues/144
 - Fix: Custom fragments don't work, see https://github.com/sebastian-lenz/craft-linkfield/issues/142
 
 ## 2.0.0-beta.12 - 2021-01-28

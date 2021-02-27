@@ -103,6 +103,7 @@ class ElementLinkType extends LinkType
       'typedlinkfield/_settings-element',
       [
         'linkType' => $this,
+        'sources' => $this->sources,
       ]
     );
   }
@@ -148,6 +149,7 @@ class ElementLinkType extends LinkType
 
   /**
    * @return void
+   * @noinspection PhpUnused (Validator)
    */
   public function validateElementType() {
     if (!is_subclass_of($this->elementType, ElementInterface::class)) {
@@ -157,22 +159,23 @@ class ElementLinkType extends LinkType
 
   /**
    * @return void
+   * @noinspection PhpUnused (Validator)
    */
   public function validateSources() {
-    $availableSources = $this->getAvailableSources();
+    $validSources = $this->getValidSources();
     $sources = $this->sources;
     if (!is_array($sources)) {
       $sources = [$sources];
     }
 
-    $resolvedResources = array();
+    $resolvedResources = [];
     foreach ($sources as $source) {
       if ($source == '*') {
         $this->sources = '*';
         return;
       }
 
-      if (array_key_exists($source, $availableSources)) {
+      if (in_array($source, $validSources)) {
         $resolvedResources[] = $source;
       }
     }
@@ -281,6 +284,13 @@ class ElementLinkType extends LinkType
       'name'  => 'linkedSiteId',
       'value' => $siteId,
     ];
+  }
+
+  /**
+   * @return array
+   */
+  protected function getValidSources(): array {
+    return array_keys($this->getAvailableSources());
   }
 
   /**
