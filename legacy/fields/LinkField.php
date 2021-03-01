@@ -13,4 +13,11 @@ Craft::$app->getDeprecator()->log(
  * Class LinkField
  * @deprecated
  */
-class LinkField extends \lenz\linkfield\fields\LinkField {}
+class LinkField extends \lenz\linkfield\fields\LinkField
+{
+  /**
+   * @var string|array
+   * @deprecated
+   */
+  public $allowedLinkNames = '*';
+}
