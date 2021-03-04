@@ -55,6 +55,15 @@ class AssetLinkType extends ElementLinkType
   // -----------------
 
   /**
+   * @return string|null
+   */
+  protected function getEnabledSources() {
+    return $this->sources === '*'
+      ? null
+      : self::toFolderSources($this->sources);
+  }
+
+  /**
    * @return array
    */
   protected function getValidSources(): array {

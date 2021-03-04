@@ -30,7 +30,7 @@ class ElementLinkType extends LinkType
   public $elementType;
 
   /**
-   * @var string
+   * @var string|string[]
    */
   public $sources = '*';
 
@@ -237,9 +237,16 @@ class ElementLinkType extends LinkType
       'limit'           => 1,
       'name'            => 'linkedId',
       'showSiteMenu'    => $this->allowCrossSiteLink,
-      'sources'         => $this->sources === '*' ? null : $this->sources,
+      'sources'         => $this->getEnabledSources(),
       'storageKey'      => "linkfield.{$value->getField()->handle}.{$this->name}",
     ];
+  }
+
+  /**
+   * @return string[]|null
+   */
+  protected function getEnabledSources() {
+    return $this->sources === '*' ? null : $this->sources;
   }
 
   /**
