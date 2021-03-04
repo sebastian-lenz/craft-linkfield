@@ -5,12 +5,12 @@ namespace lenz\linkfield;
 use Craft;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterGqlTypesEvent;
+use craft\feedme\services\Fields as FeedMeFields;
 use craft\services\Fields;
 use craft\services\Gql;
 use craft\services\Plugins;
 use craft\utilities\ClearCaches;
 use lenz\linkfield\fields\LinkField;
-use lenz\linkfield\listeners\ElementListener;
 use lenz\linkfield\listeners\ElementListenerState;
 use lenz\linkfield\models\LinkGqlType;
 use Throwable;
@@ -19,7 +19,7 @@ use yii\base\Event;
 /**
  * Class Plugin
  *
- * @property ElementListener $elementListener
+ * @property listeners\ElementListener $elementListener
  */
 class Plugin extends \craft\base\Plugin
 {
@@ -41,7 +41,8 @@ class Plugin extends \craft\base\Plugin
     parent::init();
 
     $this->setComponents([
-      'elementListener' => ElementListener::class,
+      'elementListener' => listeners\ElementListener::class,
+      'feedMe' => listeners\FeedMeListener::class,
     ]);
 
     Event::on(
@@ -67,6 +68,14 @@ class Plugin extends \craft\base\Plugin
       Gql::EVENT_REGISTER_GQL_TYPES,
       [$this, 'onRegisterGqlTypes']
     );
+
+    if (class_exists(FeedMeFields::class)) {
+      Event::on(
+        FeedMeFields::class,
+        FeedMeFields::EVENT_REGISTER_FEED_ME_FIELDS,
+        [listeners\FeedMeListener::class, 'onRegisterFeedMeFields']
+      );
+    }
   }
 
   /**

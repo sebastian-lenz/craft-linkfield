@@ -5,6 +5,7 @@ namespace lenz\linkfield\models;
 use ArrayIterator;
 use Countable;
 use Craft;
+use Exception;
 use lenz\linkfield\events\LinkTypeEvent;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\Plugin;
@@ -13,7 +14,7 @@ use yii\base\Event;
 /**
  * Class LinkTypeCollection
  */
-class LinkTypeCollection implements Countable, \IteratorAggregate
+class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
 {
   /**
    * @var LinkType[]
@@ -164,6 +165,40 @@ class LinkTypeCollection implements Countable, \IteratorAggregate
   public function sort() {
     self::sortLinkTypes($this->_types);
     return $this;
+  }
+
+
+  // ArrayAccess
+  // -----------
+
+  /**
+   * @inheritDoc
+   */
+  public function offsetExists($offset) {
+    return array_key_exists($offset, $this->_types);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function offsetGet($offset) {
+    return $this->_types[$offset];
+  }
+
+  /**
+   * @inheritDoc
+   * @throws Exception
+   */
+  public function offsetSet($offset, $value) {
+    throw new Exception('LinkTypeCollection is read-only.');
+  }
+
+  /**
+   * @inheritDoc
+   * @throws Exception
+   */
+  public function offsetUnset($offset) {
+    throw new Exception('LinkTypeCollection is read-only.');
   }
 
 

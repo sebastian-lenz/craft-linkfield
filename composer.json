@@ -9,6 +9,7 @@
     "sebastianlenz/craft-utils": "^2.2.12"
   },
   "require-dev": {
+    "craftcms/feed-me": "4.3.5.1",
     "phpunit/phpunit": "^7.5 || ^8.0",
     "verbb/super-table": "^2.3"
   },
