@@ -154,6 +154,18 @@ class LinkField extends ForeignField
   }
 
   /**
+   * @inheritDoc
+   */
+  public function getSettings(): array {
+    $result = parent::getSettings();
+    if (array_key_exists('typeSettings', $result)) {
+      $result['typeSettings'] = (object)$result['typeSettings'];
+    }
+
+    return $result;
+  }
+
+  /**
    * @return array
    */
   public function getTypeSettings(): array {
