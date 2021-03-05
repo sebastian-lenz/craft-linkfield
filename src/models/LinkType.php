@@ -4,8 +4,7 @@ namespace lenz\linkfield\models;
 
 use Craft;
 use craft\base\ElementInterface;
-use craft\helpers\ArrayHelper;
-use Exception;
+use lenz\craft\utils\helpers\ArrayHelper;
 use lenz\linkfield\fields\LinkField;
 use Throwable;
 use yii\base\Model;
@@ -60,7 +59,6 @@ class LinkType extends Model
    * @param ElementInterface|null $owner
    * @param array $value
    * @return Link
-   * @throws Exception
    */
   public function createLink(LinkField $field, ElementInterface $owner = null, $value = []): Link {
     // If the value includes a payload, merge it
@@ -75,7 +73,7 @@ class LinkType extends Model
 
     // If the value includes cp form data, merge it
     if (isset($value['cpForm'])) {
-      $data = ArrayHelper::getValue($value['cpForm'], $this->name);
+      $data = ArrayHelper::get($value['cpForm'], $this->name);
       unset($value['cpForm']);
 
       if (is_array($data)) {

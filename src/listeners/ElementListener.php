@@ -58,7 +58,7 @@ class ElementListener
    * @return array
    * @throws Exception
    */
-  static function getElementConditions(ElementInterface $element) {
+  static function getElementConditions(ElementInterface $element): array {
     return [
       'and',
       ElementListenerState::getInstance()->getCachedElementLinkConditions(),
@@ -82,7 +82,7 @@ class ElementListener
    * @param ElementInterface $element
    * @return bool
    */
-  static function isElementPublished(ElementInterface $element) {
+  static function isElementPublished(ElementInterface $element): bool {
     return in_array(
       $element->getStatus(),
       [Element::STATUS_ENABLED, Entry::STATUS_LIVE]

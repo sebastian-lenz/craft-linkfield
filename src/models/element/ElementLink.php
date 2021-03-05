@@ -87,7 +87,7 @@ class ElementLink extends Link
   /**
    * @return string
    */
-  public function getIntrinsicText() {
+  public function getIntrinsicText(): string {
     if ($this->_field->enableElementCache) {
       return $this->linkedTitle;
     }
@@ -157,7 +157,7 @@ class ElementLink extends Link
   /**
    * @inheritDoc
    */
-  public function isEmpty(): bool {
+  public function isEmpty() {
     return empty($this->getElementUrl());
   }
 

@@ -32,9 +32,9 @@ class SiteLink extends Link
   /**
    * @inheritDoc
    */
-  public function getIntrinsicText() {
+  public function getIntrinsicText(): string {
     $site = $this->getSite();
-    return is_null($site) ? null : (string)$site;
+    return is_null($site) ? '' : (string)$site;
   }
 
   /**
@@ -61,7 +61,7 @@ class SiteLink extends Link
   /**
    * @inheritDoc
    */
-  public function isEmpty(): bool {
+  public function isEmpty() {
     return empty($this->linkedSiteId);
   }
 }

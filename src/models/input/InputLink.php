@@ -56,7 +56,7 @@ class InputLink extends Link
   /**
    * @inheritDoc
    */
-  public function isEmpty(): bool {
+  public function isEmpty() {
     return empty($this->linkedUrl);
   }
 
@@ -82,11 +82,14 @@ class InputLink extends Link
 
     switch ($linkType->inputType) {
       case 'email':
-        return $this->validateEmailUrl($attribute);
+        $this->validateEmailUrl($attribute);
+        return;
       case 'tel':
-        return $this->validateTelUrl($attribute);
+        $this->validateTelUrl($attribute);
+        return;
       case 'url':
-        return $this->validateGenericUrl($attribute);
+        $this->validateGenericUrl($attribute);
+        return;
     }
   }
 

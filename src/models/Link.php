@@ -5,12 +5,12 @@ namespace lenz\linkfield\models;
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
-use craft\helpers\ArrayHelper;
 use craft\helpers\Html;
 use craft\helpers\Template;
 use craft\models\Site;
 use Exception;
 use lenz\craft\utils\foreignField\ForeignFieldModel;
+use lenz\craft\utils\helpers\ArrayHelper;
 use lenz\linkfield\fields\LinkField;
 use Twig\Markup;
 
@@ -117,6 +117,7 @@ class Link extends ForeignFieldModel
    *
    * @param string $fallbackText
    * @return string
+   * @noinspection PhpUnused (Public API)
    */
   public function getCustomText($fallbackText = "") {
     if ($this->getAllowCustomText() && !empty($this->customText)) {
@@ -139,7 +140,7 @@ class Link extends ForeignFieldModel
   /**
    * @param bool $ignoreStatus
    * @return null|ElementInterface
-   * @noinspection PhpUnusedParameterInspection (is API method)
+   * @noinspection PhpUnusedParameterInspection (API)
    */
   public function getElement($ignoreStatus = false) {
     return null;
@@ -147,8 +148,9 @@ class Link extends ForeignFieldModel
 
   /**
    * @return bool
+   * @noinspection PhpUnused (API)
    */
-  public function getEnableAriaLabel() {
+  public function getEnableAriaLabel(): bool {
     return is_null($this->_field)
       ? false
       : $this->_field->enableAriaLabel;
@@ -157,7 +159,7 @@ class Link extends ForeignFieldModel
   /**
    * @return bool
    */
-  public function getEnableTitle() {
+  public function getEnableTitle(): bool {
     return is_null($this->_field)
       ? false
       : $this->_field->enableTitle;
@@ -166,7 +168,7 @@ class Link extends ForeignFieldModel
   /**
    * @return string
    */
-  public function getIntrinsicText() {
+  public function getIntrinsicText(): string {
     return '';
   }
 
@@ -228,6 +230,7 @@ class Link extends ForeignFieldModel
    *
    * @param array|null $extraAttributes
    * @return Markup
+   * @noinspection PhpUnused (Public API)
    */
   public function getLinkAttributes($extraAttributes = null) {
     $attributes = $this->getRawLinkAttributes($extraAttributes);
@@ -266,7 +269,7 @@ class Link extends ForeignFieldModel
    * @return array|null
    */
   public function getRawLinkAttributes(array $extraAttributes = null) {
-    $href = ArrayHelper::getValue($extraAttributes, 'href');
+    $href = ArrayHelper::get($extraAttributes, 'href');
     $url = $this->getUrl(is_array($href) ? $href : null);
     if (is_null($url)) {
       return null;
@@ -368,7 +371,7 @@ class Link extends ForeignFieldModel
   /**
    * @return bool
    */
-  public function isEmpty(): bool {
+  public function isEmpty() {
     return true;
   }
 
@@ -436,7 +439,7 @@ class Link extends ForeignFieldModel
     parent::setSerializedData($data);
 
     $this->_linkType = $this->_field->getEnabledLinkTypes()->getByName(
-      ArrayHelper::getValue($data, '_linkType')
+      ArrayHelper::get($data, '_linkType')
     );
   }
 }

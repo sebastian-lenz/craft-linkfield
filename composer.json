@@ -6,7 +6,7 @@
   "require": {
     "php": "^7.0 || ^8.0",
     "craftcms/cms": "^3.3.3",
-    "sebastianlenz/craft-utils": "^2.2.12"
+    "sebastianlenz/craft-utils": "^2.2.14"
   },
   "require-dev": {
     "craftcms/feed-me": "4.3.5.1",

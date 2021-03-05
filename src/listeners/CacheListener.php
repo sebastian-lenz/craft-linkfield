@@ -26,6 +26,7 @@ class CacheListener
   /**
    * @return void
    * @throws Exception
+   * @noinspection PhpUnused (Used as callable)
    */
   static function onClearCache() {
     $allFields = Craft::$app->getFields()->getAllFields(false);

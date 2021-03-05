@@ -83,6 +83,7 @@ class m190417_202153_migrateDataToTable extends Migration
   /**
    * @param FieldInterface $field
    * @param string $table
+   * @param string $handlePrefix
    */
   private function updateField(FieldInterface $field, string $table, string $handlePrefix = '') {
     if ($field instanceof LinkField) {
@@ -113,6 +114,7 @@ class m190417_202153_migrateDataToTable extends Migration
   /**
    * @param LinkField $field
    * @param string $table
+   * @param string $handlePrefix
    */
   private function updateLinkField(LinkField $field, string $table, string $handlePrefix = '') {
     $insertRows = [];
@@ -172,7 +174,7 @@ class m190417_202153_migrateDataToTable extends Migration
    * @param string $settings
    * @return string
    */
-  private function updateSettings(string $settings) {
+  private function updateSettings(string $settings): string {
     $settings = Json::decode($settings);
     if (!is_array($settings)) {
       $settings = array();

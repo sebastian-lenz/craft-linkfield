@@ -148,7 +148,7 @@ class CacheListenerJob extends BaseJob
   /**
    * @return string
    */
-  protected function getFieldName() {
+  protected function getFieldName(): string {
     $field = $this->getField();
     return is_null($field)
       ? '(unknown)'

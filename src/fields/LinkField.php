@@ -101,7 +101,7 @@ class LinkField extends ForeignField
   /**
    * @return LinkTypeCollection
    */
-  public function getAvailableLinkTypes() {
+  public function getAvailableLinkTypes(): LinkTypeCollection {
     if (!isset($this->_linkTypes)) {
       $this->_linkTypes = LinkTypeCollection::createForField($this);
 
@@ -123,7 +123,7 @@ class LinkField extends ForeignField
   /**
    * @return LinkTypeCollection
    */
-  public function getEnabledLinkTypes() {
+  public function getEnabledLinkTypes(): LinkTypeCollection {
     $result = $this->enableAllLinkTypes
       ? $this->getAvailableLinkTypes()->clone()
       : $this->getAvailableLinkTypes()->getEnabledTypes();
@@ -156,21 +156,22 @@ class LinkField extends ForeignField
   /**
    * @return array
    */
-  public function getTypeSettings() {
+  public function getTypeSettings(): array {
     return $this->getAvailableLinkTypes()->getSettings();
   }
 
   /**
    * @return bool
+   * @noinspection PhpUnused (Used in field template)
    */
-  public function hasSingleLinkType() {
+  public function hasSingleLinkType(): bool {
     return count($this->getEnabledLinkTypes()) == 1;
   }
 
   /**
    * @return boolean
    */
-  public function hasSettings() {
+  public function hasSettings(): bool {
     return (
       $this->allowCustomText ||
       $this->enableAriaLabel ||
@@ -267,39 +268,10 @@ class LinkField extends ForeignField
   }
 
   /**
-   * @return LinkType|null
-   */
-  protected function getDefaultLinkType() {
-    return $this
-      ->getEnabledLinkTypes()
-      ->getByName($this->defaultLinkName);
-  }
-
-  /**
-   * @param Link $value
-   * @param ElementInterface $element
-   * @return Link
-   * @throws Exception
-   */
-  protected function getEditLink(Link $value, ElementInterface $element = null) {
-    $defaultLinkType = $this->getDefaultLinkType();
-    if (
-      $value->isEmpty() &&
-      !is_null($defaultLinkType) &&
-      $value->getLinkType() !== $defaultLinkType
-    ) {
-      $value = $defaultLinkType->createLink($this, $value->getOwner(), $value->getAttributes());
-    }
-
-    $value->setOwner($element);
-    return $value;
-  }
-
-  /**
    * @param string $linkName
    * @return LinkType
    */
-  protected function resolveLinkType(string $linkName) {
+  protected function resolveLinkType(string $linkName): LinkType {
     $result = $this
       ->getEnabledLinkTypes()
       ->getByName($linkName, $this->defaultLinkName, '*');
@@ -325,7 +297,7 @@ class LinkField extends ForeignField
   /**
    * @return bool
    */
-  protected function useEmptyType() {
+  protected function useEmptyType(): bool {
     return !$this->required;
   }
 

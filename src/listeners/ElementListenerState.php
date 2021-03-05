@@ -88,7 +88,7 @@ class ElementListenerState
   /**
    * @return bool
    */
-  public function isCacheEnabled() {
+  public function isCacheEnabled(): bool {
     foreach ($this->fields as $field) {
       if (isset($field['enableElementCache']) && $field['enableElementCache']) {
         return true;
@@ -178,7 +178,7 @@ class ElementListenerState
    * @param array $specs
    * @return array
    */
-  protected function getElementLinkConditions(array $specs) {
+  protected function getElementLinkConditions(array $specs): array {
     $conditions = ['or'];
     foreach ($specs as $fieldId => $fieldInfo) {
       $conditions[] = [
@@ -193,7 +193,7 @@ class ElementListenerState
   /**
    * @return array
    */
-  protected function loadElementFields() {
+  protected function loadElementFields(): array {
     $result = array();
     $allFields = Craft::$app
       ->getFields()
@@ -276,7 +276,7 @@ class ElementListenerState
    * @return ElementListenerState
    * @throws Exception
    */
-  public static function getInstance() {
+  public static function getInstance(): ElementListenerState {
     if (!isset(self::$_instance)) {
       $instance = Craft::$app->getCache()->get(self::class);
       if (!($instance instanceof ElementListenerState)) {

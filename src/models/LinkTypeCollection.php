@@ -142,7 +142,7 @@ class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
   /**
    * @return array
    */
-  public function getSettings() {
+  public function getSettings(): array {
     return array_map(function(LinkType $linkType) {
       return $linkType->getSettings();
     }, $this->_types);
