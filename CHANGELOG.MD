@@ -1,6 +1,6 @@
 # Release Notes for Typed Link Field
 
-## 2.0.0-beta.13
+## 2.0.0-rc.1 - 2021-03-06
 - New: Add support for PHP 8.0
 - New: Asset sources are now stored using their volume ids, see https://github.com/sebastian-lenz/craft-linkfield/issues/144
 - New: FeedMe support
