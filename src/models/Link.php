@@ -53,7 +53,7 @@ class Link extends ForeignFieldModel
    *
    * @param LinkField $field
    * @param LinkType $linkType
-   * @param ElementInterface $owner
+   * @param ElementInterface|null $owner
    * @param array $config
    */
   public function __construct(
@@ -140,7 +140,6 @@ class Link extends ForeignFieldModel
   /**
    * @param bool $ignoreStatus
    * @return null|ElementInterface
-   * @noinspection PhpUnusedParameterInspection (API)
    */
   public function getElement($ignoreStatus = false) {
     return null;
@@ -362,7 +361,6 @@ class Link extends ForeignFieldModel
   /**
    * @param bool $ignoreStatus
    * @return bool
-   * @noinspection PhpUnusedParameterInspection
    */
   public function hasElement($ignoreStatus = false) {
     return false;
@@ -397,7 +395,9 @@ class Link extends ForeignFieldModel
       [['ariaLabel', 'target', 'title'], 'string'],
     ];
 
-    if ($this->_field->customTextRequired && !$this->isEmpty()) {
+    // This code is run while deserializing link models, in that case `_field`
+    // is not yet set correctly, we have to check for that case here.
+    if ($this->_field && $this->_field->customTextRequired && !$this->isEmpty()) {
       $rules[] = ['customText', 'required'];
     }
 

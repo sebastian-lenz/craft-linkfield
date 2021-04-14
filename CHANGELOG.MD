@@ -2,6 +2,7 @@
 
 ## 2.0.0-rc.2
 - Fix: Modifying mailto: links creates broken links, see https://github.com/sebastian-lenz/craft-linkfield/issues/151
+- Fix: The Yii debug toolbar might throw en exception due to the way links are serialized, see https://github.com/sebastian-lenz/craft-linkfield/issues/152
 
 ## 2.0.0-rc.1 - 2021-03-06
 - New: Add support for PHP 8.0
