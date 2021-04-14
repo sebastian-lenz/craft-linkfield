@@ -55,6 +55,17 @@ class UrlTest extends TestCase
     $this->assertEquals('craftcms.com?p=home#newFragment', (string)$url);
   }
 
+  public function testMailTo() {
+    $url = new Url('mailto:craft-linkfield@craft.com');
+    $this->assertEquals('mailto:craft-linkfield@craft.com', (string)$url);
+
+    $url->setQuery(['subject' => 'Test']);
+    $this->assertEquals('mailto:craft-linkfield@craft.com?subject=Test', (string)$url);
+
+    $url->setQuery(['subject' => 'Mail subject <with> &special=chars']);
+    $this->assertEquals('mailto:craft-linkfield@craft.com?subject=Mail%20subject%20%3Cwith%3E%20%26special%3Dchars', (string)$url);
+  }
+
   /**
    * @throws Exception
    */
