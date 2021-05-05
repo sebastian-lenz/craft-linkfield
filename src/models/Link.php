@@ -395,9 +395,7 @@ class Link extends ForeignFieldModel
       [['ariaLabel', 'target', 'title'], 'string'],
     ];
 
-    // This code is run while deserializing link models, in that case `_field`
-    // is not yet set correctly, we have to check for that case here.
-    if ($this->_field && $this->_field->customTextRequired && !$this->isEmpty()) {
+    if ($this->_field->customTextRequired && !$this->isEmpty()) {
       $rules[] = ['customText', 'required'];
     }
 
