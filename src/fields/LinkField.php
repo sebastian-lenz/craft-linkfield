@@ -239,6 +239,13 @@ class LinkField extends ForeignField
   }
 
   /**
+   * @return bool
+   */
+  public function useEmptyType(): bool {
+    return !$this->required;
+  }
+
+  /**
    * @return void
    */
   public function validateTypeSettings() {
@@ -275,7 +282,7 @@ class LinkField extends ForeignField
    */
   protected function createModel(array $attributes = [], ElementInterface $element = null) {
     return $this
-      ->resolveLinkType(isset($attributes['type']) ? $attributes['type'] : '')
+      ->resolveLinkType($attributes['type'] ?? '')
       ->createLink($this, $element, $attributes);
   }
 
@@ -304,13 +311,6 @@ class LinkField extends ForeignField
     return $model
       ->getLinkType()
       ->toRecordAttributes($model);
-  }
-
-  /**
-   * @return bool
-   */
-  protected function useEmptyType(): bool {
-    return !$this->required;
   }
 
 

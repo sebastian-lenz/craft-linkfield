@@ -109,10 +109,9 @@ abstract class AbstractLinkFieldTest extends TestCase
 
   /**
    * @param EntryType $entryType
+   * @param $options
    * @return Entry
    * @throws Throwable
-   * @throws ElementNotFoundException
-   * @throws \yii\base\Exception
    */
   protected static function createEntry(EntryType $entryType, $options) {
     $entry = new Entry([

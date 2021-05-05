@@ -43,7 +43,7 @@ class ElementLinkType extends LinkType
   /**
    * @inheritDoc
    */
-  public function createLink(LinkField $field, ElementInterface $owner = null, $value = []): Link {
+  public function createLink(LinkField $field, ElementInterface $owner = null, array $value = []): Link {
     $link = parent::createLink($field, $owner, $value);
 
     // If the link is created from post data, we mus update cached element data

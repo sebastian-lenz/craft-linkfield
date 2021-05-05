@@ -60,7 +60,7 @@ class LinkType extends Model
    * @param array $value
    * @return Link
    */
-  public function createLink(LinkField $field, ElementInterface $owner = null, $value = []): Link {
+  public function createLink(LinkField $field, ElementInterface $owner = null, array $value = []): Link {
     // If the value includes a payload, merge it
     if (isset($value['payload'])) {
       $data = Json::decode($value['payload']);
@@ -118,7 +118,6 @@ class LinkType extends Model
    * @param bool $disabled
    * @return string
    * @throws Throwable
-   * @noinspection PhpUnusedParameterInspection
    */
   public function getInputHtml(Link $value, bool $disabled): string {
     return '';
@@ -200,6 +199,10 @@ class LinkType extends Model
    * @return array
    */
   public function toRecordAttributes(Link $model) {
+    if ($model->isEditorEmpty() && $model->getField()->useEmptyType()) {
+      return $this->getEmptyRecordAttributes();
+    }
+
     $attributes       = [];
     $payload          = [];
     $recordAttributes = LinkField::recordModelAttributes();
@@ -219,13 +222,26 @@ class LinkType extends Model
     }
 
     $attributes['payload'] = \craft\helpers\Json::encode($payload);
-    $attributes['type'] = $model->getType();
+    $attributes['type'] = $this->name;
     return $attributes;
   }
 
 
   // Protected methods
   // -----------------
+
+  /**
+   * @return array
+   */
+  protected function getEmptyRecordAttributes(): array {
+    $result = [];
+    foreach (LinkField::recordModelAttributes() as $attribute) {
+      $result[$attribute] = null;
+    }
+
+    $result['type'] = $this->name;
+    return $result;
+  }
 
   /**
    * @param array $data
@@ -238,7 +254,6 @@ class LinkType extends Model
   /**
    * @param mixed $data
    * @return array|null
-   * @noinspection PhpUnusedParameterInspection
    */
   protected function prepareLegacyData($data) {
     return null;
