@@ -144,7 +144,7 @@ class LinkField extends ForeignField
       $value->isEditorEmpty() &&
       $this->useEmptyType() &&
       !is_null($element) &&
-      !$element->getIsUnsavedDraft() &&
+      !$element->getIsUnpublishedDraft() &&
       !$value->getLinkType()->isEmptyType()
     ) {
       $value = LinkType::getEmptyType()->createLink($this, $element);
