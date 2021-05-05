@@ -60,7 +60,7 @@ class Link extends ForeignFieldModel
     LinkField $field,
     LinkType $linkType,
     ElementInterface $owner = null,
-    $config = []
+    array $config = []
   ) {
     $this->_linkType = $linkType;
     $attributes = $this->attributes();
@@ -119,7 +119,7 @@ class Link extends ForeignFieldModel
    * @return string
    * @noinspection PhpUnused (Public API)
    */
-  public function getCustomText($fallbackText = "") {
+  public function getCustomText(string $fallbackText = '') {
     if ($this->getAllowCustomText() && !empty($this->customText)) {
       return $this->customText;
     }
@@ -141,7 +141,7 @@ class Link extends ForeignFieldModel
    * @param bool $ignoreStatus
    * @return null|ElementInterface
    */
-  public function getElement($ignoreStatus = false) {
+  public function getElement(bool $ignoreStatus = false) {
     return null;
   }
 
@@ -231,7 +231,7 @@ class Link extends ForeignFieldModel
    * @return Markup
    * @noinspection PhpUnused (Public API)
    */
-  public function getLinkAttributes($extraAttributes = null) {
+  public function getLinkAttributes(array $extraAttributes = null) {
     $attributes = $this->getRawLinkAttributes($extraAttributes);
     return Template::raw(is_null($attributes)
       ? ''
@@ -315,7 +315,7 @@ class Link extends ForeignFieldModel
    * @param string $fallbackText
    * @return string
    */
-  public function getText($fallbackText = "Learn More") {
+  public function getText(string $fallbackText = "Learn More") {
     if ($this->getAllowCustomText() && !empty($this->customText)) {
       return $this->customText;
     }
@@ -362,7 +362,7 @@ class Link extends ForeignFieldModel
    * @param bool $ignoreStatus
    * @return bool
    */
-  public function hasElement($ignoreStatus = false) {
+  public function hasElement(bool $ignoreStatus = false) {
     return false;
   }
 

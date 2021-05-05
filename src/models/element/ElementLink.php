@@ -68,7 +68,7 @@ class ElementLink extends Link
   /**
    * @inheritDoc
    */
-  public function getElement($ignoreStatus = false) {
+  public function getElement(bool $ignoreStatus = false) {
     if (
       !isset($this->_element) ||
       $this->_element->getId() != $this->linkedId
@@ -142,7 +142,7 @@ class ElementLink extends Link
   /**
    * @inheritDoc
    */
-  public function hasElement($ignoreStatus = false) {
+  public function hasElement(bool $ignoreStatus = false) {
     $element = $this->getElement($ignoreStatus);
     return !is_null($element);
   }
