@@ -118,7 +118,7 @@ class m190417_202153_migrateDataToTable extends Migration
    */
   private function updateLinkField(LinkField $field, string $table, string $handlePrefix = '') {
     $insertRows = [];
-    $columnName = ($field->columnPrefix ?: 'field_') . $handlePrefix . $field->handle;
+    $columnName = ($field->columnPrefix ?: 'field_') . $handlePrefix . $field->handle . ($field->columnSuffix ? '_' . $field->columnSuffix : '');
     $rows = (new Query())
       ->select([
         'elementId',
