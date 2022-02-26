@@ -4,6 +4,7 @@ use craft\base\FieldInterface;
 use craft\console\Application;
 use craft\elements\Entry;
 use craft\errors\ElementNotFoundException;
+use craft\fieldlayoutelements\CustomField;
 use craft\helpers\ArrayHelper;
 use craft\migrations\Install;
 use craft\models\EntryType;
@@ -94,30 +95,35 @@ abstract class AbstractLinkFieldTest extends TestCase
     $entryTypes = $section->getEntryTypes();
     $entryType = $entryTypes[0];
 
-    $fields = $entryType->getFieldLayout();
-    $fields->setTabs([
+    $layout = $entryType->getFieldLayout();
+    $layout->setTabs([
       new FieldLayoutTab([
-        'name'      => 'Common',
-        'fields'    => [ $field ],
+        'name' => 'Common',
         'sortOrder' => 0,
+        'elements' => [[
+          'type' => CustomField::class,
+          'fieldUid' => $field->uid,
+          'required' => false,
+        ]],
       ])
     ]);
 
+    Craft::$app->getFields()->saveLayout($layout);
     Craft::$app->getSections()->saveEntryType($entryType);
     return $entryType;
   }
 
   /**
    * @param EntryType $entryType
-   * @param $options
+   * @param array $options
    * @return Entry
    * @throws Throwable
    */
-  protected static function createEntry(EntryType $entryType, $options) {
-    $entry = new Entry([
+  protected static function createEntry(EntryType $entryType, array $options) {
+    $entry = new Entry(array_merge([
       'typeId'    => $entryType->id,
       'sectionId' => $entryType->sectionId,
-    ] + $options);
+    ], $options));
 
     Craft::$app->elements->saveElement($entry);
     return $entry;

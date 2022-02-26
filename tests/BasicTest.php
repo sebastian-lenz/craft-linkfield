@@ -4,6 +4,7 @@ use craft\base\Field;
 use craft\base\FieldInterface;
 use craft\elements\Entry;
 use craft\models\EntryType;
+use lenz\linkfield\models\input\InputLink;
 use lenz\linkfield\models\Link;
 
 /**
@@ -36,9 +37,9 @@ class BasicTest extends AbstractLinkFieldTest
    */
   public function testUrlLink() {
     $link = $this->createAndFetchEntry([
-      'title'          => 'URL Link',
+      'title' => 'URL Link',
       'basicLinkField' => self::$field->normalizeValue([
-        'type'      => 'url',
+        'type' => 'url',
         'linkedUrl' => self::TEST_URL,
       ]),
     ]);
@@ -82,7 +83,7 @@ class BasicTest extends AbstractLinkFieldTest
    */
   public function testEntryLink() {
     $otherEntry = $this->createEntry(self::$entryType, [
-      'title'          => 'Linked Entry',
+      'title' => 'Linked Entry',
       'basicLinkField' => [
         'type'     => 'url',
         'linkedId' => '',
@@ -90,9 +91,9 @@ class BasicTest extends AbstractLinkFieldTest
     ]);
 
     $link = $this->createAndFetchEntry([
-      'title'          => 'Entry Link',
+      'title' => 'Entry Link',
       'basicLinkField' => self::$field->normalizeValue([
-        'type'     => 'entry',
+        'type' => 'entry',
         'linkedId' => $otherEntry->id,
       ]),
     ]);
@@ -124,7 +125,7 @@ class BasicTest extends AbstractLinkFieldTest
    */
   public function testAriaLabel() {
     $link = $this->createAndFetchEntry([
-      'title'          => 'Aria/Title Link',
+      'title' => 'Aria/Title Link',
       'basicLinkField' => self::$field->normalizeValue([
         'ariaLabel'   => self::TEST_ARIA_LABEL,
         'customText'  => self::TEST_CAPTION,
@@ -144,12 +145,32 @@ class BasicTest extends AbstractLinkFieldTest
     );
   }
 
+  public function testModelAssignment() {
+    $entry = $this->createEntry(self::$entryType, [
+      'title' => 'Model Assignment',
+    ]);
+
+    $entry->setFieldValue('basicLinkField', [
+      'type' => 'url',
+      'linkedUrl' => 'http://www.google.de',
+    ]);
+
+    if (!Craft::$app->elements->saveElement($entry)) {
+      throw new Exception('Could not save entry: ' . implode(', ', $entry->getErrorSummary(true)));
+    }
+
+    $loadedEntry = Craft::$app->getEntries()->getEntryById($entry->id);
+    $loadedLink = $loadedEntry->basicLinkField;
+    $this->assertInstanceOf(InputLink::class, $loadedLink);
+    $this->assertEquals('http://www.google.de', $loadedLink->getUrl());
+  }
+
   /**
    * @param array $options
    * @return Link
    * @throws Throwable
    */
-  private function createAndFetchEntry($options) {
+  private function createAndFetchEntry(array $options) {
     $entry = $this->createEntry(self::$entryType, $options);
 
     $loadedEntry = Craft::$app->getEntries()->getEntryById($entry->id);
