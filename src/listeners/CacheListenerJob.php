@@ -56,8 +56,8 @@ class CacheListenerJob extends BaseJob
 
     $index = 0;
     $total = 0;
-    foreach ($elementTypes as $elementType => $sites) {
-      foreach ($sites as $siteId => $elementIds) {
+    foreach ($elementTypes as $sites) {
+      foreach ($sites as $elementIds) {
         $total += count($elementIds);
       }
     }
@@ -99,7 +99,8 @@ class CacheListenerJob extends BaseJob
    * @return array|null
    */
   protected function getElementMap(array $conditions, LinkTypeCollection $linkTypes) {
-    $links  = LinkRecord::find()->where($conditions)->all();
+    $links = LinkRecord::find()->where($conditions)->all();
+    $siteIds = Craft::$app->getSites()->getAllSiteIds(false);
     $result = [];
 
     /** @var LinkRecord $link */
@@ -110,12 +111,12 @@ class CacheListenerJob extends BaseJob
       }
 
       $elementType = $linkType->elementType;
-      $elementId   = $link->linkedId;
-      $siteId      = is_null($link->linkedSiteId)
+      $elementId = $link->linkedId;
+      $siteId = is_null($link->linkedSiteId)
         ? $link->siteId
         : $link->linkedSiteId;
 
-      if (is_null($siteId) || is_null($elementId)) {
+      if (is_null($siteId) || is_null($elementId) || !in_array($siteId, $siteIds)) {
         continue;
       }
 
