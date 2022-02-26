@@ -1,7 +1,9 @@
 # Release Notes for Typed Link Field
 
-## 2.0.0-rc.2
+## 2.0.0-rc.2 - 2022-02-26
 - Fix: Modifying mailto: links creates broken links, see https://github.com/sebastian-lenz/craft-linkfield/issues/151
+- Fix: Migration fails due to field suffixes introduced in Craft 3.7, see https://github.com/sebastian-lenz/craft-linkfield/issues/164
+- Fix: Link cache fails for disabled sites, see https://github.com/sebastian-lenz/craft-linkfield/issues/164
 
 ## 2.0.0-rc.1 - 2021-03-06
 - New: Add support for PHP 8.0
