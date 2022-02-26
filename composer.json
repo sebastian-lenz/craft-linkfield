@@ -28,5 +28,14 @@
   "scripts": {
     "test": "./vendor/bin/phpunit ./tests",
     "testWithCoverage": "./vendor/bin/phpunit --coverage-html ./tests/coverage --whitelist ./src  ./tests"
+  },
+  "config": {
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true
+    },
+    "platform": {
+      "php": "7.4.14"
+    }
   }
 }
