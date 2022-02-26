@@ -271,7 +271,7 @@ of the original url:
 Returns whether the link points to an element (e.g. entry or asset).
 
 ```twig
-{{ entry.myLinkField. }}
+{{ entry.myLinkField.hasElement() }}
 ```
 
 
