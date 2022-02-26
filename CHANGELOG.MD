@@ -1,5 +1,8 @@
 # Release Notes for Typed Link Field
 
+## 2.0.0-rc.3
+- Fix: Set the direction of url input fields to ltr, see https://github.com/sebastian-lenz/craft-linkfield/issues/171
+
 ## 2.0.0-rc.2 - 2022-02-26
 - Fix: Modifying mailto: links creates broken links, see https://github.com/sebastian-lenz/craft-linkfield/issues/151
 - Fix: Migration fails due to field suffixes introduced in Craft 3.7, see https://github.com/sebastian-lenz/craft-linkfield/issues/164

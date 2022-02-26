@@ -106,11 +106,12 @@ class InputLinkType extends LinkType
    */
   protected function getInputField(Link $value, bool $disabled) {
     $field = [
-      'class'    => $value->hasErrors('linkedUrl') ? 'error' : '',
+      'class' => $value->hasErrors('linkedUrl') ? 'error' : '',
       'disabled' => $disabled,
-      'id'       => 'linkedUrl',
-      'name'     => 'linkedUrl',
-      'value'    => $this->isSelected($value) && $value instanceOf InputLink
+      'id' => 'linkedUrl',
+      'inputAttributes' => ['dir' => 'ltr'],
+      'name' => 'linkedUrl',
+      'value' => $this->isSelected($value) && $value instanceOf InputLink
         ? $value->linkedUrl
         : '',
     ];
