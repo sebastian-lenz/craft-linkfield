@@ -5,8 +5,8 @@
   "license": "MIT",
   "require": {
     "php": "^7.2.5 || ^8.0",
-    "craftcms/cms": "^3.6.0",
-    "sebastianlenz/craft-utils": "^2.3.1"
+    "craftcms/cms": "^3.6.0 || ^4.0",
+    "sebastianlenz/craft-utils": "dev-craft4"
   },
   "require-dev": {
     "craftcms/feed-me": "4.3.5.1",
@@ -19,6 +19,13 @@
       "lenz\\linkfield\\": "src/"
     }
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/timkelty/craft-utils"
+    }
+  ],
+
   "extra": {
     "handle": "typedlinkfield",
     "name": "Typed link field",
