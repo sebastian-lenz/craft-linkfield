@@ -116,7 +116,8 @@ class LinkField extends ForeignField
   /**
    * @inheritDoc
    */
-  public function getContentGqlType() {
+  public function getContentGqlType(): \GraphQL\Type\Definition\Type|array
+  {
     return LinkGqlType::getType();
   }
 
