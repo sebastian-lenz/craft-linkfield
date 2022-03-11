@@ -27,7 +27,7 @@ class CacheListenerJob extends BaseJob
    * @inheritdoc
    * @throws Exception
    */
-  public function execute($queue) {
+  public function execute($queue): void {
     $state = ElementListenerState::getInstance();
     $field = $this->getField();
     if (is_null($field)) {
@@ -87,7 +87,7 @@ class CacheListenerJob extends BaseJob
   /**
    * @inheritdoc
    */
-  protected function defaultDescription(): string {
+  protected function defaultDescription(): ?string {
     return Craft::t('app', 'Cache {field} element links', [
       'field' => $this->getFieldName(),
     ]);

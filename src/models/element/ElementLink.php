@@ -171,7 +171,7 @@ class ElementLink extends Link
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(parent::rules(), [
       [['customQuery', 'linkedTitle', 'linkedUrl'], 'string'],
       [['linkedId', 'linkedSiteId'], 'integer']
