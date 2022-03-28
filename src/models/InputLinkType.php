@@ -19,22 +19,22 @@ class InputLinkType extends Model implements LinkTypeInterface
   /**
    * @var string
    */
-  public $displayName;
+  public string $displayName;
 
   /**
    * @var string
    */
-  public $displayGroup = 'Common';
+  public string $displayGroup = 'Common';
 
   /**
    * @var string
    */
-  public $inputType;
+  public string $inputType;
 
   /**
    * @var string
    */
-  public $placeholder;
+  public string $placeholder;
 
 
   /**
@@ -80,7 +80,7 @@ class InputLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritdoc
    */
-  public function getElement(Link $link, $ignoreStatus = false) {
+  public function getElement(Link $link, bool $ignoreStatus = false): ?ElementInterface {
     return null;
   }
 
@@ -113,7 +113,7 @@ class InputLinkType extends Model implements LinkTypeInterface
         'linkTypeName'     => $linkTypeName,
         'textFieldOptions' => $textFieldOptions,
       ]);
-    } catch (Throwable $exception) {
+    } catch (Throwable) {
       return Html::tag('p', Craft::t(
         'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
@@ -126,7 +126,7 @@ class InputLinkType extends Model implements LinkTypeInterface
    * @param Link $link
    * @return null|string
    */
-  public function getRawUrl(Link $link) {
+  public function getRawUrl(Link $link): ?string {
     if ($this->isEmpty($link)) {
       return null;
     }
@@ -154,7 +154,7 @@ class InputLinkType extends Model implements LinkTypeInterface
         'elementName'  => $this->getDisplayName(),
         'linkTypeName' => $linkTypeName,
       ]);
-    } catch (Throwable $exception) {
+    } catch (Throwable) {
       return Html::tag('p', Craft::t(
         'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
@@ -166,33 +166,30 @@ class InputLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritDoc
    */
-  public function getText(Link $link) {
+  public function getText(Link $link): ?string {
     return null;
   }
 
   /**
    * @inheritDoc
    */
-  public function getUrl(Link $link) {
+  public function getUrl(Link $link): ?string {
     $url = $this->getRawUrl($link);
     if (is_null($url)) {
       return null;
     }
 
-    switch ($this->inputType) {
-      case('email'):
-        return 'mailto:' . $url;
-      case('tel'):
-        return 'tel:' . $url;
-      default:
-        return $url;
-    }
+    return match ($this->inputType) {
+      'email' => 'mailto:' . $url,
+      'tel' => 'tel:' . $url,
+      default => $url,
+    };
   }
 
   /**
    * @inheritdoc
    */
-  public function hasElement(Link $link, $ignoreStatus = false): bool {
+  public function hasElement(Link $link, bool $ignoreStatus = false): bool {
     return false;
   }
 
@@ -210,7 +207,7 @@ class InputLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritDoc
    */
-  public function readLinkValue($formData) {
+  public function readLinkValue(mixed $formData): string {
     return is_string($formData) ? $formData : '';
   }
 
@@ -224,7 +221,7 @@ class InputLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritDoc
    */
-  public function validateValue(LinkField $field, Link $link) {
+  public function validateValue(LinkField $field, Link $link): ?array {
     $value = $this->getRawUrl($link);
     if (is_null($value)) {
       return null;
@@ -235,10 +232,7 @@ class InputLinkType extends Model implements LinkTypeInterface
       return null;
     }
 
-    $enableIDN = (
-      Craft::$app->getI18n()->getIsIntlLoaded() &&
-      defined('INTL_IDNA_VARIANT_UTS46')
-    );
+    $enableIDN = defined('INTL_IDNA_VARIANT_UTS46');
 
     switch ($this->inputType) {
       case('email'):

@@ -15,13 +15,13 @@ class LinkFieldValidator extends Validator
   /**
    * @var LinkField
    */
-  public $field;
+  public LinkField $field;
 
   /**
    * @param mixed $value
    * @return array|null
    */
-  protected function validateValue($value) {
+  protected function validateValue($value): ?array {
     if ($value instanceof Link) {
       $linkType = $value->getLinkType();
 

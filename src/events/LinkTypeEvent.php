@@ -13,5 +13,5 @@ class LinkTypeEvent extends Event
   /**
    * @var LinkTypeInterface[]
    */
-  public $linkTypes;
+  public array $linkTypes;
 }

@@ -31,13 +31,13 @@ interface LinkTypeInterface
    * @param bool $ignoreStatus
    * @return null|ElementInterface
    */
-  public function getElement(Link $link, $ignoreStatus = false);
+  public function getElement(Link $link, bool $ignoreStatus = false): ?ElementInterface;
 
   /**
    * @param string $linkTypeName
    * @param LinkField $field
    * @param Link $value
-   * @param ElementInterface $element|null
+   * @param ElementInterface|null $element
    * @return string
    */
   public function getInputHtml(string $linkTypeName, LinkField $field, Link $value, ElementInterface $element = null): string;
@@ -53,20 +53,20 @@ interface LinkTypeInterface
    * @param Link $link
    * @return null|string
    */
-  public function getText(Link $link);
+  public function getText(Link $link): ?string;
 
   /**
    * @param Link $link
    * @return null|string
    */
-  public function getUrl(Link $link);
+  public function getUrl(Link $link): ?string;
 
   /**
    * @param Link $link
    * @param bool $ignoreStatus
    * @return bool
    */
-  public function hasElement(Link $link, $ignoreStatus = false): bool;
+  public function hasElement(Link $link, bool $ignoreStatus = false): bool;
 
   /**
    * @param Link $link
@@ -78,7 +78,7 @@ interface LinkTypeInterface
    * @param mixed $formData
    * @return mixed
    */
-  public function readLinkValue($formData);
+  public function readLinkValue(mixed $formData): mixed;
 
   /**
    * @param array $settings
@@ -91,5 +91,5 @@ interface LinkTypeInterface
    * @param Link $link
    * @return array|null
    */
-  public function validateValue(LinkField $field, Link $link);
+  public function validateValue(LinkField $field, Link $link): ?array;
 }

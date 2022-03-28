@@ -15,20 +15,20 @@ class ElementSourceValidator
   /**
    * @var array
    */
-  private $availableSources;
+  private array $availableSources;
 
   /**
    * @var ElementSourceValidator[]
    */
-  private static $validators = array();
+  private static array $validators = array();
 
 
   /**
    * ElementSourceValidator constructor.
-   * @param ElementInterface $elementType
+   * @param class-string<ElementInterface> $elementType
    * @throws Exception
    */
-  public function __construct($elementType) {
+  public function __construct(string $elementType) {
     $idPath = self::getElementIdPath($elementType);
     if (is_null($idPath)) {
       throw new Exception('Unsupported element type: ' . (string)$elementType);
@@ -58,7 +58,7 @@ class ElementSourceValidator
    * @param array $originalSources
    * @return array
    */
-  public function validate($originalSources) {
+  public function validate(array $originalSources): array {
     $resolvedSources = array();
 
     foreach ($originalSources as $originalSource) {
@@ -75,7 +75,7 @@ class ElementSourceValidator
    * @param string $originalSource
    * @return null|string
    */
-  private function validateSource($originalSource) {
+  private function validateSource(string $originalSource): ?string {
     $maybeSource = null;
 
     // Fetch id from source. If we don't find one, this is not referring
@@ -105,43 +105,39 @@ class ElementSourceValidator
   }
 
   /**
-   * @param ElementInterface $elementType
+   * @param class-string<ElementInterface> $elementType
    * @param array $sources
    * @return array
    */
-  public static function apply($elementType, $sources) {
+  public static function apply(string $elementType, array $sources): array {
     try {
       if (!array_key_exists($elementType, self::$validators)) {
         self::$validators[(string)$elementType] = new ElementSourceValidator($elementType);
       }
       return self::$validators[(string)$elementType]->validate($sources);
-    } catch (Throwable $e) { }
+    } catch (Throwable) { }
 
     return $sources;
   }
 
   /**
-   * @param ElementInterface $elementType
+   * @param class-string<ElementInterface> $elementType
    * @return array|null
    */
-  public static function getElementIdPath($elementType) {
-    switch ($elementType) {
-      case 'craft\\elements\\Asset':
-        return array('criteria', 'folderId');
-      case 'craft\\elements\\Category':
-        return array('criteria', 'groupId');
-      case 'craft\\elements\\Entry':
-        return array('criteria', 'sectionId');
-    }
-
-    return null;
+  public static function getElementIdPath(string $elementType): ?array {
+    return match ($elementType) {
+      'craft\\elements\\Asset' => array('criteria', 'folderId'),
+      'craft\\elements\\Category' => array('criteria', 'groupId'),
+      'craft\\elements\\Entry' => array('criteria', 'sectionId'),
+      default => null,
+    };
   }
 
   /**
    * @param string $originalSource
    * @return null|string
    */
-  public static function getIdFromSource($originalSource) {
+  public static function getIdFromSource(string $originalSource): ?string {
     $idOffset = strpos($originalSource, ':');
     if ($idOffset === false) {
       return null;

@@ -1,5 +1,8 @@
 # Release Notes for Typed Link Field
 
+## 1.1.0 - 2022-03-28
+- New: Craft 4 and PHP 8 support, removed support for Craft 3.x
+
 ## 1.0.25 - 2021-02-23
 - New: Add support for PHP 8.0
 

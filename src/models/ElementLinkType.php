@@ -19,14 +19,14 @@ use yii\base\Model;
 class ElementLinkType extends Model implements LinkTypeInterface
 {
   /**
-   * @var ElementInterface
+   * @var class-string<ElementInterface>
    */
-  public $elementType;
+  public string $elementType;
 
   /**
    * @var string
    */
-  public $displayGroup = 'Common';
+  public string $displayGroup = 'Common';
 
 
   /**
@@ -73,7 +73,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritdoc
    */
-  public function getElement(Link $link, $ignoreStatus = false) {
+  public function getElement(Link $link, bool $ignoreStatus = false): ?ElementInterface {
     if ($this->isEmpty($link)) {
       return null;
     }
@@ -85,7 +85,6 @@ class ElementLinkType extends Model implements LinkTypeInterface
 
     if ($ignoreStatus || Craft::$app->request->getIsCpRequest()) {
       $query += [
-        'enabledForSite' => null,
         'status' => null,
       ];
     }
@@ -110,7 +109,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
 
     try {
       $criteria['siteId'] = $this->getTargetSiteId($element);
-    } catch (Exception $e) {}
+    } catch (Exception) {}
 
     $selectFieldOptions = [
       'criteria'    => $criteria,
@@ -142,7 +141,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
         'queryFieldOptions'  => $queryFieldOptions,
         'selectFieldOptions' => $selectFieldOptions,
       ]);
-    } catch (Throwable $exception) {
+    } catch (Throwable) {
       return Html::tag('p', Craft::t(
         'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
@@ -177,7 +176,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
         'linkTypeName' => $linkTypeName,
         'sources'      => $this->getSources(),
       ]);
-    } catch (Throwable $exception) {
+    } catch (Throwable) {
       return Html::tag('p', Craft::t(
         'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
@@ -189,11 +188,11 @@ class ElementLinkType extends Model implements LinkTypeInterface
   /**
    * @return array
    */
-  protected function getSources() {
+  protected function getSources(): array {
     $elementType = $this->elementType;
     $options = array();
 
-    foreach ($elementType::sources() as $source) {
+    foreach ($elementType::sources('settings') as $source) {
       if (array_key_exists('key', $source) && $source['key'] !== '*') {
         $options[$source['key']] = $source['label'];
       }
@@ -205,7 +204,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritDoc
    */
-  public function getText(Link $link) {
+  public function getText(Link $link): ?string {
     $element = $link->getElement();
     if (is_null($element)) {
       return null;
@@ -217,7 +216,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritDoc
    */
-  public function getUrl(Link $link) {
+  public function getUrl(Link $link): ?string {
     $element = $link->getElement();
     if (is_null($element)) {
       return null;
@@ -254,7 +253,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
         }
 
         $url = (string)$baseUrl;
-      } catch (Throwable $error) {}
+      } catch (Throwable) {}
     }
 
     return $url;
@@ -263,7 +262,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritdoc
    */
-  public function hasElement(Link $link, $ignoreStatus = false): bool {
+  public function hasElement(Link $link, bool $ignoreStatus = false): bool {
     $element = $link->getElement($ignoreStatus);
     return !is_null($element);
   }
@@ -282,7 +281,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritDoc
    */
-  public function readLinkValue($formData) {
+  public function readLinkValue(mixed $formData): mixed {
     if (
       !is_array($formData) ||
       !array_key_exists('value', $formData) ||
@@ -314,7 +313,7 @@ class ElementLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritDoc
    */
-  public function validateValue(LinkField $field, Link $link) {
+  public function validateValue(LinkField $field, Link $link): ?array {
     return null;
   }
 }

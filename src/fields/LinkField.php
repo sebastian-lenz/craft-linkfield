@@ -23,52 +23,52 @@ class LinkField extends Field
   /**
    * @var bool
    */
-  public $allowCustomText = true;
+  public bool $allowCustomText = true;
 
   /**
    * @var string|array
    */
-  public $allowedLinkNames = '*';
+  public string|array $allowedLinkNames = '*';
 
   /**
    * @var bool
    */
-  public $allowTarget = false;
+  public bool $allowTarget = false;
 
   /**
    * @var bool
    */
-  public $autoNoReferrer = false;
+  public bool $autoNoReferrer = false;
 
   /**
    * @var string
    */
-  public $defaultLinkName = '';
+  public string $defaultLinkName = '';
 
   /**
    * @var string
    */
-  public $defaultText = '';
+  public string $defaultText = '';
 
   /**
    * @var bool
    */
-  public $enableAriaLabel = false;
+  public bool $enableAriaLabel = false;
 
   /**
    * @var bool
    */
-  public $enableTitle = false;
+  public bool $enableTitle = false;
 
   /**
    * @var array
    */
-  public $typeSettings = array();
+  public array $typeSettings = array();
 
   /**
    * @var bool
    */
-  private $isStatic = false;
+  private bool $isStatic = false;
 
 
   /**
@@ -101,11 +101,11 @@ class LinkField extends Field
   }
 
   /**
-   * @param $value
+   * @param mixed $value
    * @param ElementInterface|null $element
    * @return Link
    */
-  public function normalizeValue($value, ElementInterface $element = null) {
+  public function normalizeValue(mixed $value, ?ElementInterface $element = null): Link {
     if ($value instanceof Link) {
       return $value;
     }
@@ -118,11 +118,11 @@ class LinkField extends Field
     if (is_string($value)) {
       // If value is a string we are loading the data from the database
       try {
-        $decodedValue = Json::decode($value, true);
+        $decodedValue = Json::decode($value);
         if (is_array($decodedValue)) {
           $attr += $decodedValue;
         }
-      } catch (Exception $e) {}
+      } catch (Exception) {}
 
     } else if (is_array($value) && isset($value['isCpFormData'])) {
       // If it is an array and the field `isCpFormData` is set, we are saving a cp form
@@ -132,7 +132,7 @@ class LinkField extends Field
         'customText'  => $this->allowCustomText && isset($value['customText']) ? $value['customText'] : null,
         'target'      => $this->allowTarget && isset($value['target']) ? $value['target'] : null,
         'title'       => $this->enableTitle && isset($value['title']) ? $value['title'] : null,
-        'type'        => isset($value['type']) ? $value['type'] : null,
+        'type'        => $value['type'] ?? null,
         'value'       => $this->readLinkValue($value)
       ];
 
@@ -172,7 +172,7 @@ class LinkField extends Field
   /**
    * @return LinkTypeInterface[]
    */
-  public function getAllowedLinkTypes() {
+  public function getAllowedLinkTypes(): array {
     $allowedLinkNames = $this->allowedLinkNames;
     $linkTypes = Plugin::getInstance()->getLinkTypes();
 
@@ -263,12 +263,11 @@ class LinkField extends Field
    * @return string
    * @throws Throwable
    */
-  public function getSettingsHtml() {
+  public function getSettingsHtml(): string {
     $settings = $this->getSettings();
     $allowedLinkNames = $settings['allowedLinkNames'];
     $linkTypes = [];
     $linkNames = [];
-    $linkSettings = [];
 
     $allTypesAllowed = false;
     if (!is_array($allowedLinkNames)) {
@@ -292,7 +291,6 @@ class LinkField extends Field
       );
 
       $linkNames[$linkTypeName] = $linkType->getDisplayName();
-      $linkSettings[] = $linkType->getSettingsHtml($linkTypeName, $this);
     }
 
     asort($linkNames);
@@ -326,7 +324,7 @@ class LinkField extends Field
   /**
    * @return boolean
    */
-  public function hasSettings() {
+  public function hasSettings(): bool {
     return (
       $this->allowCustomText ||
       $this->enableAriaLabel ||
@@ -337,7 +335,7 @@ class LinkField extends Field
   /**
    * @return bool
    */
-  public function isStatic() {
+  public function isStatic(): bool {
     return $this->isStatic;
   }
 
@@ -362,7 +360,7 @@ class LinkField extends Field
    * @param string $type
    * @return bool
    */
-  private function isAllowedLinkType($type) {
+  private function isAllowedLinkType(string $type): bool {
     $allowedLinkTypes = $this->getAllowedLinkTypes();
     return array_key_exists($type, $allowedLinkTypes);
   }
@@ -371,7 +369,7 @@ class LinkField extends Field
    * @param array $formData
    * @return mixed
    */
-  private function readCustomQuery(array $formData) {
+  private function readCustomQuery(array $formData): mixed {
     $type = $formData['type'];
     if (!array_key_exists($type, $formData)) {
       return null;
@@ -387,7 +385,7 @@ class LinkField extends Field
    * @param array $formData
    * @return mixed
    */
-  private function readLinkValue(array $formData) {
+  private function readLinkValue(array $formData): mixed {
     $linkTypes = Plugin::getInstance()->getLinkTypes();
     $type = $formData['type'];
     if (

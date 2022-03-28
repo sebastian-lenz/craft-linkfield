@@ -4,8 +4,8 @@
   "type": "craft-plugin",
   "license": "MIT",
   "require": {
-    "php": "^7.0 || ^8.0",
-    "craftcms/cms": "^3.0.0-RC1"
+    "php": "^8.0",
+    "craftcms/cms": "^4.0.0-beta"
   },
   "autoload": {
     "psr-4": {
@@ -24,5 +24,11 @@
   "scripts": {
     "test": "./vendor/bin/phpunit ./tests",
     "testWithCoverage": "./vendor/bin/phpunit --coverage-html ./tests/coverage --whitelist ./src  ./tests"
+  },
+  "config": {
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true
+    }
   }
 }

@@ -15,10 +15,9 @@ class ElementPrefetch
    * @param string $handle
    * @param ElementInterface[] $sourceElements
    */
-  static function prefetchElements($handle, array $sourceElements) {
+  static function prefetchElements(string $handle, array $sourceElements) {
     $elementTypes = array();
 
-    /** @var ElementInterface $element */
     foreach ($sourceElements as $element) {
       $value = $element->$handle;
 
@@ -33,6 +32,7 @@ class ElementPrefetch
     }
 
     foreach ($elementTypes as $type => $mappings) {
+      /** @noinspection PhpUndefinedMethodInspection */
       $elements = $type::find()
         ->id(array_keys($mappings))
         ->all();

@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection PhpUnused */
+
 namespace typedlinkfield\models;
 
 use Craft;
@@ -23,52 +25,52 @@ class Link extends Model
   /**
    * @var string|null
    */
-  public $ariaLabel;
+  public ?string $ariaLabel = null;
 
   /**
    * @var string|null
    */
-  public $customQuery;
+  public ?string $customQuery = null;
 
   /**
    * @var string|null
    */
-  public $customText;
+  public ?string $customText = null;
 
   /**
    * @var string
    */
-  public $target;
+  public string $target = '';
 
   /**
    * @var string|null
    */
-  public $title;
+  public ?string $title = null;
 
   /**
    * @var string
    */
-  public $type;
+  public string $type = '';
 
   /**
    * @var mixed
    */
-  public $value;
+  public mixed $value = '';
 
   /**
    * @var ElementInterface
    */
-  private $prefetchedElement;
+  private ElementInterface $prefetchedElement;
 
   /**
    * @var LinkField|null
    */
-  private $linkField;
+  private ?LinkField $linkField;
 
   /**
    * @var ElementInterface|null
    */
-  private $owner;
+  private ?ElementInterface $owner;
 
 
   /**
@@ -76,14 +78,8 @@ class Link extends Model
    * @param array $config
    */
   public function __construct($config = []) {
-    $this->linkField = isset($config['linkField'])
-      ? $config['linkField']
-      : null;
-
-    $this->owner = isset($config['owner'])
-      ? $config['owner']
-      : null;
-
+    $this->linkField = $config['linkField'] ?? null;
+    $this->owner = $config['owner'] ?? null;
     unset($config['linkField']);
     unset($config['owner']);
 
@@ -93,7 +89,7 @@ class Link extends Model
   /**
    * @return bool
    */
-  public function getAllowCustomText() {
+  public function getAllowCustomText(): bool {
     return is_null($this->linkField)
       ? false
       : $this->linkField->allowCustomText;
@@ -102,7 +98,7 @@ class Link extends Model
   /**
    * @return bool
    */
-  public function getAllowTarget() {
+  public function getAllowTarget(): bool {
     return is_null($this->linkField)
       ? false
       : $this->linkField->allowTarget;
@@ -111,14 +107,14 @@ class Link extends Model
   /**
    * @return null|string
    */
-  public function getAriaLabel() {
+  public function getAriaLabel(): ?string {
     return $this->ariaLabel;
   }
 
   /**
    * @return string
    */
-  public function getDefaultText() {
+  public function getDefaultText(): string {
     return is_null($this->linkField)
       ? ''
       : $this->linkField->defaultText;
@@ -128,7 +124,7 @@ class Link extends Model
    * @param bool $ignoreStatus
    * @return null|ElementInterface
    */
-  public function getElement($ignoreStatus = false) {
+  public function getElement(bool $ignoreStatus = false): ?ElementInterface {
     if (
       !isset($this->prefetchedElement) ||
       $this->prefetchedElement->getId() != $this->value
@@ -151,7 +147,7 @@ class Link extends Model
   /**
    * @return bool
    */
-  public function getEnableAriaLabel() {
+  public function getEnableAriaLabel(): bool {
     return is_null($this->linkField)
       ? false
       : $this->linkField->enableAriaLabel;
@@ -160,7 +156,7 @@ class Link extends Model
   /**
    * @return bool
    */
-  public function getEnableTitle() {
+  public function getEnableTitle(): bool {
     return is_null($this->linkField)
       ? false
       : $this->linkField->enableTitle;
@@ -187,7 +183,7 @@ class Link extends Model
    * @param array|string|null $attributesOrText
    * @return null|Markup
    */
-  public function getLink($attributesOrText = null) {
+  public function getLink(array|string $attributesOrText = null): ?Markup {
     $text = $this->getText();
     $extraAttributes = null;
 
@@ -218,7 +214,7 @@ class Link extends Model
    * @param array|null $extraAttributes
    * @return Markup
    */
-  public function getLinkAttributes($extraAttributes = null) {
+  public function getLinkAttributes(array $extraAttributes = null): Markup {
     $attributes = $this->getRawLinkAttributes($extraAttributes);
     return Template::raw(is_null($attributes)
       ? ''
@@ -229,14 +225,14 @@ class Link extends Model
   /**
    * @return null|LinkField
    */
-  public function getLinkField() {
+  public function getLinkField(): ?LinkField {
     return $this->linkField;
   }
 
   /**
    * @return LinkTypeInterface|null
    */
-  public function getLinkType() {
+  public function getLinkType(): ?LinkTypeInterface {
     $linkTypes = Plugin::getInstance()->getLinkTypes();
     return array_key_exists($this->type, $linkTypes)
       ? $linkTypes[$this->type]
@@ -246,18 +242,18 @@ class Link extends Model
   /**
    * @return ElementInterface|null
    */
-  public function getOwner() {
+  public function getOwner(): ?ElementInterface {
     return $this->owner;
   }
 
   /**
    * @return Site
    */
-  public function getOwnerSite() {
+  public function getOwnerSite(): Site {
     if ($this->owner instanceof Element) {
       try {
         return $this->owner->getSite();
-      } catch (Exception $e) { }
+      } catch (Exception) { }
     }
 
     return Craft::$app->sites->currentSite;
@@ -268,10 +264,10 @@ class Link extends Model
    * `title` and `arial-label`) of this link.
    * Returns NULL if this link has no target url.
    *
-   * @param null|array $extraAttributes
+   * @param array|null $extraAttributes
    * @return array|null
    */
-  public function getRawLinkAttributes($extraAttributes = null) {
+  public function getRawLinkAttributes(array $extraAttributes = null): ?array {
     $url = $this->getUrl();
     if (is_null($url)) {
       return null;
@@ -308,7 +304,7 @@ class Link extends Model
   /**
    * @return null|string
    */
-  public function getTarget() {
+  public function getTarget(): ?string {
     return $this->getAllowTarget() && !empty($this->target)
       ? $this->target
       : null;
@@ -317,7 +313,7 @@ class Link extends Model
   /**
    * @return null|string
    */
-  public function getText() {
+  public function getText(): ?string {
     if ($this->getAllowCustomText() && !empty($this->customText)) {
       return $this->customText;
     }
@@ -337,7 +333,7 @@ class Link extends Model
   /**
    * @return null|string
    */
-  public function getTitle() {
+  public function getTitle(): ?string {
     return $this->title;
   }
 
@@ -346,9 +342,9 @@ class Link extends Model
    * Allows user to specify a fallback string if the custom text and default are not set.
    *
    * @param string $fallbackText
-   * @return string
+   * @return string|null
    */
-  public function getCustomText($fallbackText = "Learn More") {
+  public function getCustomText(string $fallbackText = "Learn More"): ?string {
     if ($this->getAllowCustomText() && !empty($this->customText)) {
       return $this->customText;
     }
@@ -362,7 +358,7 @@ class Link extends Model
   /**
    * @return null|string
    */
-  public function getUrl() {
+  public function getUrl(): ?string {
     $linkType = $this->getLinkType();
     return is_null($linkType) ? null : $linkType->getUrl($this);
   }
@@ -371,11 +367,9 @@ class Link extends Model
    * @param bool $ignoreStatus
    * @return bool
    */
-  public function hasElement($ignoreStatus = false) {
+  public function hasElement(bool $ignoreStatus = false): bool {
     $linkType = $this->getLinkType();
-    return is_null($linkType)
-      ? false
-      : $linkType->hasElement($this, $ignoreStatus);
+    return !is_null($linkType) && $linkType->hasElement($this, $ignoreStatus);
   }
 
   /**
@@ -383,7 +377,7 @@ class Link extends Model
    */
   public function isEmpty(): bool {
     $linkType = $this->getLinkType();
-    return is_null($linkType) ? true : $linkType->isEmpty($this);
+    return is_null($linkType) || $linkType->isEmpty($this);
   }
 
   /**

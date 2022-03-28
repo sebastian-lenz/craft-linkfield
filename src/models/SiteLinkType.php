@@ -18,12 +18,12 @@ class SiteLinkType extends Model implements LinkTypeInterface
   /**
    * @var string
    */
-  public $displayGroup = 'Common';
+  public string $displayGroup = 'Common';
 
   /**
    * @var string
    */
-  public $displayName;
+  public string $displayName;
 
 
   /**
@@ -68,7 +68,7 @@ class SiteLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritdoc
    */
-  public function getElement(Link $link, $ignoreStatus = false) {
+  public function getElement(Link $link, bool $ignoreStatus = false): ?ElementInterface {
     return null;
   }
 
@@ -76,7 +76,7 @@ class SiteLinkType extends Model implements LinkTypeInterface
    * @param Link $link
    * @return null|Site
    */
-  public function getSite(Link $link) {
+  public function getSite(Link $link): ?Site {
     if ($this->isEmpty($link)) {
       return null;
     }
@@ -107,7 +107,7 @@ class SiteLinkType extends Model implements LinkTypeInterface
         'linkTypeName'       => $linkTypeName,
         'selectFieldOptions' => $selectFieldOptions,
       ]);
-    } catch (Throwable $exception) {
+    } catch (Throwable) {
       return Html::tag('p', Craft::t(
         'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
@@ -129,7 +129,7 @@ class SiteLinkType extends Model implements LinkTypeInterface
         'linkTypeName' => $linkTypeName,
         'siteOptions'  => $this->getSiteOptions(),
       ]);
-    } catch (Throwable $exception) {
+    } catch (Throwable) {
       return Html::tag('p', Craft::t(
         'typedlinkfield',
         'Error: Could not render the template for the field `{name}`.',
@@ -141,10 +141,10 @@ class SiteLinkType extends Model implements LinkTypeInterface
   }
 
   /**
-   * @param string|array|null $siteIds
+   * @param array|string|null $siteIds
    * @return array
    */
-  protected function getSiteOptions($siteIds = null) {
+  protected function getSiteOptions(array|string $siteIds = null): array {
     if ($siteIds === '*') {
       $siteIds = null;
     } elseif ($siteIds === '') {
@@ -168,7 +168,7 @@ class SiteLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritdoc
    */
-  public function getText(Link $link) {
+  public function getText(Link $link): ?string {
     $site = $this->getSite($link);
     if (is_null($site)) {
       return null;
@@ -180,7 +180,7 @@ class SiteLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritdoc
    */
-  public function getUrl(Link $link) {
+  public function getUrl(Link $link): ?string {
     $site = $this->getSite($link);
     if (is_null($site)) {
       return null;
@@ -192,7 +192,7 @@ class SiteLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritdoc
    */
-  public function hasElement(Link $link, $ignoreStatus = false): bool {
+  public function hasElement(Link $link, bool $ignoreStatus = false): bool {
     return false;
   }
 
@@ -210,7 +210,7 @@ class SiteLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritDoc
    */
-  public function readLinkValue($formData) {
+  public function readLinkValue(mixed $formData): mixed {
     return $formData ?? null;
   }
 
@@ -224,7 +224,7 @@ class SiteLinkType extends Model implements LinkTypeInterface
   /**
    * @inheritdoc
    */
-  public function validateValue(LinkField $field, Link $link) {
+  public function validateValue(LinkField $field, Link $link): ?array {
     return null;
   }
 }

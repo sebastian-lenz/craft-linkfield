@@ -10,14 +10,14 @@ class Url
   /**
    * @var array
    */
-  private $parts;
+  private array $parts;
 
 
   /**
    * Url constructor.
    * @param string $url
    */
-  public function __construct($url) {
+  public function __construct(string $url) {
     $this->parts = parse_url($url);
   }
 
@@ -27,12 +27,12 @@ class Url
   public function __toString() {
     $parts    = $this->parts;
     $scheme   = isset($parts['scheme']) ? $parts['scheme'] . '://' : '';
-    $host     = isset($parts['host']) ? $parts['host'] : '';
+    $host     = $parts['host'] ?? '';
     $port     = isset($parts['port']) ? ':' . $parts['port'] : '';
-    $user     = isset($parts['user']) ? $parts['user'] : '';
+    $user     = $parts['user'] ?? '';
     $pass     = isset($parts['pass']) ? ':' . $parts['pass']  : '';
     $pass     = ($user || $pass) ? "$pass@" : '';
-    $path     = isset($parts['path']) ? $parts['path'] : '';
+    $path     = $parts['path'] ?? '';
     $query    = isset($parts['query']) ? '?' . $parts['query'] : '';
     $fragment = isset($parts['fragment']) ? '#' . $parts['fragment'] : '';
 
@@ -42,14 +42,14 @@ class Url
   /**
    * @return string|null
    */
-  public function getFragment() {
+  public function getFragment(): ?string {
     return isset($this->parts['fragment']) ? (string)$this->parts['fragment'] : null;
   }
 
   /**
    * @return array
    */
-  public function getQuery() {
+  public function getQuery(): array {
     if (!isset($this->parts['query'])) {
       return array();
     }
@@ -58,7 +58,7 @@ class Url
     foreach (explode('&', $this->parts['query']) as $param) {
       $parts = explode('=', $param, 2);
       if (count($parts) !== 2) continue;
-      
+
       list($key, $value) = $parts;
       $result[$key] = urldecode($value);
     }
@@ -69,7 +69,7 @@ class Url
   /**
    * @param string|null $fragment
    */
-  public function setFragment($fragment) {
+  public function setFragment(?string $fragment) {
     if (empty($fragment)) {
       unset($this->parts['fragment']);
     } else {

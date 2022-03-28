@@ -27,7 +27,7 @@ class Plugin extends \craft\base\Plugin
   /**
    * @var LinkTypeInterface[]
    */
-  private $linkTypes;
+  private array $linkTypes;
 
   /**
    * @event events\LinkTypeEvent
@@ -58,6 +58,8 @@ class Plugin extends \craft\base\Plugin
    * @param string $name
    * @param LinkTypeInterface $type
    * @throws DeprecationException
+   * @deprecated
+   * @noinspection PhpUnused (API)
    */
   public function addLinkType(string $name, LinkTypeInterface $type) {
     Craft::$app->getDeprecator()->log(
@@ -72,7 +74,7 @@ class Plugin extends \craft\base\Plugin
   /**
    * @return LinkTypeInterface[]
    */
-  public function getLinkTypes() {
+  public function getLinkTypes(): array {
     if (!isset($this->linkTypes)) {
       $event = new LinkTypeEvent();
       $event->linkTypes = $this->createDefaultLinkTypes();
@@ -87,7 +89,7 @@ class Plugin extends \craft\base\Plugin
   /**
    * @return LinkTypeInterface[]
    */
-  private function createDefaultLinkTypes() {
+  private function createDefaultLinkTypes(): array {
     $result = [
       'url' => new InputLinkType([
         'displayName'  => 'Url',
