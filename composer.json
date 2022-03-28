@@ -4,14 +4,13 @@
   "type": "craft-plugin",
   "license": "MIT",
   "require": {
-    "php": "^7.2.5 || ^8.0",
-    "craftcms/cms": "^3.6.0 || ^4.0.0-beta",
-    "sebastianlenz/craft-utils": "dev-craft4"
+    "php": "^8.0",
+    "craftcms/cms": "^4.0.0-beta",
+    "sebastianlenz/craft-utils": "dev-master"
   },
   "require-dev": {
-    "craftcms/feed-me": "4.3.5.1",
     "phpunit/phpunit": "^7.5 || ^8.0",
-    "verbb/super-table": "^2.3"
+    "verbb/super-table": "^3.0.0-beta"
   },
   "autoload": {
     "classmap": ["legacy"],
@@ -19,13 +18,6 @@
       "lenz\\linkfield\\": "src/"
     }
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/timkelty/craft-utils"
-    }
-  ],
-
   "extra": {
     "handle": "typedlinkfield",
     "name": "Typed link field",
@@ -41,5 +33,6 @@
       "yiisoft/yii2-composer": true,
       "craftcms/plugin-installer": true
     }
-  }
+  },
+  "minimum-stability": "dev"
 }
