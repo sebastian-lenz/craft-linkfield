@@ -390,7 +390,7 @@ class Link extends ForeignFieldModel
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     $rules = [
       [['ariaLabel', 'target', 'title'], 'string'],
     ];

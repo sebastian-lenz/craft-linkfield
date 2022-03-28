@@ -91,7 +91,7 @@ class LinkField extends ForeignField
    * @param bool $isNew
    * @throws Exception
    */
-  public function afterSave(bool $isNew) {
+  public function afterSave(bool $isNew): void {
     parent::afterSave($isNew);
 
     ElementListenerState::getInstance()->updateFields();
@@ -116,7 +116,8 @@ class LinkField extends ForeignField
   /**
    * @inheritDoc
    */
-  public function getContentGqlType() {
+  public function getContentGqlType(): \GraphQL\Type\Definition\Type|array
+  {
     return LinkGqlType::getType();
   }
 
@@ -207,7 +208,7 @@ class LinkField extends ForeignField
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(parent::rules(), [
       ['allowCustomText', 'boolean'],
       ['allowTarget', 'boolean'],

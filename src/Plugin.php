@@ -26,7 +26,7 @@ class Plugin extends \craft\base\Plugin
   /**
    * @inheritDoc
    */
-  public $schemaVersion = '2.0.0';
+  public string $schemaVersion = '2.0.0';
 
   /**
    * @event events\LinkTypeEvent
