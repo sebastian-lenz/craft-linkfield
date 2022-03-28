@@ -6,7 +6,7 @@
   "require": {
     "php": "^8.0",
     "craftcms/cms": "^4.0.0-beta",
-    "sebastianlenz/craft-utils": "dev-master"
+    "sebastianlenz/craft-utils": "^3.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^7.5 || ^8.0",

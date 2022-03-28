@@ -1,6 +1,7 @@
 # Release Notes for Typed Link Field
 
-## 2.0.0-rc.3
+## 2.1.0-rc - 2022-03-28
+- New: Craft 4 and PHP 8 support, removed support for Craft 3.x
 - Fix: Set the direction of url input fields to ltr, see https://github.com/sebastian-lenz/craft-linkfield/issues/171
 
 ## 2.0.0-rc.2 - 2022-02-26
