@@ -1,5 +1,8 @@
 # Release Notes for Typed Link Field
 
+## 1.1.1
+- Fix: Element select modal does not display elements (see https://github.com/sebastian-lenz/craft-linkfield/issues/203)
+
 ## 1.1.0 - 2022-03-28
 - New: Craft 4 and PHP 8 support, removed support for Craft 3.x
 
