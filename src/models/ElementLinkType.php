@@ -103,7 +103,6 @@ class ElementLinkType extends Model implements LinkTypeInterface
     $elements   = $isSelected ? array_filter([$this->getElement($value)]) : null;
 
     $criteria = [
-      'enabledForSite' => null,
       'status' => null,
     ];
 
