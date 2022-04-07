@@ -157,7 +157,7 @@ class ElementLink extends Link
   /**
    * @inheritDoc
    */
-  public function isEmpty() {
+  public function isEmpty(): bool {
     return empty($this->getElementUrl());
   }
 
