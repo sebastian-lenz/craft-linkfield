@@ -105,7 +105,7 @@ class m190417_202153_migrateDataToTable extends Migration
       ->getBlockTypesByFieldId($matrixField->id);
 
     foreach ($blockTypes as $blockType) {
-      foreach ($blockType->getFields() as $field) {
+      foreach ($blockType->getCustomFields() as $field) {
         $this->updateField($field, $table, $blockType->handle.'_');
       }
     }
