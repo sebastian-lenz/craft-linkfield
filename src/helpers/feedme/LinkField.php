@@ -29,14 +29,14 @@ class LinkField extends Field implements FieldInterface
   /**
    * @inheritDoc
    */
-  public function getMappingTemplate() {
+  public function getMappingTemplate(): string {
     return 'typedlinkfield/_feedme';
   }
 
   /**
    * @inheritDoc
    */
-  public function parseField() {
+  public function parseField(): ?Link {
     $linkType = $this->parseLinkType();
     if (empty($linkType)) {
       return null;
@@ -51,9 +51,9 @@ class LinkField extends Field implements FieldInterface
   // ---------------
 
   /**
-   * @return LinkType|false|null
+   * @return LinkType|null
    */
-  private function parseLinkType() {
+  private function parseLinkType(): LinkType|null {
     $typeField = Hash::get($this->fieldInfo, ['fields', 'type']);
     if (empty($typeField)) {
       return null;

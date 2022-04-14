@@ -17,13 +17,13 @@ class SiteLink extends Link
   /**
    * @var int|null
    */
-  public $linkedSiteId;
+  public ?int $linkedSiteId = null;
 
 
   /**
    * @inheritDoc
    */
-  public function attributes() {
+  public function attributes(): array {
     return array_merge(parent::attributes(), [
       'linkedSiteId',
     ]);
@@ -40,7 +40,7 @@ class SiteLink extends Link
   /**
    * @inheritDoc
    */
-  public function getIntrinsicUrl() {
+  public function getIntrinsicUrl(): ?string {
     $site = $this->getSite();
     return is_null($site) ? null : $site->getBaseUrl();
   }
@@ -48,7 +48,7 @@ class SiteLink extends Link
   /**
    * @return null|Site
    */
-  public function getSite() {
+  public function getSite(): ?Site {
     if ($this->isEmpty()) {
       return null;
     }

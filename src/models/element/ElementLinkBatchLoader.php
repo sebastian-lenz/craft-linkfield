@@ -14,12 +14,12 @@ class ElementLinkBatchLoader
   /**
    * @var ElementInterface[][]|null
    */
-  private $_elements = null;
+  private ?array $_elements = null;
 
   /**
    * @var int[][]
    */
-  private $_elementIds = [];
+  private array $_elementIds = [];
 
 
   /**
@@ -45,16 +45,16 @@ class ElementLinkBatchLoader
   /**
    * @return bool
    */
-  public function isInUse() {
+  public function isInUse(): bool {
     return !is_null($this->_elements);
   }
 
   /**
-   * @param string $type
-   * @param string|int $id
+   * @param class-string<ElementInterface> $type
+   * @param int|string $id
    * @return ElementInterface|null
    */
-  public function loadElement(string $type, $id) {
+  public function loadElement(string $type, int|string $id): ?ElementInterface {
     if (!isset($this->_elements)) {
       $this->_elements = [];
     }
@@ -73,10 +73,10 @@ class ElementLinkBatchLoader
   // ---------------
 
   /**
-   * @param string|ElementInterface $type
+   * @param class-string<ElementInterface> $type
    * @return ElementInterface[]
    */
-  private function loadElements(string $type) {
+  private function loadElements(string $type): array {
     if (!array_key_exists($type, $this->_elementIds)) {
       return [];
     }

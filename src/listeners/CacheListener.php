@@ -15,7 +15,7 @@ class CacheListener
   /**
    * @param RegisterCacheOptionsEvent $event
    */
-  static function onRegisterCacheOptions(RegisterCacheOptionsEvent $event) {
+  static function onRegisterCacheOptions(RegisterCacheOptionsEvent $event): void {
     $event->options[] = [
       'key'    => 'linkfieldElementCache',
       'label'  => 'Link field element cache',
@@ -28,7 +28,7 @@ class CacheListener
    * @throws Exception
    * @noinspection PhpUnused (Used as callable)
    */
-  static function onClearCache() {
+  static function onClearCache(): void {
     $allFields = Craft::$app->getFields()->getAllFields(false);
     $state = ElementListenerState::getInstance();
 

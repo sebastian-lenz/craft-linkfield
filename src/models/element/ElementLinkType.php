@@ -4,6 +4,7 @@ namespace lenz\linkfield\models\element;
 
 use Craft;
 use craft\base\ElementInterface;
+use craft\errors\SiteNotFoundException;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\listeners\ElementListener;
 use lenz\linkfield\models\Link;
@@ -17,22 +18,22 @@ class ElementLinkType extends LinkType
   /**
    * @var bool
    */
-  public $allowCrossSiteLink = false;
+  public bool $allowCrossSiteLink = false;
 
   /**
    * @var bool
    */
-  public $allowCustomQuery = false;
+  public bool $allowCustomQuery = false;
 
   /**
-   * @var ElementInterface|string
+   * @var class-string<ElementInterface>
    */
-  public $elementType;
+  public string $elementType;
 
   /**
    * @var string|string[]
    */
-  public $sources = '*';
+  public string|array $sources = '*';
 
   /**
    * @inheritDoc
@@ -59,7 +60,7 @@ class ElementLinkType extends LinkType
   /**
    * @return array
    */
-  public function getAvailableSources() {
+  public function getAvailableSources(): array {
     $elementType = $this->elementType;
     $options = array();
 
@@ -111,7 +112,7 @@ class ElementLinkType extends LinkType
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(parent::rules(), [
       ['allowCustomQuery', 'boolean'],
       ['allowCrossSiteLink', 'boolean'],
@@ -134,7 +135,7 @@ class ElementLinkType extends LinkType
   /**
    * @inheritDoc
    */
-  public function toRecordAttributes(Link $model) {
+  public function toRecordAttributes(Link $model): array {
     $attributes = parent::toRecordAttributes($model);
 
     if (
@@ -161,7 +162,7 @@ class ElementLinkType extends LinkType
    * @return void
    * @noinspection PhpUnused (Validator)
    */
-  public function validateSources() {
+  public function validateSources(): void {
     $validSources = $this->getValidSources();
     $sources = $this->sources;
     if (!is_array($sources)) {
@@ -191,7 +192,7 @@ class ElementLinkType extends LinkType
    * @param Link $model
    * @return array
    */
-  protected function getCachedElementAttributes(Link $model) {
+  protected function getCachedElementAttributes(Link $model): array {
     $element = $model->getElement();
 
     if ($element && ElementListener::isElementPublished($element)) {
@@ -210,8 +211,9 @@ class ElementLinkType extends LinkType
   /**
    * @param Link $value
    * @return array
+   * @throws SiteNotFoundException
    */
-  protected function getElementField(Link $value) {
+  protected function getElementField(Link $value): array {
     if ($this->isSelected($value) && $value instanceof ElementLink) {
       $linkedElements = array_filter([ $value->getElement() ]);
       $linkedSiteId   = $value->getSiteId();
@@ -229,6 +231,9 @@ class ElementLinkType extends LinkType
       $criteria['siteId'] = $linkedSiteId;
     }
 
+    $fieldHandle = $value->getField()->handle;
+    $typeHandle = $this->name;
+
     return [
       'criteria'        => $criteria,
       'elementType'     => $this->elementType,
@@ -238,14 +243,14 @@ class ElementLinkType extends LinkType
       'name'            => 'linkedId',
       'showSiteMenu'    => $this->allowCrossSiteLink,
       'sources'         => $this->getEnabledSources(),
-      'storageKey'      => "linkfield.{$value->getField()->handle}.{$this->name}",
+      'storageKey'      => "linkfield.$fieldHandle.$typeHandle",
     ];
   }
 
   /**
-   * @return string[]|null
+   * @return array|string|null
    */
-  protected function getEnabledSources() {
+  protected function getEnabledSources(): array|string|null {
     return $this->sources === '*' ? null : $this->sources;
   }
 
@@ -253,7 +258,7 @@ class ElementLinkType extends LinkType
    * @param Link $value
    * @return array|null
    */
-  protected function getQueryField(Link $value) {
+  protected function getQueryField(Link $value): ?array {
     if (!$this->allowCustomQuery) {
       return null;
     }
@@ -274,8 +279,9 @@ class ElementLinkType extends LinkType
   /**
    * @param Link $value
    * @return array|null
+   * @throws SiteNotFoundException
    */
-  protected function getSiteField(Link $value) {
+  protected function getSiteField(Link $value): ?array {
     if (!$this->allowCrossSiteLink) {
       return null;
     }
@@ -314,7 +320,7 @@ class ElementLinkType extends LinkType
   /**
    * @inheritDoc
    */
-  protected function prepareLegacyData($data) {
+  protected function prepareLegacyData($data): ?array {
     if (!is_numeric($data)) {
       return null;
     }

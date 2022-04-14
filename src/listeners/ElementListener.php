@@ -26,7 +26,7 @@ class ElementListener
    * @param Event $event
    * @throws Exception
    */
-  public function onElementChanged(Event $event) {
+  public function onElementChanged(Event $event): void {
     $element = $event->sender;
     if ($element instanceof ElementInterface) {
       ElementListenerState::getInstance()->updateChangeDate();
@@ -37,7 +37,7 @@ class ElementListener
   /**
    * @throws Exception
    */
-  public function processStatusChanges() {
+  public function processStatusChanges(): void {
     $state = ElementListenerState::getInstance();
     if (
       is_null($state->nextEntryChangeDate) ||
@@ -93,7 +93,7 @@ class ElementListener
    * @param ElementInterface $element
    * @throws Exception
    */
-  static function updateElement(ElementInterface $element) {
+  static function updateElement(ElementInterface $element): void {
     $conditions = self::getElementConditions($element);
 
     if (self::isElementPublished($element)) {

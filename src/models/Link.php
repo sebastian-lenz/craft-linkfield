@@ -5,6 +5,7 @@ namespace lenz\linkfield\models;
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
+use craft\errors\SiteNotFoundException;
 use craft\helpers\Html;
 use craft\helpers\Template;
 use craft\models\Site;
@@ -25,27 +26,27 @@ class Link extends ForeignFieldModel
   /**
    * @var string|null
    */
-  public $ariaLabel;
+  public ?string $ariaLabel = null;
 
   /**
    * @var string|null
    */
-  public $customText;
+  public ?string $customText = null;
 
   /**
    * @var string
    */
-  public $target;
+  public string $target = '';
 
   /**
    * @var string|null
    */
-  public $title;
+  public ?string $title = null;
 
   /**
    * @var LinkType
    */
-  protected $_linkType;
+  protected LinkType $_linkType;
 
 
   /**
@@ -77,7 +78,7 @@ class Link extends ForeignFieldModel
   /**
    * @inheritDoc
    */
-  public function attributes() {
+  public function attributes(): array {
     return [
       'ariaLabel',
       'customText',
@@ -90,24 +91,20 @@ class Link extends ForeignFieldModel
    * @return bool
    */
   public function getAllowCustomText(): bool {
-    return is_null($this->_field)
-      ? false
-      : $this->_field->allowCustomText;
+    return $this->_field->allowCustomText;
   }
 
   /**
    * @return bool
    */
   public function getAllowTarget(): bool {
-    return is_null($this->_field)
-      ? false
-      : $this->_field->allowTarget;
+    return $this->_field->allowTarget;
   }
 
   /**
    * @return null|string
    */
-  public function getAriaLabel() {
+  public function getAriaLabel(): ?string {
     return $this->ariaLabel;
   }
 
@@ -116,10 +113,10 @@ class Link extends ForeignFieldModel
    * Allows user to specify a fallback string if the custom text and default are not set.
    *
    * @param string $fallbackText
-   * @return string
+   * @return string|null
    * @noinspection PhpUnused (Public API)
    */
-  public function getCustomText(string $fallbackText = '') {
+  public function getCustomText(string $fallbackText = ''): ?string {
     if ($this->getAllowCustomText() && !empty($this->customText)) {
       return $this->customText;
     }
@@ -133,7 +130,7 @@ class Link extends ForeignFieldModel
   /**
    * @return string
    */
-  public function getDefaultText() {
+  public function getDefaultText(): string {
     return $this->_field->defaultText;
   }
 
@@ -141,7 +138,7 @@ class Link extends ForeignFieldModel
    * @param bool $ignoreStatus
    * @return null|ElementInterface
    */
-  public function getElement(bool $ignoreStatus = false) {
+  public function getElement(bool $ignoreStatus = false): ?ElementInterface {
     return null;
   }
 
@@ -150,18 +147,14 @@ class Link extends ForeignFieldModel
    * @noinspection PhpUnused (API)
    */
   public function getEnableAriaLabel(): bool {
-    return is_null($this->_field)
-      ? false
-      : $this->_field->enableAriaLabel;
+    return $this->_field->enableAriaLabel;
   }
 
   /**
    * @return bool
    */
   public function getEnableTitle(): bool {
-    return is_null($this->_field)
-      ? false
-      : $this->_field->enableTitle;
+    return $this->_field->enableTitle;
   }
 
   /**
@@ -174,7 +167,7 @@ class Link extends ForeignFieldModel
   /**
    * @return string|null
    */
-  public function getIntrinsicUrl() {
+  public function getIntrinsicUrl(): ?string {
     return null;
   }
 
@@ -199,7 +192,7 @@ class Link extends ForeignFieldModel
    * @param array|string|null $attributesOrText
    * @return null|Markup
    */
-  public function getLink($attributesOrText = null) {
+  public function getLink(array|string|null $attributesOrText = null): ?Markup {
     $text = $this->getText();
     $extraAttributes = null;
 
@@ -231,7 +224,7 @@ class Link extends ForeignFieldModel
    * @return Markup
    * @noinspection PhpUnused (Public API)
    */
-  public function getLinkAttributes(array $extraAttributes = null) {
+  public function getLinkAttributes(array $extraAttributes = null): Markup {
     $attributes = $this->getRawLinkAttributes($extraAttributes);
     return Template::raw(is_null($attributes)
       ? ''
@@ -242,21 +235,24 @@ class Link extends ForeignFieldModel
   /**
    * @return LinkType|null
    */
-  public function getLinkType() {
+  public function getLinkType(): ?LinkType {
     return $this->_linkType;
   }
 
   /**
    * @return Site
+   * @throws SiteNotFoundException
    */
-  public function getOwnerSite() {
+  public function getOwnerSite(): Site {
     if ($this->_owner instanceof Element) {
       try {
         return $this->_owner->getSite();
-      } catch (Exception $e) { }
+      } catch (Exception) {
+        // Ignore
+      }
     }
 
-    return Craft::$app->sites->currentSite;
+    return Craft::$app->getSites()->getCurrentSite();
   }
 
   /**
@@ -267,7 +263,7 @@ class Link extends ForeignFieldModel
    * @param array|null $extraAttributes
    * @return array|null
    */
-  public function getRawLinkAttributes(array $extraAttributes = null) {
+  public function getRawLinkAttributes(array $extraAttributes = null): ?array {
     $href = ArrayHelper::get($extraAttributes, 'href');
     $url = $this->getUrl(is_array($href) ? $href : null);
     if (is_null($url)) {
@@ -305,7 +301,7 @@ class Link extends ForeignFieldModel
   /**
    * @return null|string
    */
-  public function getTarget() {
+  public function getTarget(): ?string {
     return $this->getAllowTarget() && !empty($this->target)
       ? $this->target
       : null;
@@ -315,7 +311,7 @@ class Link extends ForeignFieldModel
    * @param string $fallbackText
    * @return string
    */
-  public function getText(string $fallbackText = "Learn More") {
+  public function getText(string $fallbackText = "Learn More"): string {
     if ($this->getAllowCustomText() && !empty($this->customText)) {
       return $this->customText;
     }
@@ -334,14 +330,14 @@ class Link extends ForeignFieldModel
   /**
    * @return null|string
    */
-  public function getTitle() {
+  public function getTitle(): ?string {
     return $this->title;
   }
 
   /**
    * @return string
    */
-  public function getType() {
+  public function getType(): string {
     return $this->_linkType->name;
   }
 
@@ -349,7 +345,7 @@ class Link extends ForeignFieldModel
    * @param array|null $options
    * @return string|null
    */
-  public function getUrl(array $options = null) {
+  public function getUrl(array $options = null): ?string {
     $url = $this->getIntrinsicUrl();
     if (!is_null($url) && !is_null($options) && count($options)) {
       $url = Url::modify($url, $options);
@@ -362,7 +358,7 @@ class Link extends ForeignFieldModel
    * @param bool $ignoreStatus
    * @return bool
    */
-  public function hasElement(bool $ignoreStatus = false) {
+  public function hasElement(bool $ignoreStatus = false): bool {
     return false;
   }
 

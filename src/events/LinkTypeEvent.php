@@ -22,12 +22,12 @@ class LinkTypeEvent extends Event
   /**
    * @var LinkField
    */
-  public $field;
+  public LinkField $field;
 
   /**
    * @var LinkType[]
    */
-  public $linkTypes;
+  public array $linkTypes;
 
 
   /**

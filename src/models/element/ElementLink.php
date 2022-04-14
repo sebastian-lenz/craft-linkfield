@@ -19,43 +19,43 @@ class ElementLink extends Link
   /**
    * @var string|null
    */
-  public $customQuery;
+  public ?string $customQuery = null;
 
   /**
    * @var int
    */
-  public $linkedId;
+  public int $linkedId = 0;
 
   /**
    * @var int|null
    */
-  public $linkedSiteId;
+  public ?int $linkedSiteId = null;
 
   /**
    * @var string|null
    */
-  public $linkedTitle;
+  public ?string $linkedTitle = null;
 
   /**
    * @var string|null
    */
-  public $linkedUrl;
+  public ?string $linkedUrl = null;
 
   /**
    * @var ElementLinkBatchLoader
    */
-  private $_batchLoader;
+  private ElementLinkBatchLoader $_batchLoader;
 
   /**
    * @var ElementInterface|null
    */
-  private $_element;
+  private ?ElementInterface $_element;
 
 
   /**
    * @inheritDoc
    */
-  public function attributes() {
+  public function attributes(): array {
     return array_merge(parent::attributes(), [
       'customQuery',
       'linkedId',
@@ -68,7 +68,7 @@ class ElementLink extends Link
   /**
    * @inheritDoc
    */
-  public function getElement(bool $ignoreStatus = false) {
+  public function getElement(bool $ignoreStatus = false): ?ElementInterface {
     if (
       !isset($this->_element) ||
       $this->_element->getId() != $this->linkedId
@@ -99,7 +99,7 @@ class ElementLink extends Link
   /**
    * @inheritDoc
    */
-  public function getIntrinsicUrl() {
+  public function getIntrinsicUrl(): ?string {
     $url = $this->getElementUrl();
     $customQuery = is_string($this->customQuery)
       ? trim($this->customQuery)
@@ -124,25 +124,31 @@ class ElementLink extends Link
         }
 
         $url = (string)$baseUrl;
-      } catch (Throwable $error) {}
+      } catch (Throwable) {
+        // Ignore
+      }
     }
 
     return $url;
   }
 
   /**
-   * @return int
+   * @return int|null
    */
-  public function getSiteId() {
-    return !$this->_linkType->allowCrossSiteLink || is_null($this->linkedSiteId)
-      ? $this->getOwnerSite()->id
-      : $this->linkedSiteId;
+  public function getSiteId(): ?int {
+    try {
+      return !$this->_linkType->allowCrossSiteLink || is_null($this->linkedSiteId)
+        ? $this->getOwnerSite()->id
+        : $this->linkedSiteId;
+    } catch (Throwable) {
+      return null;
+    }
   }
 
   /**
    * @inheritDoc
    */
-  public function hasElement(bool $ignoreStatus = false) {
+  public function hasElement(bool $ignoreStatus = false): bool {
     $element = $this->getElement($ignoreStatus);
     return !is_null($element);
   }
@@ -150,8 +156,12 @@ class ElementLink extends Link
   /**
    * @return bool
    */
-  public function isCrossSiteLink() {
-    return $this->getSiteId() !== $this->getOwnerSite()->id;
+  public function isCrossSiteLink(): bool {
+    try {
+      return $this->getSiteId() !== $this->getOwnerSite()->id;
+    } catch (Throwable) {
+      return false;
+    }
   }
 
   /**
@@ -192,7 +202,7 @@ class ElementLink extends Link
   /**
    * @return string|null
    */
-  protected function getElementUrl() {
+  protected function getElementUrl(): ?string {
     if ($this->_field->enableElementCache) {
       return $this->linkedUrl;
     }
@@ -209,7 +219,7 @@ class ElementLink extends Link
    * @param bool $ignoreStatus
    * @return ElementInterface|null
    */
-  protected function queryElement($ignoreStatus = false) {
+  protected function queryElement(bool $ignoreStatus = false): ?ElementInterface {
     if (!is_numeric($this->linkedId) || $this->linkedId <= 0) {
       return null;
     }
@@ -228,7 +238,7 @@ class ElementLink extends Link
       ->siteId($this->getSiteId());
 
     if ($ignoreStatus || Craft::$app->request->getIsCpRequest()) {
-      $query->anyStatus();
+      $query->status(null);
     }
 
     return $query->one();

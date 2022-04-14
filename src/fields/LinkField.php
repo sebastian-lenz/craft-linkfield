@@ -5,6 +5,7 @@ namespace lenz\linkfield\fields;
 use Craft;
 use craft\base\ElementInterface;
 use Exception;
+use GraphQL\Type\Definition\Type as GraphQLType;
 use InvalidArgumentException;
 use lenz\craft\utils\foreignField\ForeignField;
 use lenz\craft\utils\foreignField\ForeignFieldModel;
@@ -18,73 +19,75 @@ use lenz\linkfield\records\LinkRecord;
 
 /**
  * Class LinkField
+ *
+ * @extends ForeignField<Link, LinkRecord>
  */
 class LinkField extends ForeignField
 {
   /**
    * @var bool
    */
-  public $allowCustomText = true;
+  public bool $allowCustomText = true;
 
   /**
    * @var bool
    */
-  public $allowTarget = false;
+  public bool $allowTarget = false;
 
   /**
    * @var bool
    */
-  public $autoNoReferrer = false;
+  public bool $autoNoReferrer = false;
 
   /**
    * @var int
    */
-  public $customTextMaxLength = 0;
+  public int $customTextMaxLength = 0;
 
   /**
    * @var bool
    */
-  public $customTextRequired = false;
+  public bool $customTextRequired = false;
 
   /**
    * @var string
    */
-  public $defaultLinkName = '';
+  public string $defaultLinkName = '';
 
   /**
    * @var string
    */
-  public $defaultText = '';
+  public string $defaultText = '';
 
   /**
    * @var bool
    */
-  public $enableAriaLabel = false;
+  public bool $enableAriaLabel = false;
 
   /**
    * @var bool
    */
-  public $enableAllLinkTypes = true;
+  public bool $enableAllLinkTypes = true;
 
   /**
    * @var bool
    */
-  public $enableElementCache = false;
+  public bool $enableElementCache = false;
 
   /**
    * @var bool
    */
-  public $enableTitle = false;
+  public bool $enableTitle = false;
 
   /**
    * @var LinkTypeCollection
    */
-  private $_linkTypes;
+  private LinkTypeCollection $_linkTypes;
 
   /**
    * @var array|null
    */
-  private $_linkTypeSettings = null;
+  private ?array $_linkTypeSettings = null;
 
 
   /**
@@ -116,8 +119,7 @@ class LinkField extends ForeignField
   /**
    * @inheritDoc
    */
-  public function getContentGqlType(): \GraphQL\Type\Definition\Type|array
-  {
+  public function getContentGqlType(): GraphQLType|array {
     return LinkGqlType::getType();
   }
 
@@ -140,7 +142,7 @@ class LinkField extends ForeignField
    * @inheritDoc
    * @throws Exception
    */
-  protected function getHtml(ForeignFieldModel $value, ElementInterface $element = null, $disabled = false) {
+  protected function getHtml(ForeignFieldModel $value, ElementInterface $element = null, $disabled = false): string {
     if (
       $value->isEditorEmpty() &&
       $this->useEmptyType() &&
@@ -197,7 +199,7 @@ class LinkField extends ForeignField
    * @return string|null
    * @noinspection PhpUnused (Used in field template)
    */
-  public function resolveSelectedLinkTypeName($model) {
+  public function resolveSelectedLinkTypeName(mixed $model): ?string {
     $linkType = $this
       ->getEnabledLinkTypes()
       ->getByName($model->getType(), '*');
@@ -281,7 +283,7 @@ class LinkField extends ForeignField
    * @inheritDoc
    * @throws Exception
    */
-  protected function createModel(array $attributes = [], ElementInterface $element = null) {
+  protected function createModel(array $attributes = [], ElementInterface $element = null): Link {
     return $this
       ->resolveLinkType($attributes['type'] ?? '')
       ->createLink($this, $element, $attributes);
@@ -304,7 +306,7 @@ class LinkField extends ForeignField
   /**
    * @inheritDoc
    */
-  protected function toRecordAttributes(ForeignFieldModel $model, ElementInterface $element) {
+  protected function toRecordAttributes(ForeignFieldModel $model, ElementInterface $element): array {
     if (!($model instanceof Link)) {
       throw new InvalidArgumentException('$model mus be an instance of Link');
     }
@@ -370,7 +372,7 @@ class LinkField extends ForeignField
   /**
    * @inheritDoc
    */
-  public static function settingsTemplate() {
+  public static function settingsTemplate(): ?string {
     return 'typedlinkfield/_settings';
   }
 

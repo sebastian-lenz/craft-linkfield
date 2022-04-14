@@ -3,6 +3,7 @@
 namespace lenz\linkfield\models\input;
 
 use Craft;
+use craft\helpers\App;
 use craft\validators\UrlValidator;
 use lenz\linkfield\models\Link;
 use yii\validators\EmailValidator;
@@ -18,13 +19,13 @@ class InputLink extends Link
   /**
    * @var string
    */
-  public $linkedUrl;
+  public string $linkedUrl;
 
 
   /**
    * @inheritDoc
    */
-  public function attributes() {
+  public function attributes(): array {
     return array_merge(parent::attributes(), [
       'linkedUrl',
     ]);
@@ -33,24 +34,21 @@ class InputLink extends Link
   /**
    * @inheritDoc
    */
-  public function getIntrinsicUrl() {
+  public function getIntrinsicUrl(): ?string {
     if ($this->isEmpty()) {
       return null;
     }
 
     $url = $this->linkedUrl;
     if ($this->getLinkType()->allowAliases) {
-      $url = (string)Craft::parseEnv($url);
+      $url = (string)App::parseEnv($url);
     }
 
-    switch ($this->getLinkType()->inputType) {
-      case 'email':
-        return 'mailto:' . $url;
-      case 'tel':
-        return 'tel:' . $url;
-      default:
-        return $url;
-    }
+    return match ($this->getLinkType()->inputType) {
+      'email' => 'mailto:' . $url,
+      'tel' => 'tel:' . $url,
+      default => $url,
+    };
   }
 
   /**
@@ -99,17 +97,14 @@ class InputLink extends Link
   /**
    * @return bool
    */
-  protected function getEnableIDN() {
-    return (
-      Craft::$app->getI18n()->getIsIntlLoaded() &&
-      defined('INTL_IDNA_VARIANT_UTS46')
-    );
+  protected function getEnableIDN(): bool {
+    return defined('INTL_IDNA_VARIANT_UTS46');
   }
 
   /**
    * @param string $attribute
    */
-  protected function validateGenericUrl(string $attribute) {
+  protected function validateGenericUrl(string $attribute): void {
     $error = null;
     $validator = new UrlValidator([
       'enableIDN' => $this->getEnableIDN(),
@@ -122,9 +117,9 @@ class InputLink extends Link
   }
 
   /**
-   * @param $attribute
+   * @param string $attribute
    */
-  protected function validateEmailUrl($attribute) {
+  protected function validateEmailUrl(string $attribute): void {
     $error = null;
     $validator = new EmailValidator([
       'enableIDN' => $this->getEnableIDN(),
@@ -137,9 +132,9 @@ class InputLink extends Link
   }
 
   /**
-   * @param $attribute
+   * @param string $attribute
    */
-  protected function validateTelUrl($attribute) {
+  protected function validateTelUrl(string $attribute): void {
     $isValid = filter_var($this->$attribute, FILTER_VALIDATE_REGEXP, [
       'options' => [
         'regexp' => '/^[0-9+\(\)#\.\s\/ext-]+$/',

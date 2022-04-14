@@ -14,7 +14,7 @@ class FeedMeListener
   /**
    * @param RegisterFeedMeFieldsEvent $event
    */
-  static function onRegisterFeedMeFields(RegisterFeedMeFieldsEvent $event) {
+  static function onRegisterFeedMeFields(RegisterFeedMeFieldsEvent $event): void {
     $event->fields = array_filter($event->fields, function($field) {
       return $field != TypedLink::class;
     });

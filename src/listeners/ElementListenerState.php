@@ -21,22 +21,22 @@ class ElementListenerState
   /**
    * @var array
    */
-  public $fields;
+  public array $fields;
 
   /**
    * @var int
    */
-  public $lastChangeDate;
+  public int $lastChangeDate;
 
   /**
    * @var int|null
    */
-  public $nextEntryChangeDate = null;
+  public ?int $nextEntryChangeDate = null;
 
   /**
    * @var ElementListenerState
    */
-  private static $_instance;
+  private static ElementListenerState $_instance;
 
 
   /**
@@ -48,9 +48,9 @@ class ElementListenerState
   }
 
   /**
-   * @return array
+   * @return array|null
    */
-  public function getCachedElementLinkConditions() {
+  public function getCachedElementLinkConditions(): ?array {
     $specs = array_filter(
       $this->fields,
       function ($fieldInfo) {
@@ -66,10 +66,10 @@ class ElementListenerState
   }
 
   /**
-   * @param $fieldId
+   * @param int|string|null $fieldId
    * @return array|null
    */
-  public function getFieldElementLinkConditions($fieldId) {
+  public function getFieldElementLinkConditions(int|string|null $fieldId): ?array {
     $specs = array_filter(
       $this->fields,
       function ($key) use ($fieldId) {
@@ -101,7 +101,7 @@ class ElementListenerState
   /**
    * @throws Exception
    */
-  public function flush() {
+  public function flush(): void {
     $timeMin = Db::prepareDateForDb($this->lastChangeDate);
     $timeMax = Db::prepareDateForDb(new DateTime());
     $query = new Query();
@@ -147,7 +147,7 @@ class ElementListenerState
   /**
    * @throws Exception
    */
-  public function reset() {
+  public function reset(): void {
     $this->fields = $this->loadElementFields();
     $this->lastChangeDate = time();
     $this->nextEntryChangeDate = $this->loadNextEntryChangeDate();
@@ -157,7 +157,7 @@ class ElementListenerState
   /**
    * @throws Exception
    */
-  public function updateChangeDate() {
+  public function updateChangeDate(): void {
     $this->nextEntryChangeDate = $this->loadNextEntryChangeDate();
     $this->save();
   }
@@ -165,7 +165,7 @@ class ElementListenerState
   /**
    * @return void
    */
-  public function updateFields() {
+  public function updateFields(): void {
     $this->fields = $this->loadElementFields();
     $this->save();
   }
@@ -224,25 +224,25 @@ class ElementListenerState
    * @return int|null
    * @throws Exception
    */
-  protected function loadNextEntryChangeDate() {
+  protected function loadNextEntryChangeDate(): ?int {
     $now = Db::prepareDateForDb(new DateTime());
     $nextPost = Entry::find()
       ->status(null)
-      ->postDate("> {$now}")
+      ->postDate("> $now")
       ->orderBy('postDate')
       ->one();
 
     $nextExpiry = Entry::find()
       ->status(null)
-      ->expiryDate("> {$now}")
+      ->expiryDate("> $now")
       ->orderBy('expiryDate')
       ->one();
 
-    $result = !is_null($nextPost) && !is_null($nextPost->postDate)
+    $result = $nextPost instanceof Entry && !is_null($nextPost->postDate)
       ? $nextPost->postDate
       : null;
 
-    if (!is_null($nextExpiry) && !is_null($nextExpiry->expiryDate)) {
+    if ($nextExpiry instanceof Entry && !is_null($nextExpiry->expiryDate)) {
       if (is_null($result)) {
         $result = $nextExpiry->expiryDate;
       } else {
@@ -260,7 +260,7 @@ class ElementListenerState
   /**
    * @return void
    */
-  protected function save() {
+  protected function save(): void {
     try {
       Craft::$app->getCache()->set(self::class, $this);
     } catch (Throwable $error) {

@@ -15,12 +15,12 @@ class SiteLinkType extends LinkType
   /**
    * @var string
    */
-  public $displayName;
+  public string $displayName = '';
 
   /**
    * @var string|array
    */
-  public $sites = '*';
+  public string|array $sites = '*';
 
   /**
    * @inheritDoc
@@ -61,10 +61,10 @@ class SiteLinkType extends LinkType
   }
 
   /**
-   * @param string|array|null $siteIds
+   * @param array|string|null $siteIds
    * @return array
    */
-  public function getSiteOptions($siteIds = null) {
+  public function getSiteOptions(array|string|null $siteIds = null): array {
     if ($siteIds === '*') {
       $siteIds = null;
     } elseif ($siteIds === '') {
@@ -88,7 +88,7 @@ class SiteLinkType extends LinkType
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(parent::rules(), [
       ['sites', 'validateSites']
     ]);
@@ -106,7 +106,7 @@ class SiteLinkType extends LinkType
   /**
    * @return void
    */
-  public function validateSites() {
+  public function validateSites(): void {
     $sites = $this->sites;
     if (!is_array($sites)) {
       $sites = [$sites];
@@ -137,7 +137,7 @@ class SiteLinkType extends LinkType
    * @param bool $disabled
    * @return array
    */
-  protected function getSelectField(Link $value, bool $disabled) {
+  protected function getSelectField(Link $value, bool $disabled): array {
     $site = $this->isSelected($value) && $value instanceof SiteLink
       ? $value->getSite()
       : null;
@@ -154,7 +154,7 @@ class SiteLinkType extends LinkType
   /**
    * @inheritDoc
    */
-  protected function prepareLegacyData($data) {
+  protected function prepareLegacyData(mixed $data): ?array {
     if (!is_numeric($data)) {
       return null;
     }

@@ -8,7 +8,6 @@ use craft\queue\BaseJob;
 use Exception;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\models\element\ElementLinkType;
-use lenz\linkfield\models\LinkType;
 use lenz\linkfield\models\LinkTypeCollection;
 use lenz\linkfield\records\LinkRecord;
 
@@ -20,7 +19,7 @@ class CacheListenerJob extends BaseJob
   /**
    * @var int
    */
-  public $fieldId;
+  public int $fieldId;
 
 
   /**
@@ -98,9 +97,9 @@ class CacheListenerJob extends BaseJob
    * @param LinkTypeCollection $linkTypes
    * @return array|null
    */
-  protected function getElementMap(array $conditions, LinkTypeCollection $linkTypes) {
-    $links = LinkRecord::find()->where($conditions)->all();
+  protected function getElementMap(array $conditions, LinkTypeCollection $linkTypes): ?array {
     $siteIds = Craft::$app->getSites()->getAllSiteIds(false);
+    $links = LinkRecord::find()->where($conditions)->all();
     $result = [];
 
     /** @var LinkRecord $link */
@@ -112,11 +111,11 @@ class CacheListenerJob extends BaseJob
 
       $elementType = $linkType->elementType;
       $elementId = $link->linkedId;
-      $siteId = is_null($link->linkedSiteId)
+      $siteId = empty($link->linkedSiteId)
         ? $link->siteId
         : $link->linkedSiteId;
 
-      if (is_null($siteId) || is_null($elementId) || !in_array($siteId, $siteIds)) {
+      if (empty($siteId) || empty($elementId) || !in_array($siteId, $siteIds)) {
         continue;
       }
 
@@ -139,11 +138,9 @@ class CacheListenerJob extends BaseJob
   /**
    * @return LinkField|null
    */
-  protected function getField() {
+  protected function getField(): ?LinkField {
     $field = Craft::$app->getFields()->getFieldById($this->fieldId);
-    return $field instanceof LinkField
-      ? $field
-      : null;
+    return $field instanceof LinkField ? $field : null;
   }
 
   /**
@@ -163,7 +160,7 @@ class CacheListenerJob extends BaseJob
   /**
    * @param LinkField $field
    */
-  static function createForField(LinkField $field) {
+  static function createForField(LinkField $field): void {
     Craft::$app->getQueue()->push(new CacheListenerJob([
       'description' => Craft::t('app', 'Cache {field} element links', [
         'field' => $field->name,

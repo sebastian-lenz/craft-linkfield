@@ -13,7 +13,7 @@ class Install extends Migration
   /**
    * @return bool
    */
-  public function safeUp() {
+  public function safeUp(): bool {
     LinkRecord::createTable($this);
     return true;
   }
@@ -21,7 +21,7 @@ class Install extends Migration
   /**
    * @return bool
    */
-  public function safeDown() {
+  public function safeDown(): bool {
     LinkRecord::dropTable($this);
     return true;
   }

@@ -23,15 +23,17 @@ class LinkRecord extends ForeignFieldRecord
 {
   /**
    * @return ActiveQueryInterface
+   * @noinspection PhpUnused
    */
-  public function getLinkedElement() {
+  public function getLinkedElement(): ActiveQueryInterface {
     return $this->hasOne(Element::class, ['id' => 'linkedId']);
   }
 
   /**
    * @return ActiveQueryInterface
+   * @noinspection PhpUnused
    */
-  public function getLinkedSite() {
+  public function getLinkedSite(): ActiveQueryInterface {
     return $this->hasOne(Site::class, ['id' => 'linkedSiteId']);
   }
 
@@ -42,7 +44,7 @@ class LinkRecord extends ForeignFieldRecord
   /**
    * @inheritdoc
    */
-  public static function createTable(Migration $migration, array $columns = []) {
+  public static function createTable(Migration $migration, array $columns = []): void {
     $table = static::tableName();
 
     parent::createTable($migration, $columns + [

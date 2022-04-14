@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection PhpUnused */
+
 namespace lenz\linkfield\assets\field;
 
 use craft\web\AssetBundle;

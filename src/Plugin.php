@@ -5,7 +5,6 @@ namespace lenz\linkfield;
 use Craft;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterGqlTypesEvent;
-use craft\feedme\services\Fields as FeedMeFields;
 use craft\services\Fields;
 use craft\services\Gql;
 use craft\services\Plugins;
@@ -69,10 +68,11 @@ class Plugin extends \craft\base\Plugin
       [$this, 'onRegisterGqlTypes']
     );
 
-    if (class_exists(FeedMeFields::class)) {
+    $feedMeFields = 'craft\feedme\services\Fields';
+    if (class_exists($feedMeFields)) {
       Event::on(
-        FeedMeFields::class,
-        FeedMeFields::EVENT_REGISTER_FEED_ME_FIELDS,
+        $feedMeFields,
+        $feedMeFields::EVENT_REGISTER_FEED_ME_FIELDS,
         [listeners\FeedMeListener::class, 'onRegisterFeedMeFields']
       );
     }

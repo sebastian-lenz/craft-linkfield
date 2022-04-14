@@ -2,10 +2,12 @@
 
 namespace lenz\linkfield\models;
 
+use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use Craft;
 use Exception;
+use IteratorAggregate;
 use lenz\linkfield\events\LinkTypeEvent;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\Plugin;
@@ -14,12 +16,12 @@ use yii\base\Event;
 /**
  * Class LinkTypeCollection
  */
-class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
+class LinkTypeCollection implements ArrayAccess, Countable, IteratorAggregate
 {
   /**
    * @var LinkType[]
    */
-  private $_types;
+  private array $_types;
 
 
   /**
@@ -34,21 +36,21 @@ class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
   /**
    * @return LinkTypeCollection
    */
-  public function clone() {
+  public function clone(): LinkTypeCollection {
     return new LinkTypeCollection($this->_types);
   }
 
   /**
    * @inheritDoc
    */
-  public function count() {
+  public function count(): int {
     return count($this->_types);
   }
 
   /**
    * @return void
    */
-  public function enableEmptyType() {
+  public function enableEmptyType(): void {
     $this->_types['empty'] = LinkType::getEmptyType();
   }
 
@@ -56,7 +58,7 @@ class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
    * @param string $className
    * @return LinkTypeCollection
    */
-  public function getAllByClass(string $className) {
+  public function getAllByClass(string $className): LinkTypeCollection {
     return new LinkTypeCollection(
       array_filter($this->_types, function(LinkType $type) use ($className) {
         return is_a($type, $className);
@@ -68,7 +70,7 @@ class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
    * @param string ...$names
    * @return LinkType|null
    */
-  public function getByName(...$names) {
+  public function getByName(...$names): LinkType|null {
     foreach ($names as $name) {
       if ($name == '*') {
         return $this->getFirstType();
@@ -87,7 +89,7 @@ class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
   /**
    * @return string[]
    */
-  public function getDisplayNames() {
+  public function getDisplayNames(): array {
     $result = array_map(function(LinkType $type) {
       return $type->getDisplayName();
     }, $this->_types);
@@ -99,7 +101,7 @@ class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
   /**
    * @return LinkTypeCollection
    */
-  public function getEnabledTypes() {
+  public function getEnabledTypes(): LinkTypeCollection {
     return new LinkTypeCollection(array_filter(
       $this->_types,
       function(LinkType $linkType) {
@@ -110,48 +112,46 @@ class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
 
   /**
    * @return string|null
+   * @noinspection PhpUnused (API method)
    */
-  public function getFirstName() {
+  public function getFirstName(): ?string {
     $type = reset($this->_types);
-    return $type ? $type->name : null;
+    return $type instanceof LinkType ? $type->name : null;
   }
 
   /**
-   * @return LinkType|false
+   * @return LinkType|null
    */
-  public function getFirstType() {
-    return reset($this->_types);
+  public function getFirstType(): LinkType|null {
+    $type = reset($this->_types);
+    return $type instanceof LinkType ? $type : null;
   }
 
   /**
    * @inheritDoc
    */
-  public function getIterator() {
+  public function getIterator(): ArrayIterator {
     return new ArrayIterator($this->_types);
   }
 
   /**
    * @return string[]
    */
-  public function getNames() {
-    return array_map(function(LinkType $type) {
-      return $type->name;
-    }, $this->_types);
+  public function getNames(): array {
+    return array_map(fn(LinkType $type) => $type->name, $this->_types);
   }
 
   /**
    * @return array
    */
   public function getSettings(): array {
-    return array_map(function(LinkType $linkType) {
-      return $linkType->getSettings();
-    }, $this->_types);
+    return array_map(fn(LinkType $linkType) => $linkType->getSettings(), $this->_types);
   }
 
   /**
    * @param array $value
    */
-  public function setSettings(array $value) {
+  public function setSettings(array $value): void {
     foreach ($this->_types as $linkName => $linkType) {
       if (array_key_exists($linkName, $value)) {
         $linkType->setSettings($value[$linkName]);
@@ -162,7 +162,7 @@ class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
   /**
    * @return $this
    */
-  public function sort() {
+  public function sort(): static {
     self::sortLinkTypes($this->_types);
     return $this;
   }
@@ -174,14 +174,14 @@ class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
   /**
    * @inheritDoc
    */
-  public function offsetExists($offset) {
+  public function offsetExists(mixed $offset): bool {
     return array_key_exists($offset, $this->_types);
   }
 
   /**
    * @inheritDoc
    */
-  public function offsetGet($offset) {
+  public function offsetGet(mixed $offset) {
     return $this->_types[$offset];
   }
 
@@ -189,7 +189,7 @@ class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
    * @inheritDoc
    * @throws Exception
    */
-  public function offsetSet($offset, $value) {
+  public function offsetSet(mixed $offset, mixed $value): void {
     throw new Exception('LinkTypeCollection is read-only.');
   }
 
@@ -197,7 +197,7 @@ class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
    * @inheritDoc
    * @throws Exception
    */
-  public function offsetUnset($offset) {
+  public function offsetUnset(mixed $offset): void {
     throw new Exception('LinkTypeCollection is read-only.');
   }
 
@@ -209,7 +209,7 @@ class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
    * @param LinkField $field
    * @return LinkTypeCollection
    */
-  static public function createForField(LinkField $field) {
+  static public function createForField(LinkField $field): LinkTypeCollection {
     $event = new LinkTypeEvent($field);
     $plugin = Plugin::getInstance();
 
@@ -234,10 +234,9 @@ class LinkTypeCollection implements \ArrayAccess, Countable, \IteratorAggregate
 
   /**
    * @param LinkType[] $types
-   * @return boolean
    */
-  static private function sortLinkTypes(array &$types) {
-    return uasort($types, function(LinkType $a, LinkType $b) {
+  static private function sortLinkTypes(array &$types): void {
+    uasort($types, function (LinkType $a, LinkType $b) {
       $aGroup = $a->getTranslatedDisplayGroup();
       $bGroup = $b->getTranslatedDisplayGroup();
 

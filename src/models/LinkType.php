@@ -19,22 +19,22 @@ class LinkType extends Model
   /**
    * @var string
    */
-  public $displayGroup = 'Common';
+  public string $displayGroup = 'Common';
 
   /**
    * @var bool
    */
-  public $enabled = false;
+  public bool $enabled = false;
 
   /**
    * @var string
    */
-  public $name = '';
+  public string $name = '';
 
   /**
    * @var string
    */
-  protected $_translatedDisplayGroup;
+  protected string $_translatedDisplayGroup;
 
   /**
    * The class of the link model associated with this type.
@@ -46,7 +46,7 @@ class LinkType extends Model
   /**
    * @inheritDoc
    */
-  public function behaviors() {
+  public function behaviors(): array {
     return [
       'typecast' => [
         'class' => AttributeTypecastBehavior::class,
@@ -126,7 +126,7 @@ class LinkType extends Model
   /**
    * @return array
    */
-  public function getSettings() {
+  public function getSettings(): array {
     $settings = [];
     foreach ($this->settingsAttributes() as $attribute) {
       $settings[$attribute] = $this->$attribute;
@@ -148,7 +148,7 @@ class LinkType extends Model
   /**
    * @return bool
    */
-  public function isEmptyType() {
+  public function isEmptyType(): bool {
     return $this === self::getEmptyType();
   }
 
@@ -156,14 +156,14 @@ class LinkType extends Model
    * @param Link $link
    * @return bool
    */
-  public function isSelected(Link $link) {
+  public function isSelected(Link $link): bool {
     return $link->getLinkType() === $this;
   }
 
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return [
       ['enabled', 'boolean'],
     ];
@@ -172,7 +172,7 @@ class LinkType extends Model
   /**
    * @param array $settings
    */
-  public function setSettings(array $settings) {
+  public function setSettings(array $settings): void {
     foreach ($settings as $name => $value) {
       try {
         $this->$name = $value;
@@ -181,7 +181,7 @@ class LinkType extends Model
           'Error while trying to set config value "%s" on link field type "%s": %s',
           $name,
           $this->getDisplayName(),
-          (string)$error
+          $error
         ), __METHOD__);
       }
     }
@@ -198,7 +198,7 @@ class LinkType extends Model
    * @param Link $model
    * @return array
    */
-  public function toRecordAttributes(Link $model) {
+  public function toRecordAttributes(Link $model): array {
     if ($model->isEditorEmpty() && $model->getField()->useEmptyType()) {
       return $this->getEmptyRecordAttributes();
     }
@@ -255,7 +255,7 @@ class LinkType extends Model
    * @param mixed $data
    * @return array|null
    */
-  protected function prepareLegacyData($data) {
+  protected function prepareLegacyData(mixed $data): ?array {
     return null;
   }
 
@@ -266,7 +266,7 @@ class LinkType extends Model
   /**
    * @return LinkType
    */
-  public static function getEmptyType() {
+  public static function getEmptyType(): LinkType {
     static $type;
     if (!isset($type)) {
       $type = new LinkType();

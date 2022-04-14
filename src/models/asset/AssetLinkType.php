@@ -23,7 +23,7 @@ class AssetLinkType extends ElementLinkType
    * AssetLinkType constructor.
    * @param array $config
    */
-  public function __construct($config = []) {
+  public function __construct(array $config = []) {
     parent::__construct(array_merge($config, [
       'elementType' => Asset::class,
     ]));
@@ -45,7 +45,7 @@ class AssetLinkType extends ElementLinkType
   /**
    * @inheritDoc
    */
-  public function setSettings(array $settings) {
+  public function setSettings(array $settings): void {
     parent::setSettings($settings);
     $this->sources = self::toVolumeSources($this->sources);
   }
@@ -55,9 +55,9 @@ class AssetLinkType extends ElementLinkType
   // -----------------
 
   /**
-   * @return string|null
+   * @inheritDoc
    */
-  protected function getEnabledSources() {
+  protected function getEnabledSources(): array|string|null {
     return $this->sources === '*'
       ? null
       : self::toFolderSources($this->sources);
@@ -83,7 +83,7 @@ class AssetLinkType extends ElementLinkType
    * @param mixed $sources
    * @return mixed
    */
-  private static function toVolumeSources($sources) {
+  private static function toVolumeSources(mixed $sources): mixed {
     if (is_array($sources)) {
       foreach ($sources as &$source) {
         $source = self::toVolumeSource($source);
@@ -103,8 +103,8 @@ class AssetLinkType extends ElementLinkType
    * @return string
    * @noinspection DuplicatedCode
    */
-  private static function toVolumeSource($source): string {
-    if ($source && is_string($source) && strpos($source, 'folder:') === 0) {
+  private static function toVolumeSource(mixed $source): string {
+    if ($source && is_string($source) && str_starts_with($source, 'folder:')) {
       $parts = explode(':', $source);
       $folder = Craft::$app->getAssets()->getFolderByUid($parts[1]);
 
@@ -112,7 +112,7 @@ class AssetLinkType extends ElementLinkType
         try {
           $volume = $folder->getVolume();
           return 'volume:' . $volume->uid;
-        } catch (InvalidConfigException $e) {
+        } catch (InvalidConfigException) {
           // The volume is probably soft-deleted. Just pretend the folder didn't exist.
         }
       }
@@ -125,7 +125,7 @@ class AssetLinkType extends ElementLinkType
    * @param mixed $sources
    * @return mixed
    */
-  private static function toFolderSources($sources) {
+  private static function toFolderSources(mixed $sources): mixed {
     if (is_array($sources)) {
       foreach ($sources as &$source) {
         $source = self::toFolderSource($source);
@@ -144,8 +144,8 @@ class AssetLinkType extends ElementLinkType
    * @return string
    * @noinspection DuplicatedCode
    */
-  private static function toFolderSource($source): string {
-    if ($source && is_string($source) && strpos($source, 'volume:') === 0) {
+  private static function toFolderSource(mixed $source): string {
+    if ($source && is_string($source) && str_starts_with($source, 'volume:')) {
       $parts = explode(':', $source);
       $volume = Craft::$app->getVolumes()->getVolumeByUid($parts[1]);
 

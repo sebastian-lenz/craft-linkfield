@@ -17,17 +17,17 @@ class LinkFieldQueryExtension extends ForeignFieldQueryExtension
   /**
    * @var ElementLinkBatchLoader|null
    */
-  static private $_batchLoader = null;
+  static private ?ElementLinkBatchLoader $_batchLoader = null;
 
 
   /**
    * @param PopulateElementEvent $event
    * @throws Exception
    */
-  public function onAfterPopulateElement(PopulateElementEvent $event) {
+  public function onAfterPopulateElement(PopulateElementEvent $event): void {
     try {
       $link = $event->element->getFieldValue($this->field->handle);
-    } catch (Exception $exception) {
+    } catch (Exception) {
       $link = null;
     }
 
@@ -54,7 +54,7 @@ class LinkFieldQueryExtension extends ForeignFieldQueryExtension
   /**
    * @return void
    */
-  protected function attachEagerLoad() {
+  protected function attachEagerLoad(): void {
     parent::attachEagerLoad();
 
     $this->query->on(

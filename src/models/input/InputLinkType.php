@@ -15,27 +15,27 @@ class InputLinkType extends LinkType
   /**
    * @var bool
    */
-  public $allowAliases = false;
+  public bool $allowAliases = false;
 
   /**
    * @var bool
    */
-  public $disableValidation = false;
+  public bool $disableValidation = false;
 
   /**
    * @var string
    */
-  public $displayName;
+  public string $displayName = '';
 
   /**
    * @var string
    */
-  public $inputType = 'text';
+  public string $inputType = 'text';
 
   /**
    * @var string
    */
-  public $placeholder;
+  public string $placeholder = '';
 
   /**
    * @inheritDoc
@@ -78,7 +78,7 @@ class InputLinkType extends LinkType
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(parent::rules(), [
       ['allowAliases', 'boolean'],
       ['disableValidation', 'boolean'],
@@ -104,7 +104,7 @@ class InputLinkType extends LinkType
    * @param bool $disabled
    * @return array
    */
-  protected function getInputField(Link $value, bool $disabled) {
+  protected function getInputField(Link $value, bool $disabled): array {
     $field = [
       'class' => $value->hasErrors('linkedUrl') ? 'error' : '',
       'disabled' => $disabled,
@@ -130,7 +130,7 @@ class InputLinkType extends LinkType
   /**
    * @inheritDoc
    */
-  protected function prepareLegacyData($data) {
+  protected function prepareLegacyData(mixed $data): ?array {
     return [
       'linkedUrl' => (string)$data
     ];

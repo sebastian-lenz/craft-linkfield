@@ -22,7 +22,7 @@ class LinkGqlType
   /**
    * @return Type
    */
-  static public function getType() {
+  static public function getType(): Type {
     if ($type = GqlEntityRegistry::getEntity(self::class)) {
       return $type;
     }

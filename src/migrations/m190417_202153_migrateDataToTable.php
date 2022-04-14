@@ -22,19 +22,20 @@ class m190417_202153_migrateDataToTable extends Migration
   /**
    * @inheritdoc
    */
-  public function safeUp() {
+  public function safeUp(): bool {
     if (!$this->db->tableExists(LinkRecord::tableName())) {
       (new Install())->safeUp();
     }
 
     $this->updateAllSettings();
     $this->updateAllFields();
+    return true;
   }
 
   /**
    * @inheritdoc
    */
-  public function safeDown() {
+  public function safeDown(): bool {
     echo "m190417_202153_migrateDataToTable cannot be reverted.\n";
     return false;
   }
@@ -46,7 +47,7 @@ class m190417_202153_migrateDataToTable extends Migration
   /**
    * @return void
    */
-  private function updateAllFields() {
+  private function updateAllFields(): void {
     $service = Craft::$app->getFields();
     $service->refreshFields();
 
@@ -58,7 +59,7 @@ class m190417_202153_migrateDataToTable extends Migration
   /**
    * @return void
    */
-  private function updateAllSettings() {
+  private function updateAllSettings(): void {
     $this->update(Table::FIELDS, [
       'type' => 'lenz\linkfield\fields\LinkField',
     ], [
@@ -85,7 +86,7 @@ class m190417_202153_migrateDataToTable extends Migration
    * @param string $table
    * @param string $handlePrefix
    */
-  private function updateField(FieldInterface $field, string $table, string $handlePrefix = '') {
+  private function updateField(FieldInterface $field, string $table, string $handlePrefix = ''): void {
     if ($field instanceof LinkField) {
       $this->updateLinkField($field, $table, $handlePrefix);
     } elseif ($field instanceof Matrix) {
@@ -98,7 +99,7 @@ class m190417_202153_migrateDataToTable extends Migration
   /**
    * @param Matrix $matrixField
    */
-  private function updateMatrixField(Matrix $matrixField) {
+  private function updateMatrixField(Matrix $matrixField): void {
     $table = $matrixField->contentTable;
     $blockTypes = Craft::$app
       ->getMatrix()
@@ -116,13 +117,11 @@ class m190417_202153_migrateDataToTable extends Migration
    * @param string $table
    * @param string $handlePrefix
    */
-  private function updateLinkField(LinkField $field, string $table, string $handlePrefix = '') {
+  private function updateLinkField(LinkField $field, string $table, string $handlePrefix = ''): void {
     $insertRows = [];
     $columnName = ($field->columnPrefix ?: 'field_') . $handlePrefix . $field->handle;
-    try {
-      $columnName .= $field->columnSuffix ? '_' . $field->columnSuffix : '';
-    } catch (\Throwable $error) {
-      // Ignore this
+    if ($field->columnSuffix) {
+      $columnName .= '_' . $field->columnSuffix;
     }
 
     $rows = (new Query())
@@ -140,8 +139,8 @@ class m190417_202153_migrateDataToTable extends Migration
         continue;
       }
 
-      $type  = isset($payload['type'])  ? $payload['type']  : null;
-      $value = isset($payload['value']) ? $payload['value'] : '';
+      $type  = $payload['type'] ?? null;
+      $value = $payload['value'] ?? '';
       unset($payload['type']);
       unset($payload['value']);
 
@@ -214,7 +213,7 @@ class m190417_202153_migrateDataToTable extends Migration
   /**
    * @param SuperTableField $superTableField
    */
-  private function updateSuperTable(SuperTableField $superTableField) {
+  private function updateSuperTable(SuperTableField $superTableField): void {
     foreach ($superTableField->getBlockTypeFields() as $field) {
       $this->updateField($field, $superTableField->contentTable);
     }
