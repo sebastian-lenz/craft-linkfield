@@ -1,5 +1,9 @@
 # Release Notes for Typed Link Field
 
+## 2.1.1-rc - 2022-04-21
+- New: Add PHP 8 type annotations
+- Fix: Migration error due to the getFields() method, changed to getCustomFields() (see https://github.com/sebastian-lenz/craft-linkfield/pull/210)
+
 ## 2.1.0-rc - 2022-03-28
 - New: Craft 4 and PHP 8 support, removed support for Craft 3.x
 - Fix: Set the direction of url input fields to ltr, see https://github.com/sebastian-lenz/craft-linkfield/issues/171
