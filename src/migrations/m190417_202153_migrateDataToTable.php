@@ -124,12 +124,16 @@ class m190417_202153_migrateDataToTable extends Migration
       $columnName .= '_' . $field->columnSuffix;
     }
 
+    $writeRows = function($rows) {
+      if (count($rows)) {
+        $this->batchInsert(LinkRecord::tableName(), [
+          'elementId', 'siteId', 'fieldId', 'linkedId', 'linkedSiteId', 'type', 'linkedUrl', 'payload'
+        ], $rows);
+      }
+    };
+
     $rows = (new Query())
-      ->select([
-        'elementId',
-        'siteId',
-        $columnName,
-      ])
+      ->select(['elementId', 'siteId', $columnName])
       ->from($table)
       ->all();
 
@@ -139,7 +143,7 @@ class m190417_202153_migrateDataToTable extends Migration
         continue;
       }
 
-      $type  = $payload['type'] ?? null;
+      $type = $payload['type'] ?? null;
       $value = $payload['value'] ?? '';
       unset($payload['type']);
       unset($payload['value']);
@@ -166,12 +170,14 @@ class m190417_202153_migrateDataToTable extends Migration
         is_numeric($value) ? null : $value,         // linkedUrl
         Json::encode($payload)                      // payload
       ];
+
+      if (count($insertRows) > 100) {
+        $writeRows($insertRows);
+        $insertRows = [];
+      }
     }
 
-    $this->batchInsert(LinkRecord::tableName(), [
-      'elementId', 'siteId', 'fieldId', 'linkedId', 'linkedSiteId', 'type', 'linkedUrl', 'payload'
-    ], $insertRows);
-
+    $writeRows($insertRows);
     $this->dropColumn($table, $columnName);
   }
 

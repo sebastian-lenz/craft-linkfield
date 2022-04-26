@@ -1,5 +1,8 @@
 # Release Notes for Typed Link Field
 
+## 2.1.2-rc
+- Fix: Do not try to write all migration rows at once, see https://github.com/sebastian-lenz/craft-linkfield/issues/213
+
 ## 2.1.1-rc - 2022-04-21
 - New: Add PHP 8 type annotations
 - Fix: Migration error due to the getFields() method, changed to getCustomFields() (see https://github.com/sebastian-lenz/craft-linkfield/pull/210)
