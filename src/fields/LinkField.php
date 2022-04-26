@@ -9,6 +9,7 @@ use GraphQL\Type\Definition\Type as GraphQLType;
 use InvalidArgumentException;
 use lenz\craft\utils\foreignField\ForeignField;
 use lenz\craft\utils\foreignField\ForeignFieldModel;
+use lenz\linkfield\helpers\StringHelper;
 use lenz\linkfield\listeners\CacheListenerJob;
 use lenz\linkfield\listeners\ElementListenerState;
 use lenz\linkfield\models\LinkGqlType;
@@ -251,7 +252,7 @@ class LinkField extends ForeignField
   /**
    * @return void
    */
-  public function validateTypeSettings() {
+  public function validateTypeSettings(): void {
     foreach ($this->getAvailableLinkTypes() as $name => $linkType) {
       if (!$linkType->validate()) {
         $this->addError('typeSettings', 'Invalid link type settings for link type `' . $name . '`.');
@@ -262,7 +263,7 @@ class LinkField extends ForeignField
 
   /**
    * This is primary used to evaluate required fields within the control panel,
-   * we consider a field as non empty if the user has entered either a url or
+   * we consider a field as non-empty if the user has entered either an url or
    * has selected an entry.
    *
    * This does not guarantee that the field actually returns a valid url (e.g.
@@ -284,6 +285,11 @@ class LinkField extends ForeignField
    * @throws Exception
    */
   protected function createModel(array $attributes = [], ElementInterface $element = null): Link {
+    $attributes = array_map(
+      fn($value) => is_string($value) ? StringHelper::decodeMb4($value) : $value,
+      $attributes
+    );
+
     return $this
       ->resolveLinkType($attributes['type'] ?? '')
       ->createLink($this, $element, $attributes);
@@ -308,12 +314,13 @@ class LinkField extends ForeignField
    */
   protected function toRecordAttributes(ForeignFieldModel $model, ElementInterface $element): array {
     if (!($model instanceof Link)) {
-      throw new InvalidArgumentException('$model mus be an instance of Link');
+      throw new InvalidArgumentException('$model must be an instance of Link');
     }
 
-    return $model
-      ->getLinkType()
-      ->toRecordAttributes($model);
+    return array_map(
+      fn($value) => is_string($value) ? StringHelper::encodeMb4($value) : $value,
+      $model->getLinkType()->toRecordAttributes($model)
+    );
   }
 
 
