@@ -89,7 +89,7 @@ class ElementLink extends Link
    */
   public function getIntrinsicText(): string {
     if ($this->_field->enableElementCache) {
-      return $this->linkedTitle;
+      return $this->linkedTitle ?? '';
     }
 
     $element = $this->getElement();
