@@ -223,7 +223,6 @@ class ElementLinkType extends LinkType
     }
 
     $criteria = [
-      'enabledForSite' => null,
       'status'         => null,
     ];
 
