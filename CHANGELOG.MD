@@ -1,10 +1,11 @@
 # Release Notes for Typed Link Field
 
-## 2.1.2-rc
+## 2.1.2-rc - 2022-045-08
 - New: Support for 4 byte characters, see https://github.com/sebastian-lenz/craft-linkfield/issues/211
 - Fix: Do not try to write all migration rows at once, see https://github.com/sebastian-lenz/craft-linkfield/issues/213
 - Fix: Make sure entry titles are a string and not null, see https://github.com/sebastian-lenz/craft-linkfield/issues/212
 - Fix: Eager loading might throw an error for certain queries, see https://github.com/sebastian-lenz/craft-linkfield/issues/214
+- Fix: Do not use `enabledForSite`, removed in Craft 4 (see https://github.com/sebastian-lenz/craft-linkfield/pull/218)
 
 ## 2.1.1-rc - 2022-04-21
 - New: Add PHP 8 type annotations
