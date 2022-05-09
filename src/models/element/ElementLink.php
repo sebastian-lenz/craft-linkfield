@@ -22,9 +22,9 @@ class ElementLink extends Link
   public ?string $customQuery = null;
 
   /**
-   * @var int
+   * @var int|null
    */
-  public int $linkedId = 0;
+  public ?int $linkedId = null;
 
   /**
    * @var int|null

@@ -19,7 +19,7 @@ class InputLink extends Link
   /**
    * @var string
    */
-  public string $linkedUrl;
+  public string $linkedUrl = '';
 
 
   /**
