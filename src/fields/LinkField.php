@@ -125,14 +125,16 @@ class LinkField extends ForeignField
   }
 
   /**
+   * @param ElementInterface|null $element
    * @return LinkTypeCollection
    */
-  public function getEnabledLinkTypes(): LinkTypeCollection {
+  public function getEnabledLinkTypes(ElementInterface $element = null): LinkTypeCollection {
     $result = $this->enableAllLinkTypes
       ? $this->getAvailableLinkTypes()->clone()
       : $this->getAvailableLinkTypes()->getEnabledTypes();
 
-    if ($this->useEmptyType()) {
+    $isNewElement = $element && is_null($element->dateCreated);
+    if ($this->useEmptyType() && !$isNewElement) {
       $result->enableEmptyType();
     }
 
@@ -291,17 +293,18 @@ class LinkField extends ForeignField
     );
 
     return $this
-      ->resolveLinkType($attributes['type'] ?? '')
+      ->resolveLinkType($attributes['type'] ?? '', $element)
       ->createLink($this, $element, $attributes);
   }
 
   /**
    * @param string $linkName
+   * @param ElementInterface|null $element
    * @return LinkType
    */
-  protected function resolveLinkType(string $linkName): LinkType {
+  protected function resolveLinkType(string $linkName, ElementInterface $element = null): LinkType {
     $result = $this
-      ->getEnabledLinkTypes()
+      ->getEnabledLinkTypes($element)
       ->getByName($linkName, $this->defaultLinkName, '*');
 
     return is_null($result)
