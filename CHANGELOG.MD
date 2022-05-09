@@ -1,6 +1,10 @@
 # Release Notes for Typed Link Field
 
-## 2.1.2-rc - 2022-045-08
+## 2.1.3-rc - 2022-04-09
+- Fix: Do not use the empty link type for fields on elements that are being created right now, see https://github.com/sebastian-lenz/craft-linkfield/issues/220
+- Fix: Adjust link default values, they can cause db errors, see https://github.com/sebastian-lenz/craft-linkfield/issues/219
+
+## 2.1.2-rc - 2022-04-08
 - New: Support for 4 byte characters, see https://github.com/sebastian-lenz/craft-linkfield/issues/211
 - Fix: Do not try to write all migration rows at once, see https://github.com/sebastian-lenz/craft-linkfield/issues/213
 - Fix: Make sure entry titles are a string and not null, see https://github.com/sebastian-lenz/craft-linkfield/issues/212
