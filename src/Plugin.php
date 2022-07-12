@@ -9,6 +9,7 @@ use craft\services\Fields;
 use craft\services\Gql;
 use craft\services\Plugins;
 use craft\utilities\ClearCaches;
+use craft\web\Application as WebApplication;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\listeners\ElementListenerState;
 use lenz\linkfield\models\LinkGqlType;
@@ -50,10 +51,9 @@ class Plugin extends \craft\base\Plugin
       [$this, 'onRegisterFieldTypes']
     );
 
-    Event::on(
-      Plugins::class,
-      Plugins::EVENT_AFTER_LOAD_PLUGINS,
-      [$this, 'onAfterLoadPlugins']
+    Craft::$app->on(
+      WebApplication::EVENT_INIT,
+      [$this, 'onAppInit']
     );
 
     Event::on(
@@ -81,7 +81,7 @@ class Plugin extends \craft\base\Plugin
   /**
    * @return void
    */
-  public function onAfterLoadPlugins() {
+  public function onAppInit() {
     try {
       if (
         Craft::$app->isInstalled &&
