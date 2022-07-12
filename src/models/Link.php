@@ -432,6 +432,11 @@ class Link extends ForeignFieldModel
   protected function setSerializedData(array $data) {
     parent::setSerializedData($data);
 
+    // This should not happen, but it was reported in #225
+    if (!isset($this->_field)) {
+      return;
+    }
+
     $this->_linkType = $this->_field->getEnabledLinkTypes()->getByName(
       ArrayHelper::get($data, '_linkType')
     );
