@@ -7,7 +7,6 @@ use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterGqlTypesEvent;
 use craft\services\Fields;
 use craft\services\Gql;
-use craft\services\Plugins;
 use craft\utilities\ClearCaches;
 use craft\web\Application as WebApplication;
 use lenz\linkfield\fields\LinkField;
@@ -37,7 +36,7 @@ class Plugin extends \craft\base\Plugin
   /**
    * @return void
    */
-  public function init() {
+  public function init(): void {
     parent::init();
 
     $this->setComponents([
@@ -81,7 +80,7 @@ class Plugin extends \craft\base\Plugin
   /**
    * @return void
    */
-  public function onAppInit() {
+  public function onAppInit(): void {
     try {
       if (
         Craft::$app->isInstalled &&

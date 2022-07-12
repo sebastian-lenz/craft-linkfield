@@ -1,5 +1,10 @@
 # Release Notes for Typed Link Field
 
+## 2.1.4
+- Fix: Respect the default link type setting in matrix fields (see https://github.com/sebastian-lenz/craft-linkfield/issues/221)
+- Fix: Element query executed before Craft is fully initialized (see https://github.com/sebastian-lenz/craft-linkfield/issues/231)
+- Update: Dutch translation (see https://github.com/sebastian-lenz/craft-linkfield/pull/224)
+
 ## 2.1.3-rc - 2022-04-09
 - Fix: Do not use the empty link type for fields on elements that are being created right now, see https://github.com/sebastian-lenz/craft-linkfield/issues/220
 - Fix: Adjust link default values, they can cause db errors, see https://github.com/sebastian-lenz/craft-linkfield/issues/219
