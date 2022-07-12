@@ -4,6 +4,7 @@ namespace lenz\linkfield\fields;
 
 use Craft;
 use craft\base\ElementInterface;
+use craft\elements\MatrixBlock;
 use Exception;
 use GraphQL\Type\Definition\Type as GraphQLType;
 use InvalidArgumentException;
@@ -142,6 +143,10 @@ class LinkField extends ForeignField
   }
 
   /**
+   * (1) Should prevent newly created fields from reverting to the empty type
+   * (2) Should detect dummy MatrixBlock blocks created by the cp,
+   * prevents defaulting to the empty type, see #221
+   *
    * @inheritDoc
    * @throws Exception
    */
@@ -150,8 +155,11 @@ class LinkField extends ForeignField
       $value->isEditorEmpty() &&
       $this->useEmptyType() &&
       !is_null($element) &&
+      !$value->getLinkType()->isEmptyType() &&
+      // (1)
       !$element->getIsUnpublishedDraft() &&
-      !$value->getLinkType()->isEmptyType()
+      // (2)
+      !($element instanceof MatrixBlock && is_null($element->getId()))
     ) {
       $value = LinkType::getEmptyType()->createLink($this, $element);
     }
@@ -173,6 +181,7 @@ class LinkField extends ForeignField
 
   /**
    * @return array
+   * @noinspection PhpUnused ($typeSettings getter)
    */
   public function getTypeSettings(): array {
     return $this->getAvailableLinkTypes()->getSettings();
@@ -239,6 +248,7 @@ class LinkField extends ForeignField
 
   /**
    * @param array $value
+   * @noinspection PhpUnused ($typeSettings setter)
    */
   public function setTypeSettings(array $value) {
     $this->_linkTypeSettings = $value;
@@ -253,6 +263,7 @@ class LinkField extends ForeignField
 
   /**
    * @return void
+   * @noinspection PhpUnused (Validator)
    */
   public function validateTypeSettings(): void {
     foreach ($this->getAvailableLinkTypes() as $name => $linkType) {
