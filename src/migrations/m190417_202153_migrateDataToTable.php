@@ -36,8 +36,8 @@ class m190417_202153_migrateDataToTable extends Migration
    * @inheritdoc
    */
   public function safeDown(): bool {
-    echo "m190417_202153_migrateDataToTable cannot be reverted.\n";
-    return false;
+    $this->dropTableIfExists(LinkRecord::tableName());
+    return true;
   }
 
 
