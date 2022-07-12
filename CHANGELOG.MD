@@ -3,6 +3,7 @@
 ## 2.1.4
 - Fix: Respect the default link type setting in matrix fields (see https://github.com/sebastian-lenz/craft-linkfield/issues/221)
 - Fix: Element query executed before Craft is fully initialized (see https://github.com/sebastian-lenz/craft-linkfield/issues/231)
+- Fix: Asset source selections are not working as expected (see https://github.com/sebastian-lenz/craft-linkfield/issues/229)
 - Update: Dutch translation (see https://github.com/sebastian-lenz/craft-linkfield/pull/224)
 
 ## 2.1.3-rc - 2022-04-09
