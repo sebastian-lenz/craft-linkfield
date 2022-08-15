@@ -77,6 +77,9 @@ class ElementLinkType extends LinkType
    * @inheritDoc
    */
   public function getDisplayName(): string {
+    if ($this->elementType === 'Solspace\Calendar\Elements\Event'){
+      return 'Event';
+    }
     return $this->elementType::displayName();
   }
 
