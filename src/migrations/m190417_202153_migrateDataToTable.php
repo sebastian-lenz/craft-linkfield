@@ -132,9 +132,11 @@ class m190417_202153_migrateDataToTable extends Migration
       }
     };
 
+    // Make sure the rows actually exist in the elements table.
     $rows = (new Query())
-      ->select(['elementId', 'siteId', $columnName])
-      ->from($table)
+      ->select(['t.elementId', 't.siteId', 't.'.$columnName])
+      ->from(['t' => $table])
+      ->innerJoin(['e' => Table::ELEMENTS], '[[t.elementId]] = [[e.id]]')
       ->all();
 
     foreach ($rows as $row) {
