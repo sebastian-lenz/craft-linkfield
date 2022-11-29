@@ -1,5 +1,8 @@
 # Release Notes for Typed Link Field
 
+## 2.1.5 - 2022-11-29
+- Fix: Escape SQL query in Migration (see: https://github.com/sebastian-lenz/craft-linkfield/pull/245)
+
 ## 2.1.4 - 2022-08-18
 - Fix: Fixed a migration error that could occur when updating to Craft 4. (see https://github.com/sebastian-lenz/craft-linkfield/issues/230)
 - Fix: Respect the default link type setting in matrix fields (see https://github.com/sebastian-lenz/craft-linkfield/issues/221)
