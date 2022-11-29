@@ -61,15 +61,15 @@ class m190417_202153_migrateDataToTable extends Migration
    */
   private function updateAllSettings(): void {
     $this->update(Table::FIELDS, [
-      'type' => 'lenz\linkfield\fields\LinkField',
+      'type' => 'lenz\\linkfield\\fields\\LinkField',
     ], [
-      'type' => 'typedlinkfield\fields\LinkField'
+      'type' => 'typedlinkfield\\fields\\LinkField'
     ]);
 
     $rows = (new Query())
       ->select(['id', 'settings'])
       ->from(Table::FIELDS)
-      ->where(['type' => 'lenz\linkfield\fields\LinkField'])
+      ->where(['type' => 'lenz\\linkfield\\fields\\LinkField'])
       ->all();
 
     foreach ($rows as $row) {
