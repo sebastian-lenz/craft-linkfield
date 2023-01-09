@@ -143,14 +143,20 @@ class m190417_202153_migrateDataToTable extends Migration
 
 
         // Make sure the rows actually exist in the elements table.
-        $rows = (new Query())
-          ->select(['t.elementId', 't.siteId', 't.'.$columnName])
-          ->from(['t' => $table])
-          ->innerJoin(['e' => Table::ELEMENTS], '[[t.elementId]] = [[e.id]]')
-          ->all();
+        $rowQuery = (new Query())
+        ->select(['t.elementId', 't.siteId', 't.'.$columnName])
+        ->from(['t' => $table])
+        ->innerJoin(['e' => Table::ELEMENTS], '[[t.elementId]] = [[e.id]]');
+        $rows = $rowQuery->all();
 
         foreach ($rows as $row) {
-            $payload = Json::decode($row[$columnName]);
+
+          if (substr($row[$columnName], 0, 1) != "{") {
+            continue;
+          }
+
+              $payload = Json::decode((string)$row[$columnName], $associative=true, $depth=512, JSON_THROW_ON_ERROR);
+
             if (!is_array($payload)) {
                 continue;
             }
