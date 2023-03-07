@@ -152,7 +152,7 @@ class ElementLinkType extends LinkType
    * @return void
    * @noinspection PhpUnused (Validator)
    */
-  public function validateElementType() {
+  public function validateElementType(): void {
     if (!is_subclass_of($this->elementType, ElementInterface::class)) {
       $this->addError('elementType', 'Element type must be a class implementing ElementInterface');
     }
