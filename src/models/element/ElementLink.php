@@ -88,8 +88,8 @@ class ElementLink extends Link
    * @return string
    */
   public function getIntrinsicText(): string {
-    if ($this->_field->enableElementCache) {
-      return $this->linkedTitle ?? '';
+    if ($this->_field->enableElementCache && !is_null($this->linkedTitle)) {
+      return $this->linkedTitle;
     }
 
     $element = $this->getElement();
@@ -203,7 +203,7 @@ class ElementLink extends Link
    * @return string|null
    */
   protected function getElementUrl(): ?string {
-    if ($this->_field->enableElementCache) {
+    if ($this->_field->enableElementCache && !is_null($this->linkedUrl)) {
       return $this->linkedUrl;
     }
 
