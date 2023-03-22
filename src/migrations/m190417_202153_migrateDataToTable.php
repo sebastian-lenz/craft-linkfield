@@ -12,6 +12,7 @@ use craft\helpers\Json;
 use lenz\linkfield\fields\LinkField;
 use lenz\linkfield\records\LinkRecord;
 use verbb\supertable\fields\SuperTableField;
+use Yii;
 
 /**
  * m190417_202153_migrateDataToTable migration.
@@ -119,7 +120,11 @@ class m190417_202153_migrateDataToTable extends Migration
    */
   private function updateLinkField(LinkField $field, string $table, string $handlePrefix = ''): void {
     $insertRows = [];
+    $columnsToDrop = [];
     $columnName = ($field->columnPrefix ?: 'field_') . $handlePrefix . $field->handle;
+    if (!$this->db->tableExists($table)) {
+      return;
+    }
     if ($field->columnSuffix) {
       $columnName .= '_' . $field->columnSuffix;
     }
@@ -132,55 +137,77 @@ class m190417_202153_migrateDataToTable extends Migration
       }
     };
 
-    // Make sure the rows actually exist in the elements table.
-    $rows = (new Query())
-      ->select(['t.elementId', 't.siteId', 't.'.$columnName])
-      ->from(['t' => $table])
-      ->innerJoin(['e' => Table::ELEMENTS], '[[t.elementId]] = [[e.id]]')
-      ->all();
+    $yiiTable = Yii::$app->db->schema->getTableSchema($table);
+    if (isset($yiiTable->columns[$columnName])) {
+        // do something
 
-    foreach ($rows as $row) {
-      $payload = Json::decode($row[$columnName]);
-      if (!is_array($payload)) {
-        continue;
-      }
 
-      $type = $payload['type'] ?? null;
-      $value = $payload['value'] ?? '';
-      unset($payload['type']);
-      unset($payload['value']);
+        // Make sure the rows actually exist in the elements table.
+        $rowQuery = (new Query())
+        ->select(['t.elementId', 't.siteId', 't.'.$columnName])
+        ->from(['t' => $table])
+        ->innerJoin(['e' => Table::ELEMENTS], '[[t.elementId]] = [[e.id]]');
+        $rows = $rowQuery->all();
 
-      if ($value && is_numeric($value)) {
-        $doesExist = (new Query())
-          ->select('id')
-          ->where(['id' => $value])
-          ->from('{{%elements}}')
-          ->exists();
+        foreach ($rows as $row) {
 
-        if (!$doesExist) {
-          $value = null;
+          if (substr($row[$columnName], 0, 1) != "{") {
+            continue;
+          }
+
+              $payload = Json::decode((string)$row[$columnName], $associative=true, $depth=512, JSON_THROW_ON_ERROR);
+
+            if (!is_array($payload)) {
+                continue;
+            }
+
+            $type = $payload['type'] ?? null;
+            $value = $payload['value'] ?? '';
+            unset($payload['type']);
+            unset($payload['value']);
+
+            if ($value && is_numeric($value)) {
+                $doesExist = (new Query())
+                  ->select('id')
+                  ->where(['id' => $value])
+                  ->from('{{%elements}}')
+                  ->exists();
+
+                if (!$doesExist) {
+                    $value = null;
+                }
+            }
+
+            $insertRows[] = [
+              $row['elementId'],                          // elementId
+              $row['siteId'],                             // siteId
+              $field->id,                                 // fieldId
+              is_numeric($value) ? $value : null,         // linkedId
+              is_numeric($value) ? $row['siteId'] : null, // linkedSiteId
+              $type,                                      // type
+              is_numeric($value) ? null : $value,         // linkedUrl
+              Json::encode($payload)                      // payload
+            ];
+
+            if (count($insertRows) > 100) {
+                $writeRows($insertRows);
+                $insertRows = [];
+            }
+            if (!in_array($columnName, $columnsToDrop)) {
+                $columnsToDrop[] = $columnName;
+            }
         }
-      }
-
-      $insertRows[] = [
-        $row['elementId'],                          // elementId
-        $row['siteId'],                             // siteId
-        $field->id,                                 // fieldId
-        is_numeric($value) ? $value : null,         // linkedId
-        is_numeric($value) ? $row['siteId'] : null, // linkedSiteId
-        $type,                                      // type
-        is_numeric($value) ? null : $value,         // linkedUrl
-        Json::encode($payload)                      // payload
-      ];
-
-      if (count($insertRows) > 100) {
-        $writeRows($insertRows);
-        $insertRows = [];
-      }
     }
 
     $writeRows($insertRows);
-    $this->dropColumn($table, $columnName);
+
+    foreach ($columnsToDrop as $col) {
+      $yiiTable = Yii::$app->db->schema->getTableSchema($table);
+      if (isset($yiiTable->columns[$columnName])) {
+          $this->dropColumn($table, $col);
+      }
+    }
+    //
   }
 
   /**
