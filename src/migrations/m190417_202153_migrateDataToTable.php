@@ -22,7 +22,8 @@ class m190417_202153_migrateDataToTable extends Migration
   /**
    * @inheritdoc
    */
-  public function safeUp(): bool {
+  public function safeUp(): bool
+  {
     if (!$this->db->tableExists(LinkRecord::tableName())) {
       (new Install())->safeUp();
     }
@@ -35,7 +36,8 @@ class m190417_202153_migrateDataToTable extends Migration
   /**
    * @inheritdoc
    */
-  public function safeDown(): bool {
+  public function safeDown(): bool
+  {
     $this->dropTableIfExists(LinkRecord::tableName());
     return true;
   }
@@ -47,7 +49,8 @@ class m190417_202153_migrateDataToTable extends Migration
   /**
    * @return void
    */
-  private function updateAllFields(): void {
+  private function updateAllFields(): void
+  {
     $service = Craft::$app->getFields();
     $service->refreshFields();
 
@@ -59,7 +62,8 @@ class m190417_202153_migrateDataToTable extends Migration
   /**
    * @return void
    */
-  private function updateAllSettings(): void {
+  private function updateAllSettings(): void
+  {
     $this->update(Table::FIELDS, [
       'type' => 'lenz\\linkfield\\fields\\LinkField',
     ], [
@@ -86,7 +90,8 @@ class m190417_202153_migrateDataToTable extends Migration
    * @param string $table
    * @param string $handlePrefix
    */
-  private function updateField(FieldInterface $field, string $table, string $handlePrefix = ''): void {
+  private function updateField(FieldInterface $field, string $table, string $handlePrefix = ''): void
+  {
     if ($field instanceof LinkField) {
       $this->updateLinkField($field, $table, $handlePrefix);
     } elseif ($field instanceof Matrix) {
@@ -99,7 +104,8 @@ class m190417_202153_migrateDataToTable extends Migration
   /**
    * @param Matrix $matrixField
    */
-  private function updateMatrixField(Matrix $matrixField): void {
+  private function updateMatrixField(Matrix $matrixField): void
+  {
     $table = $matrixField->contentTable;
     $blockTypes = Craft::$app
       ->getMatrix()
@@ -107,7 +113,7 @@ class m190417_202153_migrateDataToTable extends Migration
 
     foreach ($blockTypes as $blockType) {
       foreach ($blockType->getCustomFields() as $field) {
-        $this->updateField($field, $table, $blockType->handle.'_');
+        $this->updateField($field, $table, $blockType->handle . '_');
       }
     }
   }
@@ -117,14 +123,15 @@ class m190417_202153_migrateDataToTable extends Migration
    * @param string $table
    * @param string $handlePrefix
    */
-  private function updateLinkField(LinkField $field, string $table, string $handlePrefix = ''): void {
+  private function updateLinkField(LinkField $field, string $table, string $handlePrefix = ''): void
+  {
     $insertRows = [];
     $columnName = ($field->columnPrefix ?: 'field_') . $handlePrefix . $field->handle;
     if ($field->columnSuffix) {
       $columnName .= '_' . $field->columnSuffix;
     }
 
-    $writeRows = function($rows) {
+    $writeRows = function ($rows) {
       if (count($rows)) {
         $this->batchInsert(LinkRecord::tableName(), [
           'elementId', 'siteId', 'fieldId', 'linkedId', 'linkedSiteId', 'type', 'linkedUrl', 'payload'
@@ -134,7 +141,7 @@ class m190417_202153_migrateDataToTable extends Migration
 
     // Make sure the rows actually exist in the elements table.
     $rows = (new Query())
-      ->select(['t.elementId', 't.siteId', 't.'.$columnName])
+      ->select(['t.elementId', 't.siteId', 't.' . $columnName])
       ->from(['t' => $table])
       ->innerJoin(['e' => Table::ELEMENTS], '[[t.elementId]] = [[e.id]]')
       ->all();
@@ -150,7 +157,7 @@ class m190417_202153_migrateDataToTable extends Migration
       unset($payload['type']);
       unset($payload['value']);
 
-      if ($value && is_numeric($value)) {
+      if (!empty($value) && is_numeric($value)) {
         $doesExist = (new Query())
           ->select('id')
           ->where(['id' => $value])
@@ -162,14 +169,16 @@ class m190417_202153_migrateDataToTable extends Migration
         }
       }
 
+      $valueCondition = is_numeric($value) && !empty($value);
+
       $insertRows[] = [
         $row['elementId'],                          // elementId
         $row['siteId'],                             // siteId
         $field->id,                                 // fieldId
-        is_numeric($value) ? $value : null,         // linkedId
-        is_numeric($value) ? $row['siteId'] : null, // linkedSiteId
+        $valueCondition ? $value : null,            // linkedId
+        $valueCondition ? $row['siteId'] : null,    // linkedSiteId
         $type,                                      // type
-        is_numeric($value) ? null : $value,         // linkedUrl
+        $valueCondition ? null : $value,            // linkedUrl
         Json::encode($payload)                      // payload
       ];
 
@@ -187,7 +196,8 @@ class m190417_202153_migrateDataToTable extends Migration
    * @param string $settings
    * @return string
    */
-  private function updateSettings(string $settings): string {
+  private function updateSettings(string $settings): string
+  {
     $settings = Json::decode($settings);
     if (!is_array($settings)) {
       $settings = array();
@@ -221,7 +231,8 @@ class m190417_202153_migrateDataToTable extends Migration
   /**
    * @param SuperTableField $superTableField
    */
-  private function updateSuperTable(SuperTableField $superTableField): void {
+  private function updateSuperTable(SuperTableField $superTableField): void
+  {
     foreach ($superTableField->getBlockTypeFields() as $field) {
       $this->updateField($field, $superTableField->contentTable);
     }
