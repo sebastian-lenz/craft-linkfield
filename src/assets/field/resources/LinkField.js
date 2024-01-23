@@ -31,6 +31,8 @@
 			this.$typeSelect = this.$field.find('.linkfield--type select');
 			this.type = this.$typeSelect.val();
 
+			this.markOptionAsSelected(this.$typeSelect, this.type);
+
 			this.$optionsHolder = this.$field.find('.linkfield--typeOptions');
 			this.$options = this.$optionsHolder.find('.linkfield--typeOption');
 			this.$settingsHolder = this.$field.find('.linkfield--settings,.linkfield--target');
@@ -69,6 +71,7 @@
 
 		onChangeType: function(e) {
 			this.type = this.$typeSelect.val();
+			this.markOptionAsSelected(this.$typeSelect, this.type);
       this.$settingsHolder.toggleClass('hidden', this.type === '' || this.type === 'empty');
 			this.$options.addClass('hidden');
 			this.$options.filter('.' + this.type).removeClass('hidden');
@@ -87,6 +90,16 @@
         this.$field.addClass(resizeClass);
         this.resizeClass = resizeClass;
       }
-    }
+    },
+
+        markOptionAsSelected: function(typeSelect, type) {
+            // mark option as 'selected'
+            typeSelect.find('option').each(function() {
+                let $this = $(this);
+                if ($this.val() === type) {
+                    $this.attr('selected', true);
+                }
+            });
+        },
 	});
 })(jQuery);
