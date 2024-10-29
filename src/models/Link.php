@@ -14,6 +14,7 @@ use lenz\craft\utils\foreignField\ForeignFieldModel;
 use lenz\craft\utils\helpers\ArrayHelper;
 use lenz\linkfield\fields\LinkField;
 use Twig\Markup;
+use lenz\linkfield\helpers\StringHelper;
 
 /**
  * Class Link
@@ -214,7 +215,7 @@ class Link extends ForeignFieldModel
       return null;
     }
 
-    return Template::raw(Html::tag('a', $text, $attributes));
+    return Template::raw(Html::tag('a', $text, StringHelper::sanitizeAttributes($attributes)));
   }
 
   /**
@@ -228,7 +229,7 @@ class Link extends ForeignFieldModel
     $attributes = $this->getRawLinkAttributes($extraAttributes);
     return Template::raw(is_null($attributes)
       ? ''
-      : Html::renderTagAttributes($attributes)
+      : Html::renderTagAttributes(StringHelper::sanitizeAttributes($attributes))
     );
   }
 
@@ -295,7 +296,7 @@ class Link extends ForeignFieldModel
       $attributes = array_merge($attributes, $extraAttributes);
     }
 
-    return $attributes;
+    return StringHelper::sanitizeAttributes($attributes);
   }
 
   /**

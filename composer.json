@@ -1,5 +1,5 @@
 {
-  "name": "sebastianlenz/linkfield",
+  "name": "yournextagency/craft-linkfield",
   "description": "A Craft field type for selecting links",
   "type": "craft-plugin",
   "license": "MIT",
